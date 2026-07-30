@@ -1,0 +1,155 @@
+{
+  "shoulder": {
+    "left": 38.043,
+    "top": 54.199,
+    "width": 10.507,
+    "height": 6.348,
+    "ox": "55%",
+    "oy": "45%",
+    "motion": "move-rot"
+  },
+  "arm": {
+    "left": 35.326,
+    "top": 56.152,
+    "width": 12.138,
+    "height": 17.578,
+    "ox": "65%",
+    "oy": "5%",
+    "motion": "move-rot"
+  },
+  "elbow": {
+    "left": 36.232,
+    "top": 63.477,
+    "width": 9.058,
+    "height": 5.859,
+    "ox": "45%",
+    "oy": "45%",
+    "motion": "move-rot"
+  },
+  "wrist": {
+    "left": 33.514,
+    "top": 71.289,
+    "width": 9.058,
+    "height": 4.395,
+    "ox": "50%",
+    "oy": "35%",
+    "motion": "move-wiggle"
+  },
+  "thumb": {
+    "left": 31.703,
+    "top": 72.754,
+    "width": 7.246,
+    "height": 5.371,
+    "ox": "65%",
+    "oy": "20%",
+    "motion": "move-wiggle"
+  },
+  "fingers": {
+    "left": 34.42,
+    "top": 73.242,
+    "width": 7.609,
+    "height": 11.23,
+    "ox": "55%",
+    "oy": "8%",
+    "motion": "move-wiggle"
+  },
+  "trunk": {
+    "left": 44.384,
+    "top": 58.594,
+    "width": 11.775,
+    "height": 18.066,
+    "ox": "50%",
+    "oy": "15%",
+    "motion": "move-x"
+  },
+  "knee": {
+    "left": 42.572,
+    "top": 83.984,
+    "width": 9.964,
+    "height": 7.812,
+    "ox": "50%",
+    "oy": "25%",
+    "motion": "move-x"
+  },
+  "toes": {
+    "left": 38.949,
+    "top": 92.285,
+    "width": 12.681,
+    "height": 7.129,
+    "ox": "50%",
+    "oy": "20%",
+    "motion": "move-y"
+  },
+  "neck": {
+    "left": 47.101,
+    "top": 51.758,
+    "width": 9.058,
+    "height": 4.102,
+    "ox": "40%",
+    "oy": "70%",
+    "motion": "move-x"
+  },
+  "face": {
+    "left": 45.29,
+    "top": 47.656,
+    "width": 9.964,
+    "height": 6.543,
+    "ox": "45%",
+    "oy": "55%",
+    "motion": "move-wiggle"
+  },
+  "lips": {
+    "left": 48.551,
+    "top": 51.758,
+    "width": 6.159,
+    "height": 2.734,
+    "ox": "40%",
+    "oy": "50%",
+    "motion": "move-y"
+  },
+  "eye": {
+    "left": 45.652,
+    "top": 49.316,
+    "width": 5.072,
+    "height": 2.637,
+    "ox": "40%",
+    "oy": "50%",
+    "motion": "move-wiggle"
+  },
+  "brow": {
+    "left": 45.29,
+    "top": 48.047,
+    "width": 6.341,
+    "height": 2.246,
+    "ox": "40%",
+    "oy": "70%",
+    "motion": "move-y"
+  },
+  "jaw": {
+    "left": 47.101,
+    "top": 52.734,
+    "width": 7.609,
+    "height": 3.125,
+    "ox": "40%",
+    "oy": "30%",
+    "motion": "move-y"
+  },
+  "tongue": {
+    "left": 48.913,
+    "top": 52.246,
+    "width": 5.072,
+    "height": 2.246,
+    "ox": "40%",
+    "oy": "50%",
+    "motion": "move-wiggle"
+  },
+  "pharynx": {
+    "left": 48.007,
+    "top": 53.711,
+    "width": 6.341,
+    "height": 2.93,
+    "ox": "40%",
+    "oy": "40%",
+    "motion": "move-y"
+  }
+}

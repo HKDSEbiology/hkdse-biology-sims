@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Probe the Motor Cortex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0:#e8eef4; --bg1:#f4f7fa; --panel:#ffffff;
+      --line:#d0dae6; --text:#1e2a36; --muted:#5a6b7c;
+      --accent:#1f7a6c; --accent-soft:#d8efe9;
+      --L:#2f6f9e; --L-soft:#e3f0f8;
+      --R:#b86a2e; --R-soft:#f8ebe0;
+      --glow:#4aa3c4; --glow-lock:#d4a017;
+      --shadow:0 8px 24px rgba(30,42,54,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;font-family:"Source Sans 3",system-ui,sans-serif;color:var(--text);
+      background:
+        radial-gradient(ellipse 70% 50% at 8% 0%,#d9e8f2,transparent 55%),
+        radial-gradient(ellipse 55% 40% at 100% 5%,#e6efe8,transparent 50%),
+        linear-gradient(180deg,var(--bg1),var(--bg0));
+      padding:1.1rem 1rem 2rem;
+    }
+    header{max-width:1180px;margin:0 auto 1.15rem;text-align:center}
+    header .kicker{
+      display:inline-block;margin:0 0 .7rem;padding:.38rem .78rem;
+      font:700 .7rem/1 "Source Sans 3",sans-serif;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--accent);background:var(--accent-soft);border:1px solid rgba(31,122,108,.22);
+      border-radius:999px;
+    }
+    header h1{
+      font-family:Fraunces,Georgia,serif;font-size:clamp(2.05rem,5.4vw,3.25rem);
+      font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#16324a;
+    }
+    header .title-lead{
+      display:block;font-size:.4em;font-weight:600;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--muted);margin-bottom:.18em;
+    }
+    header .title-focus{
+      display:inline-block;
+      background:linear-gradient(115deg,#0d4f6b 0%,#1f7a6c 42%,#c45d2a 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      text-shadow:none;
+      filter:drop-shadow(0 2px 0 rgba(22,50,74,.06));
+    }
+    header .title-rule{
+      width:min(12rem,48%);height:4px;margin:.55rem auto .15rem;border-radius:99px;
+      background:linear-gradient(90deg,transparent,#1f7a6c 18%,#c45d2a 82%,transparent);
+    }
+    header .lede{
+      margin:.65rem auto 0;max-width:42rem;color:var(--muted);
+      font-size:.92rem;line-height:1.45;
+    }
+    header .lede strong{color:var(--text);font-weight:600}
+    .series{
+      max-width:1180px;margin:0 auto .75rem;display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;
+    }
+    .series a{
+      text-decoration:none;font:600 .75rem/1 "Source Sans 3",sans-serif;
+      padding:.4rem .7rem;border-radius:.5rem;border:1px solid var(--line);
+      background:#fff;color:var(--muted);
+    }
+    .series a.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+    .series a:hover{border-color:var(--accent);color:var(--accent)}
+    .next-link{
+      text-align:center;padding:.85rem 1rem;background:var(--accent-soft);
+      border:1px solid rgba(31,122,108,.25);border-radius:.9rem;
+    }
+    .next-link a{
+      color:var(--accent);font-weight:700;text-decoration:none;font-size:.95rem;
+    }
+    .next-link a:hover{text-decoration:underline}
+    .next-link p{margin-top:.3rem;font-size:.8rem;color:var(--muted)}
+    .shell{max-width:1180px;margin:0 auto;display:grid;gap:.75rem}
+
+    .know{
+      display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:.55rem;
+    }
+    @media(max-width:900px){.know{grid-template-columns:1fr}}
+    .card{
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.75rem .9rem;font-size:.82rem;line-height:1.5;color:var(--muted);
+      box-shadow:var(--shadow);
+    }
+    .card h3{
+      font-family:Fraunces,Georgia,serif;font-size:.95rem;color:var(--accent);
+      margin-bottom:.35rem;font-weight:600;
+    }
+    .card strong{color:var(--text);font-weight:600}
+    .card em{font-style:italic}
+    .card.r{border-top:3px solid var(--R);background:linear-gradient(180deg,var(--R-soft),#fff 42%)}
+    .card.l{border-top:3px solid var(--L);background:linear-gradient(180deg,var(--L-soft),#fff 42%)}
+    .card.bg{border-top:3px solid var(--accent);background:linear-gradient(180deg,var(--accent-soft),#fff 45%)}
+    .map-note{
+      font-size:.78rem;color:var(--muted);margin-top:.5rem;line-height:1.45;
+    }
+    .note{
+      background:#fff8e8;border:1px solid #e6d3a8;border-left:4px solid #c9922a;
+      border-radius:.65rem;padding:.65rem .85rem;font-size:.8rem;line-height:1.5;color:#6a5a3a;
+      box-shadow:var(--shadow);
+    }
+    .note strong{color:#4a3c22}
+
+    .layout{
+      display:grid;grid-template-columns:1fr 1fr;gap:.75rem;align-items:stretch;
+    }
+    @media(max-width:960px){.layout{grid-template-columns:1fr}}
+    .panel{
+      background:var(--panel);border:1px solid var(--line);border-radius:1rem;
+      padding:.75rem;box-shadow:var(--shadow);
+      display:flex;flex-direction:column;min-width:0;
+    }
+    .panel h2{
+      font-family:Fraunces,Georgia,serif;font-size:1.05rem;color:#16324a;margin-bottom:.25rem;
+    }
+    .hint{font-size:.8rem;color:var(--muted);margin-bottom:.5rem;line-height:1.45}
+    .hint strong{color:var(--text)}
+    .stage{
+      position:relative;width:100%;border-radius:.6rem;overflow:hidden;background:#fff;
+      touch-action:none;cursor:none;box-shadow:inset 0 0 0 1px var(--line);
+      flex:0 0 auto;
+    }
+    .stage.brain{aspect-ratio:1467/1879}
+    .stage.body{aspect-ratio:1389/1769}
+    .stage img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .hl-layer{
+      position:absolute;pointer-events:none;z-index:3;opacity:0;transition:opacity .12s;
+      mix-blend-mode:normal;
+    }
+    .hl-layer.on{opacity:1}
+    .cover{position:absolute;border-radius:26%;background:#efe6dc;opacity:0;pointer-events:none;z-index:2;transition:opacity .08s}
+    .cover.on{opacity:.9}
+    .limb{
+      position:absolute;z-index:3;pointer-events:none;opacity:0;will-change:transform;
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.18));
+    }
+    .limb img{display:block;width:100%;height:100%;object-fit:fill}
+    .limb.on{opacity:1}
+    .marker{
+      position:absolute;z-index:3;pointer-events:none;opacity:0;transform:translate(-50%,-50%);
+      width:14px;height:14px;border-radius:50%;
+      background:radial-gradient(circle,#ffe08a 0%,#e09a4a 55%,transparent 72%);
+    }
+    .marker.on{opacity:1;animation:pulseMark .4s ease-in-out 5}
+    @keyframes pulseMark{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.35)}}
+
+    .limb.hinge-thumb{animation:hingeThumb .55s cubic-bezier(.4,.0,.2,1) 4}
+    .limb.hinge-fingers{animation:hingeFingers .45s ease-in-out 5}
+    .limb.hinge-toes{animation:hingeToes .45s ease-in-out 5}
+    .limb.hinge-elbow{animation:hingeElbow .6s ease-in-out 4}
+    .limb.hinge-wrist{animation:hingeWrist .5s ease-in-out 5}
+    .limb.hinge-shoulder{animation:hingeShoulder .55s ease-in-out 4}
+    .limb.hinge-neck{animation:hingeNeck .6s ease-in-out 4}
+    .limb.hinge-brow{animation:hingeBrow .5s ease-in-out 4}
+    .limb.blink-eye{animation:blinkEye .75s ease-in-out 3}
+    .limb.hinge-face{animation:hingeFace .45s ease-in-out 5}
+    .limb.hinge-lips{animation:hingeLips .5s ease-in-out 4}
+    .limb.hinge-jaw{animation:hingeJaw .65s ease-in-out 3}
+    .limb.knee-updown{animation:kneeUpDown .55s ease-in-out 5}
+    .limb.shake{animation:partShake .12s linear 14}
+
+    @keyframes hingeThumb{0%,100%{transform:rotate(0deg)}35%{transform:rotate(-32deg)}55%{transform:rotate(-18deg)}75%{transform:rotate(-28deg)}}
+    @keyframes hingeFingers{0%,100%{transform:rotate(0deg)}30%{transform:rotate(14deg)}55%{transform:rotate(22deg)}75%{transform:rotate(8deg)}}
+    @keyframes hingeToes{0%,100%{transform:rotate(0deg)}45%{transform:rotate(20deg)}}
+    @keyframes hingeElbow{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-30deg)}}
+    @keyframes hingeWrist{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-20deg)}75%{transform:rotate(18deg)}}
+    @keyframes hingeShoulder{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(-10deg) translateY(-8px)}}
+    @keyframes kneeUpDown{0%,100%{transform:translateY(0)}25%{transform:translateY(-14px)}50%{transform:translateY(6px)}75%{transform:translateY(-10px)}}
+    @keyframes partShake{
+      0%,100%{transform:translate(0,0) rotate(0deg)}
+      20%{transform:translate(2px,-1px) rotate(-1.5deg)}
+      40%{transform:translate(-2px,2px) rotate(1.5deg)}
+      60%{transform:translate(2px,1px) rotate(-1deg)}
+      80%{transform:translate(-1px,-2px) rotate(1deg)}
+    }
+    @keyframes hingeNeck{0%,100%{transform:rotate(0deg)}50%{transform:rotate(12deg)}}
+    @keyframes hingeBrow{0%,100%{transform:rotate(0deg) translateY(0)}45%{transform:rotate(-4deg) translateY(-9px)}}
+    @keyframes blinkEye{0%,42%,100%{transform:scaleY(1)}50%,58%{transform:scaleY(0.08)}72%{transform:scaleY(1)}80%{transform:scaleY(0.12)}}
+    @keyframes hingeFace{0%,100%{transform:rotate(0deg)}30%{transform:rotate(-3deg)}60%{transform:rotate(3deg)}}
+    @keyframes hingeLips{0%,100%{transform:scaleX(1) scaleY(1)}50%{transform:scaleX(0.82) scaleY(1.2)}}
+    @keyframes hingeJaw{0%,100%{transform:rotate(0deg)}45%{transform:rotate(10deg)}}
+
+    .probe{
+      position:absolute;z-index:9;pointer-events:none;opacity:0;
+      width:90px;height:auto;
+      filter:drop-shadow(0 5px 10px rgba(30,42,54,.28));
+      transform: translate(calc(-46 / 400 * 100%), calc(-41 / 421 * 100%));
+    }
+    .probe.show{opacity:1}
+    .probe img{display:block;width:100%;height:auto;pointer-events:none}
+    .tip-glow{
+      position:absolute;z-index:10;pointer-events:none;opacity:0;
+      width:14px;height:14px;border-radius:50%;
+      transform:translate(-50%,-50%);
+      background:radial-gradient(circle, #fff 0%, var(--glow) 42%, rgba(74,163,196,.25) 68%, transparent 80%);
+      box-shadow:0 0 7px 2px rgba(74,163,196,.55);
+      transition:opacity .1s;
+    }
+    .tip-glow.on{opacity:1}
+    .tip-glow.locked{
+      opacity:1;
+      background:radial-gradient(circle, #fff 0%, #f0c65a 38%, #d4a017 62%, transparent 80%);
+      box-shadow:0 0 8px 2px rgba(212,160,23,.55);
+    }
+    .chips{
+      margin:0;display:grid;gap:.45rem;
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.65rem .75rem;box-shadow:var(--shadow);
+    }
+    .chip-row{display:flex;flex-wrap:wrap;gap:.32rem;justify-content:center;align-items:center}
+    .chip-row .tag{
+      font:600 .68rem/1.2 "Source Sans 3",sans-serif;color:var(--muted);margin-right:.15rem;min-width:7.5rem;
+    }
+    .chips button{
+      appearance:none;border:1px solid var(--line);background:#f5f8fb;color:var(--text);
+      font:600 .68rem/1 "Source Sans 3",sans-serif;padding:.38rem .5rem;border-radius:.45rem;cursor:pointer;
+    }
+    .chips button:hover,.chips button.on{
+      border-color:var(--accent);color:var(--accent);background:var(--accent-soft);
+    }
+    .readout{
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.9rem 1.05rem;box-shadow:var(--shadow);
+    }
+    .readout h3{
+      font-family:Fraunces,Georgia,serif;font-size:1.08rem;color:#16324a;margin-bottom:.35rem;
+    }
+    .readout h4{
+      font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:.55rem;min-height:1.3em;
+    }
+    .readout .info-box{
+      padding:.5rem .65rem;margin-bottom:.4rem;background:#f5f8fb;
+      border:1px solid var(--line);border-radius:.55rem;
+      font-size:.86rem;color:var(--muted);line-height:1.5;
+    }
+    .readout .info-box strong{color:var(--text)}
+    .readout .info-box b{color:var(--text);font-weight:700}
+    .readout .disclaimer-box{
+      margin-top:.55rem;padding:.55rem .65rem;background:#fff8e8;
+      border:1px solid #e6d3a8;border-left:4px solid #c9922a;border-radius:.55rem;
+      font-size:.78rem;color:#6a5a3a;line-height:1.5;
+    }
+    .readout .disclaimer-box b{color:#4a3c22}
+    footer{
+      text-align:center;margin-top:30px;padding:15px;font-size:.9em;color:#555;
+      border-top:1px solid #e0e0e0;line-height:1.55;
+    }
+    footer p{margin:.2rem 0}
+    footer strong{color:var(--text);font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Cerebral Cortex Series · Interactive Lab</p>
+    <h1>
+      <span class="title-lead">Probe the</span>
+      <span class="title-focus">Motor Cortex</span>
+    </h1>
+    <div class="title-rule" aria-hidden="true"></div>
+    <p class="lede">
+      The <strong>motor area of the cerebrum</strong> (motor cortex) controls voluntary movement.
+      Move the probe tip over a label on the red motor area — the matching body part on the <strong>opposite side</strong> moves!
+      Move the tip away and the movement stops.
+    </p>
+  </header>
+
+  <nav class="series" aria-label="Cerebral cortex series">
+    <a href="index.html">Home · All simulations</a>
+    <a href="probe-the-sensory-cortex.html">1 · Sensory Cortex</a>
+    <a class="on" href="probe-the-brain.html">2 · Motor Cortex</a>
+  </nav>
+
+  <div class="shell">
+    <div class="know">
+      <div class="card bg">
+        <h3>Key idea — Motor area of the cerebrum</h3>
+        The <strong>motor area of the cerebrum</strong> (motor cortex) initiates voluntary body movements.
+        Body parts that need fine, precise control — such as the <strong>fingers, lips and tongue</strong> —
+        are allocated a <strong>much larger area</strong> in the motor cortex because they need a
+        <strong>higher density of motor neurones</strong> for delicate control.
+        <p class="map-note"><em>Blue area = Sensory map (feels touch) | Red area = Motor map (controls movement).</em></p>
+      </div>
+      <div class="card r">
+        <h3>Left Brain → Right Body</h3>
+        Nerve signals cross over inside the central nervous system.
+        The <strong>left motor area</strong> controls muscles on the
+        <strong>right side</strong> of the body.
+      </div>
+      <div class="card l">
+        <h3>Right Brain → Left Body</h3>
+        Likewise, the <strong>right motor area</strong> controls muscles on the
+        <strong>left side</strong> of the body.
+        This opposite-side rule is called <strong>cross-control</strong> (or <em>contralateral control</em>).
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>1 · Probe the motor area</h2>
+        <p class="hint">Move the probe tip over a red motor-area label — movement keeps going while you stay there. Move away to stop. You can also use the quick buttons under the diagrams.</p>
+        <div class="stage brain" id="brain-stage">
+          <img class="bg" src="brain-motor-cortex.png" alt="Motor area of the cerebrum" draggable="false" />
+          <div id="hl-root"></div>
+          <div class="probe" id="probe"><img src="brain-probe.png" alt="" draggable="false" /></div>
+          <div class="tip-glow" id="tip-glow"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>2 · Body response</h2>
+        <p class="hint">Watch which side of the body moves. It should be the <strong>opposite side</strong> to the motor area under the probe tip.</p>
+        <div class="stage body" id="body-stage">
+          <img class="bg" src="body-homunculus.png" alt="Body response map" draggable="false" />
+          <div id="covers"></div>
+          <div id="limbs"></div>
+          <div id="markers"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="chips" id="chips" aria-label="Quick stimulate"></div>
+
+    <div class="readout">
+      <h3>What is happening in this simulation?</h3>
+      <h4 id="main">Move the probe tip over a motor-area label to begin…</h4>
+      <div id="facts">
+        <div class="info-box">
+          <strong>How to explore:</strong> Slide the probe tip across the red motor area.
+          Each label stimulates the matching body part on the <b>opposite side</b> of the body (cross-control).
+          While the tip stays on a label the movement continues; move off and it stops.
+        </div>
+      </div>
+      <div class="disclaimer-box">
+        <small><b>Note on diagram representation:</b> Some regions (for example, the fingers) are drawn larger to suggest that fine, precise control needs more motor cortex.
+        However, the box sizes in this simulation are only a simplified guide and may <b>not match the true proportions</b> of the motor cortex in real biology.</small>
+      </div>
+    </div>
+
+    <div class="next-link">
+      <a href="probe-the-sensory-cortex.html">← Previous: Probe the Sensory Cortex</a>
+      <p>Sensory areas receive impulses from receptors and produce sensations; motor areas then send impulses to effectors.</p>
+    </div>
+  </div>
+
+  <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 0.9em; color: #555; border-top: 1px solid #e0e0e0;">
+    <p><strong>HKDSE Biology</strong> · Human Coordination: Cerebral Cortex &amp; Motor Control</p>
+    <p>Interactive Simulation Created &amp; Developed by <strong>Ms Lai Kam Fung</strong></p>
+  </footer>
+
+  <script>
+    const META = {"bodySize":[1389,1769],"brainSize":[1467,1879],"probe":{"file":"brain-probe.png","tipX":46,"tipY":41,"natW":400,"natH":421,"displayW":90},"parts":["toes","trunk","shoulder","arm","fingers","thumb","neck","brow","eye","face","lips","tongue"],"motions":{"toes":"hinge-toes","trunk":"shake","shoulder":"shake","arm":"shake","fingers":"hinge-fingers","thumb":"hinge-thumb","neck":"shake","brow":"hinge-brow","eye":"blink-eye","face":"hinge-face","lips":"shake","tongue":"shake"},"body":{"right":{"toes":{"left":38.913,"top":95.054,"width":4.392,"height":2.431,"ox":"75%","oy":"35%","motion":"hinge-toes","file":"probe-sprites/right-toes.png","hasSprite":true,"cx":571,"cy":1703},"trunk":{"left":32.181,"top":43.358,"width":14.255,"height":4.862,"ox":"80%","oy":"50%","motion":"shake","file":"probe-sprites/right-trunk.png","hasSprite":true,"cx":546,"cy":810},"shoulder":{"left":22.138,"top":27.077,"width":12.743,"height":6.67,"ox":"70%","oy":"55%","motion":"shake","file":"probe-sprites/right-shoulder.png","hasSprite":true,"cx":396,"cy":538},"arm":{"left":20.518,"top":34.624,"width":8.207,"height":7.292,"ox":"75%","oy":"20%","motion":"shake","file":"probe-sprites/right-arm.png","hasSprite":true,"cx":342,"cy":677},"fingers":{"left":12.491,"top":58.932,"width":6.983,"height":4.918,"ox":"50%","oy":"8%","motion":"hinge-fingers","file":"probe-sprites/right-fingers.png","hasSprite":true,"cx":222,"cy":1086},"thumb":{"left":1.908,"top":55.088,"width":6.551,"height":3.674,"ox":"85%","oy":"20%","motion":"hinge-thumb","file":"probe-sprites/right-thumb.png","hasSprite":true,"cx":72,"cy":1007},"neck":{"left":36.249,"top":20.916,"width":12.311,"height":4.862,"ox":"55%","oy":"85%","motion":"shake","file":"probe-sprites/right-neck.png","hasSprite":true,"cx":589,"cy":413},"brow":{"left":37.653,"top":8.31,"width":9.647,"height":1.47,"ox":"20%","oy":"70%","motion":"hinge-brow","file":"probe-sprites/right-brow.png","hasSprite":true,"cx":590,"cy":160},"eye":{"left":38.913,"top":9.582,"width":7.559,"height":1.979,"ox":"50%","oy":"50%","motion":"blink-eye","file":"probe-sprites/right-eye.png","hasSprite":true,"cx":593,"cy":187},"face":{"left":34.809,"top":12.239,"width":10.583,"height":3.787,"ox":"80%","oy":"40%","motion":"hinge-face","file":"probe-sprites/right-face.png","hasSprite":true,"cx":557,"cy":250},"lips":{"left":43.701,"top":15.235,"width":6.048,"height":1.526,"ox":"20%","oy":"50%","motion":"shake","file":"probe-sprites/right-lips.png","hasSprite":true,"cx":649,"cy":283},"tongue":{"left":43.701,"top":16.45,"width":6.623,"height":4.862,"ox":"50%","oy":"20%","motion":"shake","file":"probe-sprites/right-tongue.png","hasSprite":true,"cx":653,"cy":334}},"left":{"toes":{"left":55.364,"top":95.365,"width":5.616,"height":2.035,"ox":"25%","oy":"35%","motion":"hinge-toes","file":"probe-sprites/left-toes.png","hasSprite":true,"cx":808,"cy":1705},"trunk":{"left":53.564,"top":43.782,"width":12.959,"height":4.805,"ox":"20%","oy":"50%","motion":"shake","file":"probe-sprites/left-trunk.png","hasSprite":true,"cx":834,"cy":817},"shoulder":{"left":65.911,"top":26.682,"width":11.591,"height":7.801,"ox":"30%","oy":"55%","motion":"shake","file":"probe-sprites/left-shoulder.png","hasSprite":true,"cx":996,"cy":541},"arm":{"left":69.582,"top":34.285,"width":9.575,"height":6.501,"ox":"25%","oy":"20%","motion":"shake","file":"probe-sprites/left-arm.png","hasSprite":true,"cx":1033,"cy":664},"fingers":{"left":80.346,"top":58.819,"width":6.911,"height":5.031,"ox":"50%","oy":"8%","motion":"hinge-fingers","file":"probe-sprites/left-fingers.png","hasSprite":true,"cx":1164,"cy":1085},"thumb":{"left":90.461,"top":55.144,"width":6.551,"height":3.674,"ox":"15%","oy":"20%","motion":"hinge-thumb","file":"probe-sprites/left-thumb.png","hasSprite":true,"cx":1302,"cy":1008},"neck":{"left":50.864,"top":19.955,"width":12.311,"height":6.218,"ox":"45%","oy":"85%","motion":"shake","file":"probe-sprites/left-neck.png","hasSprite":true,"cx":792,"cy":408},"brow":{"left":51.26,"top":7.971,"width":10.223,"height":1.922,"ox":"80%","oy":"70%","motion":"hinge-brow","file":"probe-sprites/left-brow.png","hasSprite":true,"cx":783,"cy":158},"eye":{"left":52.52,"top":9.469,"width":7.559,"height":1.979,"ox":"50%","oy":"50%","motion":"blink-eye","file":"probe-sprites/left-eye.png","hasSprite":true,"cx":782,"cy":185},"face":{"left":53.78,"top":11.815,"width":10.367,"height":3.731,"ox":"20%","oy":"40%","motion":"hinge-face","file":"probe-sprites/left-face.png","hasSprite":true,"cx":819,"cy":242},"lips":{"left":49.568,"top":15.291,"width":5.688,"height":1.639,"ox":"80%","oy":"50%","motion":"shake","file":"probe-sprites/left-lips.png","hasSprite":true,"cx":728,"cy":285},"tongue":{"left":49.424,"top":16.93,"width":4.68,"height":4.692,"ox":"50%","oy":"20%","motion":"shake","file":"probe-sprites/left-tongue.png","hasSprite":true,"cx":719,"cy":341}}},"brain":{"right_cortex":{"toes":{"x":50.17,"y":59.42,"angle":90.0,"poly":[[51.227,54.896],[51.227,63.944],[49.114,63.944],[49.114,54.896]],"obb":{"mx":736.0,"my":1116.5,"cos":0.0,"sin":1.0,"umin":-85.0,"umax":85.0,"vmin":-15.5,"vmax":15.5},"bodySide":"left","label":"L. Toes","badge":{"x":50.17,"y":59.42},"highlight":{"file":"probe-sprites/hl-L-toes.png","oxPct":49.012,"oyPct":54.816,"wPct":2.386,"hPct":9.26}},"trunk":{"x":47.887,"y":59.42,"angle":90.0,"poly":[[49.182,54.843],[49.182,63.997],[46.592,63.997],[46.592,54.843]],"obb":{"mx":702.5,"my":1116.5,"cos":0.0,"sin":1.0,"umin":-86.0,"umax":86.0,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Trunk","badge":{"x":47.887,"y":59.42},"highlight":{"file":"probe-sprites/hl-L-trunk.png","oxPct":46.489,"oyPct":54.763,"wPct":2.863,"hPct":9.367}},"shoulder":{"x":45.365,"y":59.526,"angle":90.0,"poly":[[46.66,55.162],[46.66,63.89],[44.07,63.89],[44.07,55.162]],"obb":{"mx":665.5,"my":1118.5,"cos":0.0,"sin":1.0,"umin":-82.0,"umax":82.0,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Shoulder","badge":{"x":45.365,"y":59.526},"highlight":{"file":"probe-sprites/hl-L-shoulder.png","oxPct":43.967,"oyPct":55.082,"wPct":2.863,"hPct":8.941}},"arm":{"x":42.945,"y":59.5,"angle":90.0,"poly":[[44.206,55.162],[44.206,63.837],[41.684,63.837],[41.684,55.162]],"obb":{"mx":630.0,"my":1118.0,"cos":0.0,"sin":1.0,"umin":-81.5,"umax":81.5,"vmin":-18.5,"vmax":18.5},"bodySide":"left","label":"L. Arm","badge":{"x":42.945,"y":59.5},"highlight":{"file":"probe-sprites/hl-L-arm.png","oxPct":41.581,"oyPct":55.082,"wPct":2.795,"hPct":8.888}},"fingers":{"x":38.412,"y":59.792,"angle":90.0,"poly":[[41.616,55.375],[41.616,64.21],[35.208,64.21],[35.208,55.375]],"obb":{"mx":563.5,"my":1123.5,"cos":0.0,"sin":1.0,"umin":-83.0,"umax":83.0,"vmin":-47.0,"vmax":47.0},"bodySide":"left","label":"L. Fingers","badge":{"x":38.412,"y":59.792},"highlight":{"file":"probe-sprites/hl-L-fingers.png","oxPct":35.106,"oyPct":55.295,"wPct":6.68,"hPct":9.047}},"thumb":{"x":33.845,"y":60.138,"angle":90.0,"poly":[[35.14,55.641],[35.14,64.635],[32.549,64.635],[32.549,55.641]],"obb":{"mx":496.5,"my":1130.0,"cos":0.0,"sin":1.0,"umin":-84.5,"umax":84.5,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Thumb","badge":{"x":33.845,"y":60.138},"highlight":{"file":"probe-sprites/hl-L-thumb.png","oxPct":32.447,"oyPct":55.561,"wPct":2.863,"hPct":9.207}},"neck":{"x":31.288,"y":60.804,"angle":90.0,"poly":[[32.481,56.28],[32.481,65.327],[30.095,65.327],[30.095,56.28]],"obb":{"mx":459.0,"my":1142.5,"cos":0.0,"sin":1.0,"umin":-85.0,"umax":85.0,"vmin":-17.5,"vmax":17.5},"bodySide":"left","label":"L. Neck","badge":{"x":31.288,"y":60.804},"highlight":{"file":"probe-sprites/hl-L-neck.png","oxPct":29.993,"oyPct":56.2,"wPct":2.658,"hPct":9.26}},"brow":{"x":28.8,"y":61.522,"angle":90.0,"poly":[[30.095,56.972],[30.095,66.072],[27.505,66.072],[27.505,56.972]],"obb":{"mx":422.5,"my":1156.0,"cos":0.0,"sin":1.0,"umin":-85.5,"umax":85.5,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Brow","badge":{"x":28.8,"y":61.522},"highlight":{"file":"probe-sprites/hl-L-brow.png","oxPct":27.403,"oyPct":56.892,"wPct":2.863,"hPct":9.313}},"eye":{"x":26.176,"y":62.241,"angle":90.0,"poly":[[27.369,57.877],[27.369,66.605],[24.983,66.605],[24.983,57.877]],"obb":{"mx":384.0,"my":1169.5,"cos":0.0,"sin":1.0,"umin":-82.0,"umax":82.0,"vmin":-17.5,"vmax":17.5},"bodySide":"left","label":"L. Eye","badge":{"x":26.176,"y":62.241},"highlight":{"file":"probe-sprites/hl-L-eye.png","oxPct":24.881,"oyPct":57.797,"wPct":2.658,"hPct":8.941}},"face":{"x":23.483,"y":63.199,"angle":90.0,"poly":[[24.778,58.994],[24.778,67.403],[22.188,67.403],[22.188,58.994]],"obb":{"mx":344.5,"my":1187.5,"cos":0.0,"sin":1.0,"umin":-79.0,"umax":79.0,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Face","badge":{"x":23.483,"y":63.199},"highlight":{"file":"probe-sprites/hl-L-face.png","oxPct":22.086,"oyPct":58.914,"wPct":2.863,"hPct":8.622}},"lips":{"x":20.825,"y":64.13,"angle":90.0,"poly":[[22.12,59.952],[22.12,68.308],[19.53,68.308],[19.53,59.952]],"obb":{"mx":305.5,"my":1205.0,"cos":0.0,"sin":1.0,"umin":-78.5,"umax":78.5,"vmin":-19.0,"vmax":19.0},"bodySide":"left","label":"L. Lip","badge":{"x":20.825,"y":64.13},"highlight":{"file":"probe-sprites/hl-L-lips.png","oxPct":19.427,"oyPct":59.872,"wPct":2.863,"hPct":8.568}},"tongue":{"x":17.318,"y":63.71,"angle":83.09,"poly":[[19.104,58.818],[20.584,68.358],[15.859,68.805],[14.379,59.265]],"obb":{"mx":254.06,"my":1197.11,"cos":0.120273,"sin":0.992741,"umin":-88.1,"umax":92.46,"vmin":-37.06,"vmax":32.77},"bodySide":"left","label":"L. Tongue","badge":{"x":17.318,"y":63.71},"highlight":{"file":"probe-sprites/hl-L-tongue.png","oxPct":14.86,"oyPct":59.127,"wPct":4.772,"hPct":9.473}}},"left_cortex":{"toes":{"x":52.999,"y":59.606,"angle":90.0,"poly":[[53.954,54.896],[53.954,64.316],[52.045,64.316],[52.045,54.896]],"obb":{"mx":777.5,"my":1120.0,"cos":0.0,"sin":1.0,"umin":-88.5,"umax":88.5,"vmin":-14.0,"vmax":14.0},"bodySide":"right","label":"R. Toes","badge":{"x":52.999,"y":59.606},"highlight":{"file":"probe-sprites/hl-R-toes.png","oxPct":51.943,"oyPct":54.816,"wPct":2.181,"hPct":9.633}},"trunk":{"x":54.806,"y":59.5,"angle":90.0,"poly":[[55.794,54.843],[55.794,64.156],[53.817,64.156],[53.817,54.843]],"obb":{"mx":804.0,"my":1118.0,"cos":0.0,"sin":1.0,"umin":-87.5,"umax":87.5,"vmin":-14.5,"vmax":14.5},"bodySide":"right","label":"R. Trunk","badge":{"x":54.806,"y":59.5},"highlight":{"file":"probe-sprites/hl-R-trunk.png","oxPct":53.715,"oyPct":54.763,"wPct":2.249,"hPct":9.526}},"shoulder":{"x":57.157,"y":59.42,"angle":90.0,"poly":[[58.589,54.843],[58.589,63.997],[55.726,63.997],[55.726,54.843]],"obb":{"mx":838.5,"my":1116.5,"cos":0.0,"sin":1.0,"umin":-86.0,"umax":86.0,"vmin":-21.0,"vmax":21.0},"bodySide":"right","label":"R. Shoulder","badge":{"x":57.157,"y":59.42},"highlight":{"file":"probe-sprites/hl-R-shoulder.png","oxPct":55.624,"oyPct":54.763,"wPct":3.136,"hPct":9.367}},"arm":{"x":59.884,"y":59.526,"angle":90.0,"poly":[[61.179,54.896],[61.179,64.156],[58.589,64.156],[58.589,54.896]],"obb":{"mx":878.5,"my":1118.5,"cos":0.0,"sin":1.0,"umin":-87.0,"umax":87.0,"vmin":-19.0,"vmax":19.0},"bodySide":"right","label":"R. Arm","badge":{"x":59.884,"y":59.526},"highlight":{"file":"probe-sprites/hl-R-arm.png","oxPct":58.487,"oyPct":54.816,"wPct":2.863,"hPct":9.473}},"fingers":{"x":64.225,"y":59.934,"angle":85.59,"poly":[[67.416,54.678],[68.414,64.792],[61.214,65.226],[60.215,55.112]],"obb":{"mx":942.18,"my":1126.16,"cos":0.076851,"sin":0.997043,"umin":-94.86,"umax":95.75,"vmin":-54.26,"vmax":51.69},"bodySide":"right","label":"R. Fingers","badge":{"x":64.225,"y":59.934},"highlight":{"file":"probe-sprites/hl-R-fingers.png","oxPct":61.009,"oyPct":54.976,"wPct":6.748,"hPct":10.005}},"thumb":{"x":68.405,"y":60.245,"angle":90.0,"poly":[[69.427,55.695],[69.427,64.795],[67.382,64.795],[67.382,55.695]],"obb":{"mx":1003.5,"my":1132.0,"cos":0.0,"sin":1.0,"umin":-85.5,"umax":85.5,"vmin":-15.0,"vmax":15.0},"bodySide":"right","label":"R. Thumb","badge":{"x":68.405,"y":60.245},"highlight":{"file":"probe-sprites/hl-R-thumb.png","oxPct":67.28,"oyPct":55.615,"wPct":2.318,"hPct":9.313}},"neck":{"x":70.688,"y":60.857,"angle":90.0,"poly":[[71.95,56.44],[71.95,65.274],[69.427,65.274],[69.427,56.44]],"obb":{"mx":1037.0,"my":1143.5,"cos":0.0,"sin":1.0,"umin":-83.0,"umax":83.0,"vmin":-18.5,"vmax":18.5},"bodySide":"right","label":"R. Neck","badge":{"x":70.688,"y":60.857},"highlight":{"file":"probe-sprites/hl-R-neck.png","oxPct":69.325,"oyPct":56.36,"wPct":2.795,"hPct":9.047}},"brow":{"x":73.313,"y":61.841,"angle":90.0,"poly":[[74.608,57.451],[74.608,66.232],[72.018,66.232],[72.018,57.451]],"obb":{"mx":1075.5,"my":1162.0,"cos":0.0,"sin":1.0,"umin":-82.5,"umax":82.5,"vmin":-19.0,"vmax":19.0},"bodySide":"right","label":"R. Brow","badge":{"x":73.313,"y":61.841},"highlight":{"file":"probe-sprites/hl-R-brow.png","oxPct":71.915,"oyPct":57.371,"wPct":2.863,"hPct":8.994}},"eye":{"x":76.108,"y":62.773,"angle":90.0,"poly":[[77.335,58.834],[77.335,66.711],[74.881,66.711],[74.881,58.834]],"obb":{"mx":1116.5,"my":1179.5,"cos":0.0,"sin":1.0,"umin":-74.0,"umax":74.0,"vmin":-18.0,"vmax":18.0},"bodySide":"right","label":"R. Eye","badge":{"x":76.108,"y":62.773},"highlight":{"file":"probe-sprites/hl-R-eye.png","oxPct":74.778,"oyPct":58.755,"wPct":2.727,"hPct":8.089}},"face":{"x":78.868,"y":63.598,"angle":90.0,"poly":[[80.198,59.367],[80.198,67.829],[77.539,67.829],[77.539,59.367]],"obb":{"mx":1157.0,"my":1195.0,"cos":0.0,"sin":1.0,"umin":-79.5,"umax":79.5,"vmin":-19.5,"vmax":19.5},"bodySide":"right","label":"R. Face","badge":{"x":78.868,"y":63.598},"highlight":{"file":"probe-sprites/hl-R-face.png","oxPct":77.437,"oyPct":59.287,"wPct":2.931,"hPct":8.675}},"lips":{"x":81.493,"y":64.635,"angle":90.0,"poly":[[82.788,60.591],[82.788,68.68],[80.198,68.68],[80.198,60.591]],"obb":{"mx":1195.5,"my":1214.5,"cos":0.0,"sin":1.0,"umin":-76.0,"umax":76.0,"vmin":-19.0,"vmax":19.0},"bodySide":"right","label":"R. Lip","badge":{"x":81.493,"y":64.635},"highlight":{"file":"probe-sprites/hl-R-lips.png","oxPct":80.095,"oyPct":60.511,"wPct":2.863,"hPct":8.302}},"tongue":{"x":85.013,"y":65.61,"angle":88.15,"poly":[[87.966,60.779],[88.356,70.208],[82.889,70.346],[82.499,60.916]],"obb":{"mx":1247.15,"my":1232.81,"cos":0.03229,"sin":0.999479,"umin":-89.33,"umax":87.93,"vmin":-46.23,"vmax":34.03},"bodySide":"right","label":"R. Tongue","badge":{"x":85.013,"y":65.61},"highlight":{"file":"probe-sprites/hl-R-tongue.png","oxPct":82.618,"oyPct":60.83,"wPct":5.658,"hPct":9.58}}}}};
+    const LOOKUP_DATA_URL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABbsAAAdXCAIAAABnhDEIAAApJklEQVR4nOzdC5PaRhqGURqP7/z/X4qv46CtZBKW+WBAAqnVl3MqtZVMnEBmU2Xz5FX3ZgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL1Ja78BAGAd2zRkfsXD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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwP/agwMCAAAABEH9X+2QAAAAAAAAAAAAAAAAAACAHQjLn6metVBHSQAAAABJRU5ErkJggg==";
+    const PARTS = META.parts.slice();
+    const MOTIONS = [
+      "hinge-thumb","hinge-fingers","hinge-toes","hinge-elbow","hinge-wrist",
+      "hinge-shoulder","hinge-neck","hinge-brow","blink-eye",
+      "hinge-face","hinge-lips","hinge-jaw","knee-updown","shake"
+    ];
+    const HEMI_BY_CODE = {1:"right_cortex", 2:"left_cortex"};
+    const BrW = META.brainSize[0], BrH = META.brainSize[1];
+    const PART_NAME = {
+      toes:"Toes", trunk:"Trunk", shoulder:"Shoulder", arm:"Arm",
+      fingers:"Fingers", thumb:"Thumb", neck:"Neck", brow:"Brow",
+      eye:"Eye", face:"Face", lips:"Lip", tongue:"Tongue"
+    };
+
+    // left_cortex (diagram R. labels) = Left motor area → right body
+    // right_cortex (diagram L. labels) = Right motor area → left body
+    function motorAreaName(hemi){
+      return hemi === "left_cortex" ? "left motor area" : "right motor area";
+    }
+    function motorAreaTitle(hemi){
+      return hemi === "left_cortex" ? "Left Motor Area" : "Right Motor Area";
+    }
+    function bodySideName(bodySide){
+      return bodySide === "right" ? "Right" : "Left";
+    }
+    function partTitle(part){
+      return PART_NAME[part] || part;
+    }
+    function brainLabel(hemi, part){
+      return motorAreaTitle(hemi) + " — " + partTitle(part);
+    }
+    function bodyLabel(bodySide, part){
+      return bodySideName(bodySide) + " " + partTitle(part);
+    }
+
+    const brainStage = document.getElementById("brain-stage");
+    const hlRoot = document.getElementById("hl-root");
+    const covers = document.getElementById("covers");
+    const limbs = document.getElementById("limbs");
+    const markers = document.getElementById("markers");
+    const chips = document.getElementById("chips");
+    const probe = document.getElementById("probe");
+    const tipGlow = document.getElementById("tip-glow");
+    const main = document.getElementById("main");
+    const facts = document.getElementById("facts");
+
+    let active = null;
+    let probing = false;
+    let holdTimer = null;
+    let lookupReady = false;
+    let lookupCtx = null;
+    let lookupW = 0, lookupH = 0;
+
+    function pct(n){ return n + "%"; }
+
+    (function loadLookup(){
+      const img = new Image();
+      img.onload = function(){
+        lookupW = img.naturalWidth; lookupH = img.naturalHeight;
+        const c = document.createElement("canvas");
+        c.width = lookupW; c.height = lookupH;
+        lookupCtx = c.getContext("2d", {willReadFrequently:true});
+        lookupCtx.drawImage(img, 0, 0);
+        lookupReady = true;
+      };
+      img.src = LOOKUP_DATA_URL;
+    })();
+
+    ["right","left"].forEach(side => {
+      Object.keys(META.body[side] || {}).forEach(part => {
+        const m = META.body[side][part];
+        if (!m) return;
+        if (m.hasSprite && m.file) {
+          const cover = document.createElement("div");
+          cover.className = "cover";
+          cover.dataset.side = side; cover.dataset.part = part;
+          cover.style.left = pct(m.left - 0.12);
+          cover.style.top = pct(m.top - 0.12);
+          cover.style.width = pct(m.width + 0.24);
+          cover.style.height = pct(m.height + 0.24);
+          covers.appendChild(cover);
+
+          const el = document.createElement("div");
+          el.className = "limb";
+          el.dataset.side = side; el.dataset.part = part;
+          el.style.left = pct(m.left);
+          el.style.top = pct(m.top);
+          el.style.width = pct(m.width);
+          el.style.height = pct(m.height);
+          el.style.transformOrigin = (m.ox || "50%") + " " + (m.oy || "20%");
+          const img = document.createElement("img");
+          img.src = m.file; img.alt = bodyLabel(side, part); img.draggable = false;
+          el.appendChild(img);
+          limbs.appendChild(el);
+        } else {
+          const mk = document.createElement("div");
+          mk.className = "marker";
+          mk.dataset.side = side; mk.dataset.part = part;
+          mk.style.left = pct(m.left + m.width/2);
+          mk.style.top = pct(m.top + m.height/2);
+          markers.appendChild(mk);
+        }
+      });
+    });
+
+    ["left_cortex","right_cortex"].forEach(hemi => {
+      PARTS.forEach(part => {
+        const h = META.brain[hemi][part];
+        if (!h || !h.highlight) return;
+        const img = document.createElement("img");
+        img.className = "hl-layer";
+        img.dataset.hemi = hemi; img.dataset.part = part;
+        img.src = h.highlight.file;
+        img.alt = "";
+        img.draggable = false;
+        img.style.left = pct(h.highlight.oxPct);
+        img.style.top = pct(h.highlight.oyPct);
+        img.style.width = pct(h.highlight.wPct);
+        img.style.height = pct(h.highlight.hPct);
+        hlRoot.appendChild(img);
+      });
+    });
+
+    function addChipRow(title, hemi) {
+      const row = document.createElement("div");
+      row.className = "chip-row";
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = title;
+      row.appendChild(tag);
+      PARTS.forEach(part => {
+        const h = META.brain[hemi][part];
+        if (!h) return;
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.hemi = hemi;
+        b.dataset.part = part;
+        b.textContent = partTitle(part);
+        b.title = brainLabel(hemi, part) + " → " + bodyLabel(h.bodySide, part);
+        b.onclick = () => {
+          startHold(hemi, part);
+          const hitMeta = META.brain[hemi][part];
+          if (hitMeta) placeProbe(hitMeta.x, hitMeta.y);
+        };
+        row.appendChild(b);
+      });
+      chips.appendChild(row);
+    }
+    addChipRow("Left motor area →", "left_cortex");
+    addChipRow("Right motor area →", "right_cortex");
+
+    function clearMotion(keepHighlight){
+      document.querySelectorAll(".limb").forEach(el => el.classList.remove("on", ...MOTIONS));
+      document.querySelectorAll(".cover").forEach(c => c.classList.remove("on"));
+      document.querySelectorAll(".marker").forEach(m => m.classList.remove("on"));
+      if (!keepHighlight) {
+        document.querySelectorAll(".hl-layer").forEach(h => h.classList.remove("on"));
+        chips.querySelectorAll("button").forEach(b => b.classList.remove("on"));
+      }
+    }
+
+    function setGlow(mode){
+      tipGlow.classList.remove("on","locked");
+      if (mode === "hover") tipGlow.classList.add("on");
+      if (mode === "lock") tipGlow.classList.add("locked");
+    }
+
+    function showHighlight(hemi, part){
+      document.querySelectorAll(".hl-layer").forEach(el => {
+        if (el.dataset.hemi === hemi && el.dataset.part === part) el.classList.add("on");
+        else el.classList.remove("on");
+      });
+    }
+
+    function playLimb(bodySide, part, motion){
+      const cover = covers.querySelector('.cover[data-side="' + bodySide + '"][data-part="' + part + '"]');
+      if (cover) cover.classList.add("on");
+      const limb = limbs.querySelector('.limb[data-side="' + bodySide + '"][data-part="' + part + '"]');
+      if (limb) {
+        limb.classList.remove("on", ...MOTIONS);
+        void limb.offsetWidth;
+        limb.classList.add("on", motion || "hinge-face");
+      } else {
+        const mk = markers.querySelector('.marker[data-side="' + bodySide + '"][data-part="' + part + '"]');
+        if (mk) { mk.classList.remove("on"); void mk.offsetWidth; mk.classList.add("on"); }
+      }
+    }
+
+    function updateReadout(hemi, part){
+      const hitMeta = META.brain[hemi][part];
+      const bodySide = hitMeta.bodySide;
+      const area = motorAreaName(hemi);
+      const areaTitle = motorAreaTitle(hemi);
+      const side = bodySideName(bodySide).toLowerCase();
+      const nice = partTitle(part);
+      const niceLower = nice.toLowerCase();
+      main.textContent = areaTitle + " Controls " + bodyLabel(bodySide, part) + " Movement";
+      facts.innerHTML =
+        '<div class="info-box"><strong>Simulation Action:</strong> Electrical stimulation applied to the <b>' + area + '</b> of the cerebrum.</div>' +
+        '<div class="info-box"><strong>Response:</strong> Contraction of muscles controlling the <b>' + side + ' ' + niceLower + '</b> (movement on the ' + side + ' side of the body).</div>' +
+        '<div class="info-box"><strong>Mechanism:</strong> Motor nerve pathways cross over before reaching effectors. Therefore, the <b>' + area + '</b> of the cerebrum sends nerve impulses along motor neurones to trigger muscle contraction on the <b>' + side + ' side</b> of the body, and vice versa.</div>';
+      chips.querySelectorAll("button").forEach(b => {
+        b.classList.toggle("on", b.dataset.hemi === hemi && b.dataset.part === part);
+      });
+    }
+
+    function stimulate(hemi, part, fromButton){
+      const hitMeta = META.brain[hemi][part];
+      if (!hitMeta) return;
+      const bodySide = hitMeta.bodySide;
+      const limbMeta = META.body[bodySide] && META.body[bodySide][part];
+      active = hemi + ":" + part;
+      clearMotion(true);
+      showHighlight(hemi, part);
+      if (limbMeta) playLimb(bodySide, part, limbMeta.motion);
+      if (fromButton) placeProbe(hitMeta.x, hitMeta.y);
+      setGlow("lock");
+      updateReadout(hemi, part);
+    }
+
+    function stopHold(){
+      if (holdTimer) { clearInterval(holdTimer); holdTimer = null; }
+    }
+
+    function startHold(hemi, part){
+      stopHold();
+      stimulate(hemi, part, false);
+      // Keep replaying while the tip stays on this motor-area label
+      holdTimer = setInterval(() => {
+        if (!active) { stopHold(); return; }
+        const [ah, ap] = active.split(":");
+        if (ah !== hemi || ap !== part) { stopHold(); return; }
+        stimulate(ah, ap, false);
+      }, 700);
+    }
+
+    function placeProbe(x,y){
+      probe.classList.add("show");
+      probe.style.left = pct(x);
+      probe.style.top = pct(y);
+      tipGlow.style.left = pct(x);
+      tipGlow.style.top = pct(y);
+    }
+
+    function tipXY(e){
+      const r = brainStage.getBoundingClientRect();
+      return {
+        x: ((e.clientX - r.left) / r.width) * 100,
+        y: ((e.clientY - r.top) / r.height) * 100
+      };
+    }
+
+    function hitFromLookup(xPct, yPct){
+      if (!lookupReady || !lookupCtx) return null;
+      const px = Math.max(0, Math.min(lookupW - 1, Math.round(xPct / 100 * lookupW)));
+      const py = Math.max(0, Math.min(lookupH - 1, Math.round(yPct / 100 * lookupH)));
+      const d = lookupCtx.getImageData(px, py, 1, 1).data;
+      const partIndex = d[0];
+      const hemiCode = d[1];
+      if (!partIndex || !hemiCode) return null;
+      const hemi = HEMI_BY_CODE[hemiCode];
+      const part = META.parts[partIndex - 1];
+      if (!hemi || !part) return null;
+      return { hemi, part };
+    }
+
+    function hitFromObb(xPct, yPct){
+      const bx = xPct / 100 * BrW;
+      const by = yPct / 100 * BrH;
+      let best = null, bestD = Infinity;
+      ["right_cortex","left_cortex"].forEach(hemi => {
+        PARTS.forEach(part => {
+          const h = META.brain[hemi][part];
+          if (!h || !h.obb) return;
+          const o = h.obb;
+          const dx = bx - o.mx, dy = by - o.my;
+          const u = dx * o.cos + dy * o.sin;
+          const v = -dx * o.sin + dy * o.cos;
+          if (u >= o.umin && u <= o.umax && v >= o.vmin && v <= o.vmax) {
+            const d = Math.hypot(bx - o.mx, by - o.my);
+            if (d < bestD) { bestD = d; best = { hemi, part }; }
+          }
+        });
+      });
+      return best;
+    }
+
+    function hitAt(xPct, yPct){
+      return hitFromLookup(xPct, yPct) || hitFromObb(xPct, yPct);
+    }
+
+    function stopResponse(){
+      if (!active && !holdTimer) {
+        document.querySelectorAll(".hl-layer").forEach(el => el.classList.remove("on"));
+        return;
+      }
+      stopHold();
+      active = null;
+      clearMotion(false);
+      main.textContent = "Move the probe tip over a motor-area label to begin…";
+      facts.innerHTML =
+        '<div class="info-box"><strong>How to explore:</strong> Slide the probe tip across the red motor area. ' +
+        'Each label stimulates the matching body part on the <b>opposite side</b> of the body (cross-control). ' +
+        'While the tip stays on a label the movement continues; move off and it stops.</div>';
+    }
+
+    function onPointer(e){
+      const p = tipXY(e);
+      placeProbe(p.x, p.y);
+      const pressing = probing || !!(e.buttons & 1);
+      const h = hitAt(p.x, p.y);
+      if (h) {
+        const key = h.hemi + ":" + h.part;
+        showHighlight(h.hemi, h.part);
+        setGlow(pressing ? "lock" : "hover");
+        if (active !== key || !holdTimer) {
+          startHold(h.hemi, h.part);
+        }
+      } else {
+        stopResponse();
+        setGlow(pressing ? null : "hover");
+      }
+    }
+
+    brainStage.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      probing = true;
+      brainStage.setPointerCapture(e.pointerId);
+      onPointer(e);
+    });
+    brainStage.addEventListener("pointermove", onPointer);
+    function endProbe(e){
+      probing = false;
+      try { brainStage.releasePointerCapture(e.pointerId); } catch (_) {}
+      const p = tipXY(e);
+      // Keep moving while tip is still on a motor label; stop only when away
+      if (!hitAt(p.x, p.y)) stopResponse();
+      else if (active && !holdTimer) {
+        const [ah, ap] = active.split(":");
+        startHold(ah, ap);
+      }
+    }
+    brainStage.addEventListener("pointerup", endProbe);
+    brainStage.addEventListener("pointercancel", endProbe);
+    brainStage.addEventListener("pointerleave", () => {
+      probing = false;
+      stopResponse();
+      setGlow(null);
+    });
+    brainStage.addEventListener("lostpointercapture", () => { probing = false; });
+  </script>
+</body>
+</html>

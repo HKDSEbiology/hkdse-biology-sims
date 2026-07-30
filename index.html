@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HKDSE Biology · Interactive Simulations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #e8eef4; --bg1: #f4f7fa; --panel: #ffffff;
+      --line: #d0dae6; --text: #1e2a36; --muted: #5a6b7c;
+      --accent: #1f7a6c; --accent-soft: #d8efe9;
+      --L: #2f6f9e; --L-soft: #e3f0f8;
+      --R: #b86a2e; --R-soft: #f8ebe0;
+      --gen: #6b4f9a; --gen-soft: #efe8f8;
+      --shadow: 0 8px 24px rgba(30, 42, 54, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse 70% 50% at 8% 0%, #d9e8f2, transparent 55%),
+        radial-gradient(ellipse 55% 40% at 100% 5%, #e6efe8, transparent 50%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      padding: 1.25rem 1rem 2.5rem;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 1.35rem; }
+    header .kicker {
+      display: inline-block; margin: 0 0 0.75rem; padding: 0.4rem 0.85rem;
+      font: 700 0.7rem/1 "Source Sans 3", sans-serif;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-soft);
+      border: 1px solid rgba(31, 122, 108, 0.22); border-radius: 999px;
+    }
+    header h1 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2.15rem, 5.8vw, 3.4rem);
+      font-weight: 700; line-height: 1.08; letter-spacing: -0.03em; color: #16324a;
+    }
+    header .title-lead {
+      display: block; font-size: 0.38em; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.2em;
+    }
+    header .title-focus {
+      display: inline-block;
+      background: linear-gradient(115deg, #0d4f6b 0%, #1f7a6c 42%, #2f6f9e 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    header .title-rule {
+      width: min(13rem, 52%); height: 4px; margin: 0.6rem auto 0.2rem; border-radius: 99px;
+      background: linear-gradient(90deg, transparent, #1f7a6c 18%, #2f6f9e 82%, transparent);
+    }
+    header .lede {
+      margin: 0.7rem auto 0; max-width: 36rem;
+      color: var(--muted); font-size: 0.98rem; line-height: 1.5;
+    }
+    header .lede strong { color: var(--text); font-weight: 600; }
+
+    .series-block { margin-top: 1.15rem; }
+    .series-head {
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.55rem;
+    }
+    .series-head h2 {
+      font-family: Fraunces, Georgia, serif; font-size: 1.2rem;
+      color: #16324a; font-weight: 600;
+    }
+    .series-head p { font-size: 0.82rem; color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.75rem;
+    }
+
+    a.sim-card {
+      display: flex; flex-direction: column; gap: 0.45rem;
+      text-decoration: none; color: inherit;
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: 1rem; padding: 1rem 1.05rem 1.05rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+      min-height: 9.5rem;
+    }
+    a.sim-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 28px rgba(30, 42, 54, 0.12);
+    }
+    a.sim-card.sensory { border-top: 3px solid var(--L); background: linear-gradient(180deg, var(--L-soft), #fff 40%); }
+    a.sim-card.motor { border-top: 3px solid var(--R); background: linear-gradient(180deg, var(--R-soft), #fff 40%); }
+    a.sim-card.genetics { border-top: 3px solid var(--gen); background: linear-gradient(180deg, var(--gen-soft), #fff 40%); }
+    a.sim-card.soon {
+      border-top: 3px solid var(--line);
+      background: linear-gradient(180deg, #f5f8fb, #fff 45%);
+      opacity: 0.85; cursor: default; pointer-events: none;
+    }
+
+    .sim-num {
+      font: 700 0.68rem/1 "Source Sans 3", sans-serif;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    }
+    a.sim-card.sensory .sim-num { color: var(--L); }
+    a.sim-card.motor .sim-num { color: var(--R); }
+    a.sim-card.genetics .sim-num { color: var(--gen); }
+
+    .sim-card h3 {
+      font-family: Fraunces, Georgia, serif; font-size: 1.28rem;
+      font-weight: 700; color: #16324a; letter-spacing: -0.02em; line-height: 1.2;
+    }
+    .sim-card p {
+      font-size: 0.84rem; color: var(--muted); line-height: 1.45; flex: 1;
+    }
+    .sim-card .go {
+      font: 700 0.8rem/1 "Source Sans 3", sans-serif;
+      color: var(--accent); margin-top: 0.25rem;
+    }
+    a.sim-card.soon .go { color: var(--muted); font-weight: 600; }
+
+    .note {
+      margin-top: 1.1rem; padding: 0.75rem 0.9rem;
+      background: #fff8e8; border: 1px solid #e6d3a8; border-left: 4px solid #c9922a;
+      border-radius: 0.65rem; font-size: 0.82rem; color: #6a5a3a; line-height: 1.5;
+      box-shadow: var(--shadow);
+    }
+    .note strong { color: #4a3c22; }
+
+    footer {
+      text-align: center; margin-top: 2rem; padding: 1rem 0.5rem 0;
+      font-size: 0.9em; color: #555; border-top: 1px solid #e0e0e0; line-height: 1.55;
+    }
+    footer strong { color: var(--text); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="kicker">HKDSE Biology · Classroom Lab</p>
+      <h1>
+        <span class="title-lead">Interactive Simulations</span>
+        <span class="title-focus">Learn with Teaching</span>
+      </h1>
+      <div class="title-rule" aria-hidden="true"></div>
+      <p class="lede">
+        Choose a simulation below. More topics will be added over time —
+        each one is built for <strong>HKDSE Biology</strong> classroom teaching.
+      </p>
+    </header>
+
+    <section class="series-block" aria-labelledby="coord-title">
+      <div class="series-head">
+        <h2 id="coord-title">Coordination — Cerebral Cortex</h2>
+        <p>Sensory area &amp; motor area</p>
+      </div>
+      <div class="grid">
+        <a class="sim-card sensory" href="probe-the-sensory-cortex.html">
+          <span class="sim-num">Series 1 · Part A</span>
+          <h3>Probe the Sensory Cortex</h3>
+          <p>Mosquito tip on the body → opposite sensory cortex lights up and pain sensation appears.</p>
+          <span class="go">Open simulation →</span>
+        </a>
+        <a class="sim-card motor" href="probe-the-brain.html">
+          <span class="sim-num">Series 1 · Part B</span>
+          <h3>Probe the Motor Cortex</h3>
+          <p>Probe the motor area → opposite side of the body moves (cross-control).</p>
+          <span class="go">Open simulation →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="series-block" aria-labelledby="gen-title">
+      <div class="series-head">
+        <h2 id="gen-title">Genetics — Genotype to Phenotype</h2>
+        <p>Inheritance &amp; variation</p>
+      </div>
+      <div class="grid">
+        <a class="sim-card genetics" href="make-a-baby-app/chromosome-sim.html">
+          <span class="sim-num">Series 2</span>
+          <h3>Make a Baby</h3>
+          <p>Select gamete chromosomes, fertilise, and see how genotype becomes phenotype — plus Activity 1 worksheet.</p>
+          <span class="go">Open simulation →</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="series-block" aria-labelledby="more-title">
+      <div class="series-head">
+        <h2 id="more-title">Coming soon</h2>
+        <p>More simulations will appear here</p>
+      </div>
+      <div class="grid">
+        <div class="sim-card soon" aria-disabled="true">
+          <span class="sim-num">New series</span>
+          <h3>More topics</h3>
+          <p>Additional HKDSE Biology simulations will be uploaded to this cover page later.</p>
+          <span class="go">Coming soon</span>
+        </div>
+      </div>
+    </section>
+
+    <p class="note">
+      <strong>Tip for teachers:</strong> Bookmark this cover page as the student entry point.
+      When you add a new simulation HTML file to this folder, link it from a new card in the matching series above.
+    </p>
+
+    <footer>
+      <p><strong>HKDSE Biology</strong> · Interactive Simulations Hub</p>
+      <p>Created &amp; Developed by <strong>Ms Lai Kam Fung</strong></p>
+    </footer>
+  </div>
+</body>
+</html>

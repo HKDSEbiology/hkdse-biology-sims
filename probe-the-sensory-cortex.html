@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Probe the Sensory Cortex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0:#e8eef4; --bg1:#f4f7fa; --panel:#ffffff;
+      --line:#d0dae6; --text:#1e2a36; --muted:#5a6b7c;
+      --accent:#1f7a6c; --accent-soft:#d8efe9;
+      --L:#2f6f9e; --L-soft:#e3f0f8;
+      --R:#b86a2e; --R-soft:#f8ebe0;
+      --glow:#4aa3c4; --glow-lock:#e07a2f;
+      --shadow:0 8px 24px rgba(30,42,54,.08);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;font-family:"Source Sans 3",system-ui,sans-serif;color:var(--text);
+      background:
+        radial-gradient(ellipse 70% 50% at 8% 0%,#d9e8f2,transparent 55%),
+        radial-gradient(ellipse 55% 40% at 100% 5%,#e6efe8,transparent 50%),
+        linear-gradient(180deg,var(--bg1),var(--bg0));
+      padding:1.1rem 1rem 2rem;
+    }
+    header{max-width:1180px;margin:0 auto 1.15rem;text-align:center}
+    header .kicker{
+      display:inline-block;margin:0 0 .7rem;padding:.38rem .78rem;
+      font:700 .7rem/1 "Source Sans 3",sans-serif;letter-spacing:.16em;text-transform:uppercase;
+      color:var(--accent);background:var(--accent-soft);border:1px solid rgba(31,122,108,.22);
+      border-radius:999px;
+    }
+    header h1{
+      font-family:Fraunces,Georgia,serif;font-size:clamp(2.05rem,5.4vw,3.25rem);
+      font-weight:700;line-height:1.1;letter-spacing:-.03em;color:#16324a;
+    }
+    header .title-lead{
+      display:block;font-size:.4em;font-weight:600;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--muted);margin-bottom:.18em;
+    }
+    header .title-focus{
+      display:inline-block;
+      background:linear-gradient(115deg,#0d4f6b 0%,#1f7a6c 40%,#2f6f9e 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 2px 0 rgba(22,50,74,.06));
+    }
+    header .title-rule{
+      width:min(12rem,48%);height:4px;margin:.55rem auto .15rem;border-radius:99px;
+      background:linear-gradient(90deg,transparent,#1f7a6c 18%,#2f6f9e 82%,transparent);
+    }
+    header .lede{
+      margin:.65rem auto 0;max-width:44rem;color:var(--muted);
+      font-size:.92rem;line-height:1.45;
+    }
+    header .lede strong{color:var(--text);font-weight:600}
+    .series{
+      max-width:1180px;margin:0 auto .75rem;display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;
+    }
+    .series a{
+      text-decoration:none;font:600 .75rem/1 "Source Sans 3",sans-serif;
+      padding:.4rem .7rem;border-radius:.5rem;border:1px solid var(--line);
+      background:#fff;color:var(--muted);
+    }
+    .series a.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+    .series a:hover{border-color:var(--accent);color:var(--accent)}
+    .shell{max-width:1180px;margin:0 auto;display:grid;gap:.75rem}
+    .know{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:.55rem}
+    @media(max-width:900px){.know{grid-template-columns:1fr}}
+    .card{
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.75rem .9rem;font-size:.82rem;line-height:1.5;color:var(--muted);
+      box-shadow:var(--shadow);
+    }
+    .card h3{
+      font-family:Fraunces,Georgia,serif;font-size:.95rem;color:var(--accent);
+      margin-bottom:.35rem;font-weight:600;
+    }
+    .card strong{color:var(--text);font-weight:600}
+    .card em{font-style:italic}
+    .card.r{border-top:3px solid var(--R);background:linear-gradient(180deg,var(--R-soft),#fff 42%)}
+    .card.l{border-top:3px solid var(--L);background:linear-gradient(180deg,var(--L-soft),#fff 42%)}
+    .card.bg{border-top:3px solid var(--accent);background:linear-gradient(180deg,var(--accent-soft),#fff 45%)}
+    .map-note{font-size:.78rem;color:var(--muted);margin-top:.5rem;line-height:1.45}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;align-items:stretch}
+    @media(max-width:960px){.layout{grid-template-columns:1fr}}
+    .panel{
+      background:var(--panel);border:1px solid var(--line);border-radius:1rem;
+      padding:.75rem;box-shadow:var(--shadow);display:flex;flex-direction:column;min-width:0;
+    }
+    .panel h2{font-family:Fraunces,Georgia,serif;font-size:1.05rem;color:#16324a;margin-bottom:.25rem}
+    .hint{font-size:.8rem;color:var(--muted);margin-bottom:.5rem;line-height:1.45}
+    .hint strong{color:var(--text)}
+    .stage{
+      position:relative;width:100%;border-radius:.6rem;overflow:hidden;background:#fff;
+      touch-action:none;cursor:none;box-shadow:inset 0 0 0 1px var(--line);
+    }
+    .stage.body{aspect-ratio:1389/1769}
+    .stage.brain{aspect-ratio:1467/1879}
+    .stage img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;user-select:none;-webkit-user-drag:none}
+    .hl-layer{
+      position:absolute;pointer-events:none;z-index:3;opacity:0;
+      transition:opacity .12s;
+    }
+    .hl-layer.on{
+      opacity:1;
+      animation:hlPulse .85s ease-in-out infinite;
+      filter:drop-shadow(0 0 5px rgba(255,110,20,.9));
+    }
+    @keyframes hlPulse{
+      0%,100%{filter:drop-shadow(0 0 4px rgba(255,110,20,.75))}
+      50%{filter:drop-shadow(0 0 10px rgba(255,150,40,1))}
+    }
+    .pain{
+      position:absolute;z-index:6;pointer-events:none;opacity:0;
+      width:120px;height:auto;
+      transform:translate(-50%,-100%);
+      filter:drop-shadow(0 3px 8px rgba(180,40,20,.4));
+      transition:opacity .12s;
+    }
+    .pain.on{opacity:1;animation:painPulse .7s ease-in-out infinite}
+    @keyframes painPulse{
+      0%,100%{transform:translate(-50%,-100%) scale(1)}
+      50%{transform:translate(-50%,-100%) scale(1.1)}
+    }
+    .cortex-arrow{
+      position:absolute;z-index:5;pointer-events:none;opacity:0;
+      width:34px;height:48px;
+      transform:translate(-50%,-92%);
+      filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));
+      transition:opacity .12s;
+    }
+    .cortex-arrow.on{opacity:1;animation:arrowBob .65s ease-in-out infinite}
+    @keyframes arrowBob{
+      0%,100%{transform:translate(-50%,-92%) translateY(0)}
+      50%{transform:translate(-50%,-92%) translateY(5px)}
+    }
+    .mosquito{
+      position:absolute;z-index:9;pointer-events:none;opacity:0;
+      width:72px;height:auto;
+      filter:drop-shadow(0 5px 10px rgba(30,42,54,.28));
+      transform: translate(calc(-1 / 262 * 100%), calc(-255 / 280 * 100%));
+    }
+    .mosquito.show{opacity:1}
+    .mosquito img{display:block;width:100%;height:auto;pointer-events:none}
+    .tip-glow{
+      position:absolute;z-index:10;pointer-events:none;opacity:0;
+      width:12px;height:12px;border-radius:50%;
+      transform:translate(-50%,-50%);
+      background:radial-gradient(circle,#fff 0%,var(--glow) 42%,rgba(74,163,196,.25) 68%,transparent 80%);
+      box-shadow:0 0 7px 2px rgba(74,163,196,.55);
+    }
+    .tip-glow.on{opacity:1}
+    .tip-glow.locked{
+      opacity:1;
+      background:radial-gradient(circle,#fff 0%,#ff9a4a 38%,#e07a2f 62%,transparent 80%);
+      box-shadow:0 0 8px 2px rgba(224,122,47,.55);
+    }
+    .chips{
+      margin:0;display:grid;gap:.45rem;
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.65rem .75rem;box-shadow:var(--shadow);
+    }
+    .chip-row{display:flex;flex-wrap:wrap;gap:.32rem;justify-content:center;align-items:center}
+    .chip-row .tag{
+      font:600 .68rem/1.2 "Source Sans 3",sans-serif;color:var(--muted);margin-right:.15rem;min-width:8rem;
+    }
+    .chips button{
+      appearance:none;border:1px solid var(--line);background:#f5f8fb;color:var(--text);
+      font:600 .68rem/1 "Source Sans 3",sans-serif;padding:.38rem .5rem;border-radius:.45rem;cursor:pointer;
+    }
+    .chips button:hover,.chips button.on{
+      border-color:var(--accent);color:var(--accent);background:var(--accent-soft);
+    }
+    .readout{
+      background:var(--panel);border:1px solid var(--line);border-radius:.9rem;
+      padding:.9rem 1.05rem;box-shadow:var(--shadow);
+    }
+    .readout h3{font-family:Fraunces,Georgia,serif;font-size:1.08rem;color:#16324a;margin-bottom:.35rem}
+    .readout h4{font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:.55rem;min-height:1.3em}
+    .readout .info-box{
+      padding:.5rem .65rem;margin-bottom:.4rem;background:#f5f8fb;
+      border:1px solid var(--line);border-radius:.55rem;
+      font-size:.86rem;color:var(--muted);line-height:1.5;
+    }
+    .readout .info-box strong{color:var(--text)}
+    .readout .info-box b{color:var(--text);font-weight:700}
+    .readout .disclaimer-box{
+      margin-top:.55rem;padding:.55rem .65rem;background:#fff8e8;
+      border:1px solid #e6d3a8;border-left:4px solid #c9922a;border-radius:.55rem;
+      font-size:.78rem;color:#6a5a3a;line-height:1.5;
+    }
+    .readout .disclaimer-box b{color:#4a3c22}
+    .next-link{
+      text-align:center;padding:.85rem 1rem;background:var(--accent-soft);
+      border:1px solid rgba(31,122,108,.25);border-radius:.9rem;
+    }
+    .next-link a{
+      color:var(--accent);font-weight:700;text-decoration:none;font-size:.95rem;
+    }
+    .next-link a:hover{text-decoration:underline}
+    .next-link p{margin-top:.3rem;font-size:.8rem;color:var(--muted)}
+    footer{
+      text-align:center;margin-top:30px;padding:15px;font-size:.9em;color:#555;
+      border-top:1px solid #e0e0e0;line-height:1.55;
+    }
+    footer p{margin:.2rem 0}
+    footer strong{color:var(--text);font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Cerebral Cortex Series · Interactive Lab</p>
+    <h1>
+      <span class="title-lead">Probe the</span>
+      <span class="title-focus">Sensory Cortex</span>
+    </h1>
+    <div class="title-rule" aria-hidden="true"></div>
+    <p class="lede">
+      The <strong>sensory area of the cerebrum</strong> (sensory cortex) receives nerve impulses from receptors and produces sensations.
+      Move the mosquito’s tip over the body — the matching region on the <strong>opposite side</strong> of the sensory cortex lights up!
+    </p>
+  </header>
+
+  <nav class="series" aria-label="Cerebral cortex series">
+    <a href="index.html">Home · All simulations</a>
+    <a class="on" href="probe-the-sensory-cortex.html">1 · Sensory Cortex</a>
+    <a href="probe-the-brain.html">2 · Motor Cortex</a>
+  </nav>
+
+  <div class="shell">
+    <div class="know">
+      <div class="card bg">
+        <h3>Key idea — Sensory area of the cerebrum</h3>
+        The <strong>sensory area of the cerebrum</strong> (sensory cortex) receives nerve impulses from
+        <strong>receptors</strong> in different parts of the body and produces <strong>sensations</strong>
+        (for example, pain, touch or temperature).
+        Body parts with fine sensitivity (such as the <strong>fingers, lips and tongue</strong>) have a
+        <strong>larger representation</strong> in the sensory cortex.
+        <p class="map-note"><em>Blue band = Sensory cortex (receives sensations) | Red band = Motor cortex (controls movement).</em></p>
+      </div>
+      <div class="card r">
+        <h3>Right Body → Left Brain</h3>
+        Sensory pathways also cross over.
+        A stimulus on the <strong>right side</strong> of the body is mainly processed by the
+        <strong>left sensory area</strong> of the cerebrum.
+      </div>
+      <div class="card l">
+        <h3>Left Body → Right Brain</h3>
+        Likewise, a stimulus on the <strong>left side</strong> of the body is mainly processed by the
+        <strong>right sensory area</strong>.
+        This opposite-side rule is called <strong>cross-control</strong> (or <em>contralateral control</em>).
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>1 · Body — apply a stimulus</h2>
+        <p class="hint">Move the mosquito tip over a body region. The tip acts like a bite on the skin receptors.</p>
+        <div class="stage body" id="body-stage">
+          <img class="bg" src="body-sensory.png" alt="Whole body sensory map" draggable="false" />
+          <div class="mosquito" id="mosquito"><img src="mosquito-bite.png" alt="" draggable="false" /></div>
+          <div class="tip-glow" id="tip-glow"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>2 · Brain — sensory cortex response</h2>
+        <p class="hint">The matching sensory-cortex region lights up in <strong>orange</strong> (label still visible). A large pain sensation and arrow appear above it.</p>
+        <div class="stage brain" id="brain-stage">
+          <img class="bg" src="brain-sensory-cortex.png" alt="Sensory cortex of the cerebrum" draggable="false" />
+          <div id="hl-root"></div>
+          <img class="pain" id="pain" src="pain-sensation.png" alt="Pain sensation" draggable="false" />
+          <svg class="cortex-arrow" id="cortex-arrow" viewBox="0 0 40 56" aria-hidden="true">
+            <path d="M20 4 L20 38" stroke="#e85a12" stroke-width="5" stroke-linecap="round"/>
+            <path d="M8 30 L20 50 L32 30 Z" fill="#e85a12" stroke="#c44508" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </section>
+    </div>
+
+    <div class="chips" id="chips" aria-label="Quick stimulate"></div>
+
+    <div class="readout">
+      <h3>What is happening in this simulation?</h3>
+      <h4 id="main">Move the mosquito tip over a body region to begin…</h4>
+      <div id="facts">
+        <div class="info-box">
+          <strong>How to explore:</strong> Slide the mosquito tip across the body map.
+          Each body region sends a signal to the sensory cortex on the <b>opposite side</b> of the cerebrum.
+          Move off a target region and the pain sensation stops.
+        </div>
+      </div>
+      <div class="disclaimer-box">
+        <small><b>Note on diagram representation:</b> Some regions (for example, the fingers) are drawn larger to suggest higher sensitivity.
+        The box sizes in this simulation are only a simplified guide and may <b>not match the true proportions</b> of the sensory cortex in real biology.</small>
+      </div>
+    </div>
+
+    <div class="next-link">
+      <a href="probe-the-brain.html">Next: Probe the Motor Cortex →</a>
+      <p>After sensation is produced, the motor area can send impulses to effectors to produce a voluntary response.</p>
+    </div>
+  </div>
+
+  <footer style="text-align: center; margin-top: 30px; padding: 15px; font-size: 0.9em; color: #555; border-top: 1px solid #e0e0e0;">
+    <p><strong>HKDSE Biology</strong> · Human Coordination: Cerebral Cortex &amp; Sensory Control</p>
+    <p>Interactive Simulation Created &amp; Developed by <strong>Ms Lai Kam Fung</strong></p>
+  </footer>
+
+  <script>
+    const META = {"bodySize":[1389,1769],"brainSize":[1467,1879],"mosquito":{"file":"mosquito-bite.png","tipX":1,"tipY":255,"natW":262,"natH":280,"displayW":72},"pain":{"file":"pain-sensation.png","natW":934,"natH":919,"displayW":120},"parts":["leg","trunk","neck","arm","fingers","thumb","eye","nose","face","lips","tongue"],"partLabels":{"leg":"Leg","trunk":"Trunk","neck":"Neck","arm":"Arm","fingers":"Fingers","thumb":"Thumb","eye":"Eye","nose":"Nose","face":"Face","lips":"Lip","tongue":"Tongue"},"body":{"left":{"leg":{"x":59.431,"y":73.064,"left":50.108,"top":52.629,"width":18.719,"height":40.927,"cortexHemi":"right_cortex","label":"L. Leg","bbox":[696,931,955,1654]},"trunk":{"x":58.603,"y":37.988,"left":49.316,"top":24.59,"width":18.647,"height":26.851,"cortexHemi":"right_cortex","label":"L. Trunk","bbox":[685,435,943,909]},"neck":{"x":56.371,"y":22.923,"left":49.748,"top":17.807,"width":13.319,"height":10.288,"cortexHemi":"right_cortex","label":"L. Neck","bbox":[691,315,875,496]},"arm":{"x":77.43,"y":42.114,"left":64.003,"top":26.512,"width":26.926,"height":31.261,"cortexHemi":"right_cortex","label":"L. Arm","bbox":[889,469,1262,1021]},"fingers":{"x":87.725,"y":60.401,"left":80.202,"top":56.925,"width":15.119,"height":7.01,"cortexHemi":"right_cortex","label":"L. Fingers","bbox":[1114,1007,1323,1130]},"thumb":{"x":93.916,"y":56.84,"left":90.353,"top":55.116,"width":7.199,"height":3.505,"cortexHemi":"right_cortex","label":"L. Thumb","bbox":[1255,975,1354,1036]},"eye":{"x":56.371,"y":10.514,"left":52.124,"top":9.271,"width":8.567,"height":2.544,"cortexHemi":"right_cortex","label":"L. Eye","bbox":[724,164,842,208]},"nose":{"x":51.476,"y":12.21,"left":49.388,"top":9.61,"width":4.248,"height":5.257,"cortexHemi":"right_cortex","label":"L. Nose","bbox":[686,170,744,262]},"face":{"x":59.035,"y":12.747,"left":54.068,"top":7.292,"width":10.007,"height":10.967,"cortexHemi":"right_cortex","label":"L. Face","bbox":[751,129,889,322]},"lips":{"x":52.448,"y":17.213,"left":49.388,"top":15.206,"width":6.192,"height":4.07,"cortexHemi":"right_cortex","label":"L. Lip","bbox":[686,269,771,340]},"tongue":{"x":51.728,"y":19.305,"left":49.316,"top":17.015,"width":4.896,"height":4.635,"cortexHemi":"right_cortex","label":"L. Tongue","bbox":[685,301,752,382]}},"right":{"leg":{"x":39.705,"y":72.866,"left":30.382,"top":52.233,"width":18.719,"height":41.323,"cortexHemi":"left_cortex","label":"R. Leg","bbox":[422,924,681,1654]},"trunk":{"x":41.253,"y":38.864,"left":31.965,"top":26.116,"width":18.647,"height":25.551,"cortexHemi":"left_cortex","label":"R. Trunk","bbox":[444,462,702,913]},"neck":{"x":42.513,"y":23.092,"left":35.349,"top":18.146,"width":14.399,"height":9.949,"cortexHemi":"left_cortex","label":"R. Neck","bbox":[491,321,690,496]},"arm":{"x":21.85,"y":42.623,"left":8.351,"top":26.399,"width":27.07,"height":32.504,"cortexHemi":"left_cortex","label":"R. Arm","bbox":[116,467,491,1041]},"fingers":{"x":11.483,"y":60.486,"left":4.032,"top":57.038,"width":14.975,"height":6.953,"cortexHemi":"left_cortex","label":"R. Fingers","bbox":[56,1009,263,1131]},"thumb":{"x":5.904,"y":56.925,"left":2.088,"top":55.172,"width":7.703,"height":3.561,"cortexHemi":"left_cortex","label":"R. Thumb","bbox":[29,976,135,1038]},"eye":{"x":42.585,"y":10.543,"left":38.445,"top":9.327,"width":8.351,"height":2.487,"cortexHemi":"left_cortex","label":"R. Eye","bbox":[534,165,649,208]},"nose":{"x":47.264,"y":12.295,"left":45.068,"top":9.61,"width":4.464,"height":5.427,"cortexHemi":"left_cortex","label":"R. Nose","bbox":[626,170,687,265]},"face":{"x":40.029,"y":13.369,"left":34.053,"top":7.631,"width":12.023,"height":11.532,"cortexHemi":"left_cortex","label":"R. Face","bbox":[473,135,639,338]},"lips":{"x":46.58,"y":17.609,"left":43.629,"top":15.263,"width":5.976,"height":4.748,"cortexHemi":"left_cortex","label":"R. Lip","bbox":[606,270,688,353]},"tongue":{"x":47.228,"y":19.361,"left":44.996,"top":17.128,"width":4.536,"height":4.522,"cortexHemi":"left_cortex","label":"R. Tongue","bbox":[625,303,687,382]}}},"brain":{"right_cortex":{"leg":{"x":50.273,"y":50.08,"angle":90.0,"poly":[[51.363,45.263],[51.363,54.896],[49.182,54.896],[49.182,45.263]],"obb":{"mx":737.5,"my":941.0,"cos":0.0,"sin":1.0,"umin":-90.5,"umax":90.5,"vmin":-16.0,"vmax":16.0},"bodySide":"left","label":"L. Leg","pain":{"x":50.273,"y":38.638},"arrow":{"x":50.273,"y":44.971},"highlight":{"file":"sensory-sprites/hl-L-leg.png","oxPct":48.671,"oyPct":44.864,"wPct":3.272,"hPct":10.484}},"trunk":{"x":47.989,"y":50.08,"angle":90.0,"poly":[[49.182,45.104],[49.182,55.056],[46.796,55.056],[46.796,45.104]],"obb":{"mx":704.0,"my":941.0,"cos":0.0,"sin":1.0,"umin":-93.5,"umax":93.5,"vmin":-17.5,"vmax":17.5},"bodySide":"left","label":"L. Trunk","pain":{"x":47.989,"y":38.478},"arrow":{"x":47.989,"y":44.811},"highlight":{"file":"sensory-sprites/hl-L-trunk.png","oxPct":46.285,"oyPct":44.705,"wPct":3.476,"hPct":10.804}},"neck":{"x":45.467,"y":50.16,"angle":90.0,"poly":[[46.66,45.263],[46.66,55.056],[44.274,55.056],[44.274,45.263]],"obb":{"mx":667.0,"my":942.5,"cos":0.0,"sin":1.0,"umin":-92.0,"umax":92.0,"vmin":-17.5,"vmax":17.5},"bodySide":"left","label":"L. Neck","pain":{"x":45.467,"y":38.638},"arrow":{"x":45.467,"y":44.971},"highlight":{"file":"sensory-sprites/hl-L-neck.png","oxPct":43.763,"oyPct":44.864,"wPct":3.476,"hPct":10.644}},"arm":{"x":42.604,"y":50.266,"angle":90.0,"poly":[[43.865,45.476],[43.865,55.056],[41.343,55.056],[41.343,45.476]],"obb":{"mx":625.0,"my":944.5,"cos":0.0,"sin":1.0,"umin":-90.0,"umax":90.0,"vmin":-18.5,"vmax":18.5},"bodySide":"left","label":"L. Arm","pain":{"x":42.604,"y":38.85},"arrow":{"x":42.604,"y":45.184},"highlight":{"file":"sensory-sprites/hl-L-arm.png","oxPct":40.832,"oyPct":45.077,"wPct":3.613,"hPct":10.431}},"fingers":{"x":37.278,"y":50.891,"angle":-80.01,"poly":[[31.414,55.716],[33.861,44.877],[43.208,46.163],[40.762,57.002]],"obb":{"mx":546.87,"my":956.24,"cos":0.173536,"sin":-0.984828,"umin":-104.21,"umax":102.59,"vmin":-68.98,"vmax":70.26},"bodySide":"left","label":"L. Fingers","pain":{"x":37.278,"y":39.276},"arrow":{"x":37.278,"y":45.609},"highlight":{"file":"sensory-sprites/hl-L-fingers.png","oxPct":32.652,"oyPct":45.503,"wPct":9.475,"hPct":10.91}},"thumb":{"x":31.651,"y":51.643,"angle":-87.44,"poly":[[29.6,56.368],[30.172,46.373],[34.037,46.507],[33.465,56.503]],"obb":{"mx":464.32,"my":970.38,"cos":0.044597,"sin":-0.999005,"umin":-90.03,"umax":97.97,"vmin":-26.1,"vmax":30.66},"bodySide":"left","label":"L. Thumb","pain":{"x":31.651,"y":39.862},"arrow":{"x":31.651,"y":46.195},"highlight":{"file":"sensory-sprites/hl-L-thumb.png","oxPct":29.584,"oyPct":46.088,"wPct":4.499,"hPct":10.75}},"eye":{"x":28.766,"y":51.996,"angle":90.0,"poly":[[30.095,47.179],[30.095,56.812],[27.437,56.812],[27.437,47.179]],"obb":{"mx":422.0,"my":977.0,"cos":0.0,"sin":1.0,"umin":-90.5,"umax":90.5,"vmin":-19.5,"vmax":19.5},"bodySide":"left","label":"L. Eye","pain":{"x":28.766,"y":40.553},"arrow":{"x":28.766,"y":46.887},"highlight":{"file":"sensory-sprites/hl-L-eye.png","oxPct":26.926,"oyPct":46.78,"wPct":3.749,"hPct":10.484}},"nose":{"x":26.149,"y":53.021,"angle":-87.01,"poly":[[24.17,58.276],[24.894,47.455],[28.235,47.591],[27.511,58.412]],"obb":{"mx":383.6,"my":996.26,"cos":0.052178,"sin":-0.998638,"umin":-100.13,"umax":103.48,"vmin":-23.84,"vmax":25.24},"bodySide":"left","label":"L. Nose","pain":{"x":26.149,"y":40.926},"arrow":{"x":26.149,"y":47.259},"highlight":{"file":"sensory-sprites/hl-L-nose.png","oxPct":24.267,"oyPct":47.153,"wPct":3.885,"hPct":11.602}},"face":{"x":23.337,"y":53.886,"angle":-86.77,"poly":[[21.127,59.109],[21.879,48.7],[25.255,48.849],[24.503,59.257]],"obb":{"mx":342.36,"my":1012.52,"cos":0.056273,"sin":-0.998415,"umin":-99.8,"umax":96.09,"vmin":-26.85,"vmax":22.75},"bodySide":"left","label":"L. Face","pain":{"x":23.337,"y":42.203},"arrow":{"x":23.337,"y":48.536},"highlight":{"file":"sensory-sprites/hl-L-face.png","oxPct":21.268,"oyPct":48.43,"wPct":4.158,"hPct":11.176}},"lips":{"x":20.828,"y":55.761,"angle":-88.75,"poly":[[19.408,60.323],[19.68,50.607],[22.572,50.656],[22.3,60.372]],"obb":{"mx":305.55,"my":1047.74,"cos":0.021847,"sin":-0.999761,"umin":-86.17,"umax":96.45,"vmin":-18.96,"vmax":23.48},"bodySide":"left","label":"L. Lip","pain":{"x":20.828,"y":44.013},"arrow":{"x":20.828,"y":50.346},"highlight":{"file":"sensory-sprites/hl-L-lips.png","oxPct":18.95,"oyPct":50.239,"wPct":3.954,"hPct":10.538}},"tongue":{"x":17.684,"y":55.841,"angle":-88.68,"poly":[[15.24,60.091],[15.504,51.157],[19.912,51.236],[19.648,60.17]],"obb":{"mx":259.43,"my":1049.25,"cos":0.02309,"sin":-0.999733,"umin":-80.66,"umax":87.25,"vmin":-34.0,"vmax":30.68},"bodySide":"left","label":"L. Tongue","pain":{"x":17.684,"y":44.598},"arrow":{"x":17.684,"y":50.931},"highlight":{"file":"sensory-sprites/hl-L-tongue.png","oxPct":14.792,"oyPct":50.825,"wPct":5.521,"hPct":9.792}}},"left_cortex":{"leg":{"x":52.897,"y":50.053,"angle":90.0,"poly":[[54.363,45.21],[54.363,54.896],[51.431,54.896],[51.431,45.21]],"obb":{"mx":776.0,"my":940.5,"cos":0.0,"sin":1.0,"umin":-91.0,"umax":91.0,"vmin":-21.5,"vmax":21.5},"bodySide":"right","label":"R. Leg","pain":{"x":52.897,"y":38.584},"arrow":{"x":52.897,"y":44.918},"highlight":{"file":"sensory-sprites/hl-R-leg.png","oxPct":50.92,"oyPct":44.811,"wPct":4.022,"hPct":10.538}},"trunk":{"x":55.59,"y":50.08,"angle":90.0,"poly":[[57.089,45.21],[57.089,54.949],[54.09,54.949],[54.09,45.21]],"obb":{"mx":815.5,"my":941.0,"cos":0.0,"sin":1.0,"umin":-91.5,"umax":91.5,"vmin":-22.0,"vmax":22.0},"bodySide":"right","label":"R. Trunk","pain":{"x":55.59,"y":38.584},"arrow":{"x":55.59,"y":44.918},"highlight":{"file":"sensory-sprites/hl-R-trunk.png","oxPct":53.579,"oyPct":44.811,"wPct":4.09,"hPct":10.591}},"neck":{"x":58.146,"y":50.133,"angle":90.0,"poly":[[59.339,45.157],[59.339,55.109],[56.953,55.109],[56.953,45.157]],"obb":{"mx":853.0,"my":942.0,"cos":0.0,"sin":1.0,"umin":-93.5,"umax":93.5,"vmin":-17.5,"vmax":17.5},"bodySide":"right","label":"R. Neck","pain":{"x":58.146,"y":38.531},"arrow":{"x":58.146,"y":44.864},"highlight":{"file":"sensory-sprites/hl-R-neck.png","oxPct":56.442,"oyPct":44.758,"wPct":3.476,"hPct":10.804}},"arm":{"x":61.588,"y":50.745,"angle":90.0,"poly":[[62.815,46.275],[62.815,55.216],[60.361,55.216],[60.361,46.275]],"obb":{"mx":903.5,"my":953.5,"cos":0.0,"sin":1.0,"umin":-84.0,"umax":84.0,"vmin":-18.0,"vmax":18.0},"bodySide":"right","label":"R. Arm","pain":{"x":61.588,"y":39.649},"arrow":{"x":61.588,"y":45.982},"highlight":{"file":"sensory-sprites/hl-R-arm.png","oxPct":59.85,"oyPct":45.875,"wPct":3.545,"hPct":9.792}},"fingers":{"x":66.896,"y":52.054,"angle":70.86,"poly":[[69.729,45.011],[74.728,56.256],[64.262,59.092],[59.263,47.847]],"obb":{"mx":981.36,"my":978.09,"cos":0.327891,"sin":0.944716,"umin":-111.4,"umax":112.26,"vmin":-82.66,"vmax":79.87},"bodySide":"right","label":"R. Fingers","pain":{"x":66.896,"y":40.287},"arrow":{"x":66.896,"y":46.621},"highlight":{"file":"sensory-sprites/hl-R-fingers.png","oxPct":62.168,"oyPct":46.514,"wPct":9.611,"hPct":11.176}},"thumb":{"x":72.777,"y":53.285,"angle":88.9,"poly":[[74.45,48.46],[74.691,58.244],[71.124,58.298],[70.883,48.513]],"obb":{"mx":1067.65,"my":1001.22,"cos":0.019217,"sin":0.999815,"umin":-90.18,"umax":93.71,"vmin":-26.28,"vmax":26.06},"bodySide":"right","label":"R. Thumb","pain":{"x":72.777,"y":41.884},"arrow":{"x":72.777,"y":48.217},"highlight":{"file":"sensory-sprites/hl-R-thumb.png","oxPct":70.552,"oyPct":48.111,"wPct":4.499,"hPct":10.591}},"eye":{"x":75.799,"y":54.352,"angle":89.54,"poly":[[77.326,49.343],[77.43,59.418],[74.36,59.437],[74.256,49.362]],"obb":{"mx":1111.97,"my":1021.27,"cos":0.008036,"sin":0.999968,"umin":-93.93,"umax":95.38,"vmin":-23.16,"vmax":21.88},"bodySide":"right","label":"R. Eye","pain":{"x":75.799,"y":42.735},"arrow":{"x":75.799,"y":49.069},"highlight":{"file":"sensory-sprites/hl-R-eye.png","oxPct":73.824,"oyPct":48.962,"wPct":4.09,"hPct":10.91}},"nose":{"x":78.477,"y":55.101,"angle":88.16,"poly":[[79.662,49.994],[80.084,60.261],[77.438,60.328],[77.017,50.06]],"obb":{"mx":1151.25,"my":1035.34,"cos":0.032042,"sin":0.999487,"umin":-95.35,"umax":97.68,"vmin":-20.46,"vmax":18.38},"bodySide":"right","label":"R. Nose","pain":{"x":78.477,"y":43.427},"arrow":{"x":78.477,"y":49.761},"highlight":{"file":"sensory-sprites/hl-R-nose.png","oxPct":76.755,"oyPct":49.654,"wPct":3.545,"hPct":11.07}},"face":{"x":81.018,"y":55.884,"angle":87.98,"poly":[[82.55,51.301],[82.985,60.946],[79.688,61.036],[79.253,51.392]],"obb":{"mx":1188.54,"my":1050.05,"cos":0.03517,"sin":0.999381,"umin":-85.26,"umax":96.07,"vmin":-25.48,"vmax":22.91},"bodySide":"right","label":"R. Face","pain":{"x":81.018,"y":44.758},"arrow":{"x":81.018,"y":51.091},"highlight":{"file":"sensory-sprites/hl-R-face.png","oxPct":79.005,"oyPct":50.985,"wPct":4.158,"hPct":10.431}},"lips":{"x":83.492,"y":56.769,"angle":-89.81,"poly":[[82.339,61.438],[82.379,52.181],[84.703,52.187],[84.662,61.444]],"obb":{"mx":1224.83,"my":1066.7,"cos":0.003377,"sin":-0.999994,"umin":-87.78,"umax":86.16,"vmin":-16.61,"vmax":17.47},"bodySide":"right","label":"R. Lip","pain":{"x":83.492,"y":45.556},"arrow":{"x":83.492,"y":51.889},"highlight":{"file":"sensory-sprites/hl-R-lips.png","oxPct":81.868,"oyPct":51.783,"wPct":3.408,"hPct":10.112}},"tongue":{"x":87.049,"y":57.861,"angle":87.37,"poly":[[89.52,52.008],[90.186,63.353],[84.664,63.551],[83.997,52.206]],"obb":{"mx":1277.01,"my":1087.22,"cos":0.045836,"sin":0.998949,"umin":-108.21,"umax":105.18,"vmin":-41.24,"vmax":39.86},"bodySide":"right","label":"R. Tongue","pain":{"x":87.049,"y":45.556},"arrow":{"x":87.049,"y":51.889},"highlight":{"file":"sensory-sprites/hl-R-tongue.png","oxPct":84.049,"oyPct":51.783,"wPct":6.271,"hPct":12.081}}}}};
+    const LOOKUP_DATA_URL = "data:image/png;base64,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AACVjgAAAABUOgIAAACgIwAAAABrM48AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAADoCAAAAsDbzCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAOgIAAACwNvMIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgAAABApSMAAAAAlY4AAAAAVDoCAAAAUOkIAAAAQKUjAAAAAJWOAAAAAFQ6AgAAAFDpCAAAAEClIwAAAACVjgAAAABUOgIAAABQ6QgA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AKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAADQEQAAAIC1mUcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAANARAAAAgLWZRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAqHQEAAACodAQAAACg0hEAAACASkcAAAAAKh0BAAAAqHQEAAAAoNIRAAAAgEpHAAAAACodAQAAAKh0BAAAAKDSEQAAAIBKRwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAuJzSb9TqYCQreYQNAAAAAElFTkSuQmCC";
+    const PARTS = META.parts.slice();
+    const LABEL = META.partLabels || {};
+    const BODY_BY_CODE = {1:"left", 2:"right"};
+    const Bw = META.bodySize[0], Bh = META.bodySize[1];
+
+    const bodyStage = document.getElementById("body-stage");
+    const brainStage = document.getElementById("brain-stage");
+    const hlRoot = document.getElementById("hl-root");
+    const chips = document.getElementById("chips");
+    const mosquito = document.getElementById("mosquito");
+    const tipGlow = document.getElementById("tip-glow");
+    const pain = document.getElementById("pain");
+    const cortexArrow = document.getElementById("cortex-arrow");
+    const main = document.getElementById("main");
+    const facts = document.getElementById("facts");
+
+    let active = null;
+    let lookupReady = false;
+    let lookupCtx = null;
+    let lookupW = 0, lookupH = 0;
+
+    function pct(n){ return n + "%"; }
+    function partTitle(part){ return LABEL[part] || part; }
+    function bodySideTitle(side){ return side === "right" ? "Right" : "Left"; }
+    function cortexTitle(hemi){
+      return hemi === "left_cortex" ? "Left Sensory Area" : "Right Sensory Area";
+    }
+    function cortexName(hemi){
+      return hemi === "left_cortex" ? "left sensory area" : "right sensory area";
+    }
+
+    (function loadLookup(){
+      const img = new Image();
+      img.onload = function(){
+        lookupW = img.naturalWidth; lookupH = img.naturalHeight;
+        const c = document.createElement("canvas");
+        c.width = lookupW; c.height = lookupH;
+        lookupCtx = c.getContext("2d", {willReadFrequently:true});
+        lookupCtx.drawImage(img, 0, 0);
+        lookupReady = true;
+      };
+      img.src = LOOKUP_DATA_URL;
+    })();
+
+    ["left_cortex","right_cortex"].forEach(hemi => {
+      PARTS.forEach(part => {
+        const h = META.brain[hemi][part];
+        if (!h || !h.highlight) return;
+        const img = document.createElement("img");
+        img.className = "hl-layer";
+        img.dataset.hemi = hemi; img.dataset.part = part;
+        img.src = h.highlight.file;
+        img.alt = "";
+        img.draggable = false;
+        img.style.left = pct(h.highlight.oxPct);
+        img.style.top = pct(h.highlight.oyPct);
+        img.style.width = pct(h.highlight.wPct);
+        img.style.height = pct(h.highlight.hPct);
+        hlRoot.appendChild(img);
+      });
+    });
+
+    function addChipRow(title, bodySide) {
+      const row = document.createElement("div");
+      row.className = "chip-row";
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = title;
+      row.appendChild(tag);
+      PARTS.forEach(part => {
+        const bmeta = META.body[bodySide][part];
+        if (!bmeta) return;
+        const b = document.createElement("button");
+        b.type = "button";
+        b.dataset.side = bodySide;
+        b.dataset.part = part;
+        b.textContent = partTitle(part);
+        b.title = bodySideTitle(bodySide) + " " + partTitle(part);
+        b.onclick = () => stimulate(bodySide, part, true);
+        row.appendChild(b);
+      });
+      chips.appendChild(row);
+    }
+    addChipRow("Left body →", "left");
+    addChipRow("Right body →", "right");
+
+    function clearActive(){
+      document.querySelectorAll(".hl-layer").forEach(h => h.classList.remove("on"));
+      pain.classList.remove("on");
+      cortexArrow.classList.remove("on");
+      chips.querySelectorAll("button").forEach(b => b.classList.remove("on"));
+    }
+
+    function showHighlight(hemi, part){
+      document.querySelectorAll(".hl-layer").forEach(el => {
+        if (el.dataset.hemi === hemi && el.dataset.part === part) el.classList.add("on");
+        else el.classList.remove("on");
+      });
+      const h = META.brain[hemi][part];
+      if (h && h.pain) {
+        pain.style.left = pct(h.pain.x);
+        pain.style.top = pct(h.pain.y);
+        pain.classList.add("on");
+      }
+      if (h && h.arrow) {
+        cortexArrow.style.left = pct(h.arrow.x);
+        cortexArrow.style.top = pct(h.arrow.y);
+        cortexArrow.classList.add("on");
+      }
+    }
+
+    function updateReadout(bodySide, part, hemi){
+      const side = bodySideTitle(bodySide).toLowerCase();
+      const nice = partTitle(part);
+      const niceLower = nice.toLowerCase();
+      const area = cortexName(hemi);
+      const areaTitle = cortexTitle(hemi);
+      main.textContent = bodySideTitle(bodySide) + " " + nice + " → " + areaTitle;
+      facts.innerHTML =
+        '<div class="info-box"><strong>Stimulus:</strong> Pain / touch receptors in the skin of the <b>' + side + ' ' + niceLower + '</b> are stimulated (mosquito bite).</div>' +
+        '<div class="info-box"><strong>Pathway:</strong> Receptor → sensory neurone → CNS → <b>' + area + '</b> of the cerebrum.</div>' +
+        '<div class="info-box"><strong>Sensation:</strong> The <b>' + area + '</b> receives the nerve impulses and produces the <b>pain sensation</b> for the ' + side + ' ' + niceLower + '.</div>' +
+        '<div class="info-box"><strong>Why opposite side?</strong> Sensory pathways cross over, so each half of the cerebrum mainly receives information from the opposite side of the body.</div>';
+      chips.querySelectorAll("button").forEach(b => {
+        b.classList.toggle("on", b.dataset.side === bodySide && b.dataset.part === part);
+      });
+    }
+
+    function stimulate(bodySide, part, fromButton){
+      const bmeta = META.body[bodySide] && META.body[bodySide][part];
+      if (!bmeta) return;
+      const hemi = bmeta.cortexHemi;
+      const hitMeta = META.brain[hemi] && META.brain[hemi][part];
+      if (!hitMeta) return;
+      active = bodySide + ":" + part;
+      clearActive();
+      showHighlight(hemi, part);
+      setGlow("lock");
+      updateReadout(bodySide, part, hemi);
+      if (fromButton) {
+        placeMosquito(bmeta.x, bmeta.y);
+      }
+    }
+
+    function setGlow(mode){
+      tipGlow.classList.remove("on","locked");
+      if (mode === "hover") tipGlow.classList.add("on");
+      if (mode === "lock") tipGlow.classList.add("locked");
+    }
+
+    function placeMosquito(x,y){
+      mosquito.classList.add("show");
+      mosquito.style.left = pct(x);
+      mosquito.style.top = pct(y);
+      tipGlow.style.left = pct(x);
+      tipGlow.style.top = pct(y);
+    }
+
+    function tipXY(e){
+      const r = bodyStage.getBoundingClientRect();
+      return {
+        x: ((e.clientX - r.left) / r.width) * 100,
+        y: ((e.clientY - r.top) / r.height) * 100
+      };
+    }
+
+    function hitFromLookup(xPct, yPct){
+      if (!lookupReady || !lookupCtx) return null;
+      const px = Math.max(0, Math.min(lookupW - 1, Math.round(xPct / 100 * lookupW)));
+      const py = Math.max(0, Math.min(lookupH - 1, Math.round(yPct / 100 * lookupH)));
+      const d = lookupCtx.getImageData(px, py, 1, 1).data;
+      const partIndex = d[0];
+      const bodyCode = d[1];
+      if (!partIndex || !bodyCode) return null;
+      const bodySide = BODY_BY_CODE[bodyCode];
+      const part = META.parts[partIndex - 1];
+      if (!bodySide || !part) return null;
+      return { bodySide, part };
+    }
+
+    function onPointer(e){
+      const p = tipXY(e);
+      placeMosquito(p.x, p.y);
+      const h = hitFromLookup(p.x, p.y);
+      if (h) {
+        const key = h.bodySide + ":" + h.part;
+        setGlow("lock");
+        if (active !== key) stimulate(h.bodySide, h.part, false);
+      } else {
+        stopSensation();
+        setGlow("hover");
+      }
+    }
+
+    function stopSensation(){
+      if (!active) return;
+      active = null;
+      clearActive();
+      main.textContent = "Move the mosquito tip over a body region to begin…";
+      facts.innerHTML =
+        '<div class="info-box"><strong>How to explore:</strong> Slide the mosquito tip across the body map. ' +
+        'Each body region sends a signal to the sensory cortex on the <b>opposite side</b> of the cerebrum. ' +
+        'Move off a target region and the pain sensation stops.</div>';
+    }
+
+    bodyStage.addEventListener("pointermove", onPointer);
+    bodyStage.addEventListener("pointerdown", e => {
+      e.preventDefault();
+      onPointer(e);
+    });
+    bodyStage.addEventListener("pointerleave", () => {
+      stopSensation();
+      setGlow(null);
+    });
+  </script>
+</body>
+</html>
