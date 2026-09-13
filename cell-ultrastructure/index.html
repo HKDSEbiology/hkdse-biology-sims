@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HKDSE Biology · Cell ultrastructure tutor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="common.css" />
+  <style>
+    :root {
+      --animal: #2563eb;
+      --plant: #15803d;
+      --prok: #7c3aed;
+    }
+    .cell-wrap { grid-template-columns: 1.2fr .8fr; }
+    .mode-row { display: flex; gap: 8px; padding: 12px 16px; flex-wrap: wrap; align-items: center; }
+    .mode-row button { min-width: 7.5rem; }
+    .mode-row button.on-animal { background: var(--animal); border-color: #1d4ed8; color: #fff; }
+    .mode-row button.on-plant { background: var(--plant); border-color: #166534; color: #fff; }
+    .mode-row button.on-prok { background: var(--prok); border-color: #6d28d9; color: #fff; }
+    .hint-line { padding: 0 16px 10px; color: var(--muted); font-size: .88rem; }
+    .stage-wrap {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      margin: 0 16px;
+      min-height: 320px;
+      overflow: hidden;
+    }
+    .stage-svg.off { display: none; }
+    .diagram {
+      position: relative;
+      width: 100%;
+      background: #fff;
+    }
+    .diagram > img.plate {
+      display: block;
+      width: 100%;
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+    .diagram > svg.hotspots {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .diagram .hit {
+      fill: rgba(251, 191, 36, 0);
+      stroke: rgba(15, 23, 42, 0);
+      stroke-width: 2;
+      cursor: pointer;
+      transition: fill .15s ease, stroke .15s ease;
+    }
+    .diagram .hit:hover {
+      fill: rgba(56, 189, 248, .18);
+      stroke: rgba(14, 165, 233, .85);
+    }
+    .diagram .hit.on {
+      fill: rgba(251, 191, 36, .28);
+      stroke: #f59e0b;
+      stroke-width: 3;
+    }
+    .diagram .hit-ring {
+      fill: none;
+      stroke: rgba(251, 191, 36, 0);
+      stroke-width: 14;
+      cursor: pointer;
+    }
+    .diagram .hit-ring:hover { stroke: rgba(14, 165, 233, .55); }
+    .diagram .hit-ring.on { stroke: rgba(245, 158, 11, .9); }
+    svg.cell { width: 100%; height: auto; display: block; cursor: pointer; }
+    svg.cell .hit { cursor: pointer; }
+    svg.cell .hit:hover { filter: brightness(1.12) drop-shadow(0 0 6px rgba(125,211,252,.45)); }
+    svg.cell .hit.on { filter: drop-shadow(0 0 10px #fbbf24) brightness(1.1); }
+    .lbl {
+      font-family: "Source Sans 3", sans-serif; font-size: 12px; font-weight: 700;
+      fill: #e8f7f2; paint-order: stroke; stroke: rgba(5,13,18,.85); stroke-width: 3px;
+      pointer-events: none;
+    }
+    .tag-box { fill: #fff; stroke: #0f172a; stroke-width: 1.5; }
+    .tag-text {
+      font-family: "Source Sans 3", sans-serif; font-size: 13px; font-weight: 700;
+      fill: #0f172a; pointer-events: none;
+    }
+    .chip-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding: 10px 16px 4px;
+    }
+    .chip-row button {
+      font-size: .78rem; padding: 5px 10px; border-radius: 999px;
+      border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer;
+    }
+    .chip-row button:hover { border-color: var(--teal); }
+    .chip-row button.on {
+      background: #fffbeb; border-color: #f59e0b; color: #92400e; font-weight: 700;
+    }
+    .chip-row button[hidden] { display: none !important; }
+    .detail-fig {
+      margin: 0 16px 10px; padding: 10px 12px; border-radius: 12px;
+      border: 1px solid var(--line); background: #f8fafc; text-align: center;
+    }
+    .detail-fig[hidden] { display: none !important; }
+    .detail-fig img {
+      max-width: 100%; max-height: 160px; width: auto; height: auto;
+      object-fit: contain;
+    }
+    .detail-fig figcaption {
+      margin-top: 6px; font-size: .78rem; color: var(--muted);
+    }
+    .info-head { padding: 14px 16px 8px; }
+    .info-head h3 { margin: 0 0 6px; font-family: Fraunces, Georgia, serif; font-size: 1.45rem; }
+    .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pill { font-size: .72rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); }
+    .pill.yes { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; }
+    .pill.no { background: #fff1f2; border-color: #fecdd3; color: #9f1239; }
+    .info-body { padding: 0 16px 16px; display: grid; gap: 10px; }
+    .box { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+    .box h4 { margin: 0 0 6px; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--teal-deep); }
+    .box p, .box li { margin: 0 0 6px; font-size: .92rem; line-height: 1.45; color: #2a4550; }
+    .box ul { margin: 0; padding-left: 18px; }
+    .empty { padding: 48px 24px; color: var(--muted); text-align: center; }
+    .empty b { display: block; font-family: Fraunces, Georgia, serif; font-size: 1.3rem; color: var(--ink); margin-bottom: 8px; }
+    .compare { overflow-x: auto; padding: 0 16px 16px; }
+    table.cmp { width: 100%; border-collapse: collapse; font-size: .88rem; background: #fff; border-radius: 12px; overflow: hidden; }
+    table.cmp th, table.cmp td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+    table.cmp th { background: #e6f5f1; color: var(--teal-deep); }
+    .q button.picked { outline: 2px solid var(--teal); }
+    .trap-bar { display: none; }
+    .trap-bar button.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .remark {
+      display: none; margin-top: 10px; padding: 10px 12px; border-radius: 10px;
+      background: #fffbeb; border: 1px solid #fcd34d; color: #78350f; font-size: .92rem; line-height: 1.45;
+    }
+    .remark.show { display: block; }
+    .remark.escaped {
+      background: #ecfdf5; border-color: #6ee7b7; color: #065f46;
+    }
+    .remark b { color: inherit; }
+    .trap-nav { display: none; }
+    .caught { margin-top: 10px; display: none; }
+    .caught.show { display: block; }
+    .trap-bar .hint { color: var(--muted); font-size: .88rem; }
+    .q button.ok-opt { background: #ecfdf5; border-color: #6ee7b7; }
+    .q button.bad-opt { background: #fff1f2; border-color: #fecdd3; }
+    #trapList .q { margin-bottom: 12px; }
+    .mark.ok b, .mark.warn b { display: block; margin-bottom: 4px; font-size: 1rem; }
+    .q .q-meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 6px; }
+    .q .q-meta span {
+      font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--teal-deep); background: #e6f5f1;
+    }
+
+    .under-build {
+      min-height: 320px; display: grid; place-items: center; text-align: center;
+      padding: 48px 24px; background: #f8fafc; color: #475569;
+    }
+    .under-build b {
+      display: block; font-family: Fraunces, Georgia, serif; font-size: 1.45rem;
+      color: var(--ink); margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="top" style="padding:10px 20px"><a href="../index.html">Home · All simulations</a></nav>
+  <header>
+    <div>
+      <p class="brand">HKDSE Biology · English classroom</p>
+      <h1>Cell ultrastructure tutor</h1>
+      <p>Click a structure on the animal or plant cell — see notes wording, how Paper 1A / 1B / CE mark it, and the usual traps. Prokaryote diagram coming later.</p>
+    </div>
+    <div class="badge">F.4 · Ch.2 cell · notes + exam drill</div>
+  </header>
+
+  <div class="wrap cell-wrap">
+    <section class="card">
+      <h2>Click a structure <span id="cellCaption">absorptive animal cell — microvilli are folds of the membrane</span></h2>
+      <div class="mode-row">
+        <button type="button" id="btnAnimal" class="on-animal">Animal cell</button>
+        <button type="button" id="btnPlant">Plant cell</button>
+        <button type="button" id="btnProk">Prokaryote</button>
+      </div>
+      <p class="hint-line" id="hintLine">Click a coloured organelle on the diagram, or use the chips. Amber outline = selected. Teaching art, not a TEM.</p>
+      <div class="chip-row" id="chipRow" aria-label="Structures in this cell"></div>
+      <div class="stage-wrap">
+        <div class="stage-svg" id="boxAnimal">
+        <div class="diagram" aria-label="Absorptive animal cell diagram">
+          <img class="plate" src="assets/cell/animal-cell.png" width="1354" height="909" alt="3D cutaway of an absorptive animal cell with microvilli and organelles" />
+          <svg class="hotspots" viewBox="0 0 1354 909" role="img" aria-hidden="true">
+            <path class="hit" data-org="cytoplasm" d="M99.0 358.0 L79.0 434.0 C107.61 498.85 107.61 498.85 108.0 502.0 C108.39 505.15 171.0 563.0 171.0 563.0 L267.0 623.0 L349.0 667.0 L393.0 674.0 L460.0 672.0 L527.0 678.0 L624.0 691.0 L758.0 698.0 L869.0 696.0 C980.22 676.29 980.22 676.29 981.0 674.0 C981.78 671.71 1054.0 639.0 1054.0 639.0 L1132.0 595.0 L1187.0 558.0 L1235.0 481.0 L1292.0 421.0 L1320.0 360.0 L1314.0 307.0 L1270.0 250.0 L1225.0 222.0 L1203.0 211.0 L1203.0 238.0 L1201.0 275.0 L1197.0 292.0 L1213.0 299.0 L1215.0 318.0 L1215.0 339.0 L1212.0 362.0 L1231.0 334.0 L1243.0 314.0 L1256.0 320.0 L1259.0 338.0 L1259.0 363.0 L1253.0 384.0 L1248.0 418.0 L1232.0 455.0 L1220.0 478.0 L1209.0 502.0 L1194.0 527.0 L1174.0 532.0 L1162.0 551.0 L1140.0 579.0 L1119.0 579.0 L1099.0 575.0 L1096.0 579.0 L1095.0 592.0 L1085.0 606.0 L1074.0 613.0 L1059.0 628.0 L1047.0 630.0 L1035.0 641.0 L1019.0 641.0 L1014.0 647.0 L1000.0 659.0 L981.0 661.0 L954.0 653.0 L936.0 665.0 L925.0 679.0 L890.0 676.0 L877.0 655.0 L870.0 644.0 L841.0 646.0 L835.0 639.0 L819.0 639.0 L802.0 617.0 L799.0 595.0 L785.0 602.0 L765.0 603.0 L744.0 583.0 L732.0 595.0 L709.0 616.0 L681.0 627.0 L655.0 623.0 L639.0 630.0 L628.0 639.0 C612.24 656.91 612.24 656.91 610.0 660.0 C607.76 663.09 578.0 672.0 578.0 672.0 L543.0 657.0 L529.0 637.0 L497.0 621.0 L477.0 594.0 L471.0 571.0 L440.0 525.0 L433.0 480.0 L434.0 456.0 L460.0 451.0 L471.0 455.0 L470.0 426.0 L473.0 397.0 L499.0 390.0 L508.0 408.0 L505.0 427.0 L527.0 425.0 L536.0 430.0 L538.0 404.0 L543.0 366.0 L561.0 366.0 L575.0 387.0 L568.0 418.0 L571.0 447.0 L581.0 472.0 L579.0 437.0 L595.0 435.0 L612.0 435.0 L617.0 466.0 L621.0 501.0 L631.0 511.0 L631.0 479.0 L627.0 449.0 L610.0 422.0 L608.0 399.0 L592.0 351.0 L599.0 326.0 L599.0 290.0 L607.0 252.0 L621.0 254.0 L631.0 269.0 L632.0 289.0 L636.0 299.0 L639.0 262.0 L647.0 226.0 L676.0 186.0 L708.0 166.0 C728.6 153.79 728.6 153.79 734.0 152.0 C739.4 150.21 773.0 150.0 773.0 150.0 L781.0 165.0 L801.0 157.0 L839.0 152.0 L851.0 165.0 L865.0 185.0 L872.0 183.0 L876.0 154.0 L888.0 133.0 L846.0 134.0 L789.0 140.0 C713.54 138.24 713.54 138.24 711.0 138.0 C708.46 137.76 659.0 131.0 659.0 131.0 L611.0 131.0 L570.0 134.0 L543.0 135.0 L505.0 144.0 L477.0 148.0 L471.0 161.0 L446.0 171.0 L414.0 185.0 L371.0 197.0 L324.0 215.0 L279.0 234.0 L263.0 252.0 L242.0 264.0 L207.0 283.0 L192.0 294.0 L173.0 311.0 L138.0 338.0 L99.0 358.0 Z"/>
+            <path class="hit-ring hit" data-org="membrane" d="M464.0 132.0 L585.0 111.0 L674.0 114.0 L776.0 120.0 C842.89 118.53 842.89 118.53 849.0 117.0 C855.11 115.47 889.0 114.0 889.0 114.0 L890.0 129.0 L843.0 132.0 C758.8 134.59 758.8 134.59 756.0 134.0 C753.2 133.41 669.0 125.0 669.0 125.0 L529.0 130.0 L461.0 148.0 L455.0 138.0 L464.0 132.0 Z"/>
+            <path class="hit-ring hit" data-org="membrane" d="M1193.0 187.0 C1194.36 187.9 1194.36 187.9 1196.75 189.48 C1214.01 200.93 1285.0 248.0 1285.0 248.0 L1336.0 337.0 L1335.0 410.0 L1265.0 627.0 L1048.0 824.0 L842.0 885.0 C558.87 886.72 558.87 886.72 553.0 887.0 C547.13 887.28 372.91 851.04 372.0 847.0 C371.09 842.96 231.0 773.0 231.0 773.0 L113.0 630.0 C67.99 534.16 67.99 534.16 70.0 533.0 C72.01 531.84 60.0 428.0 60.0 428.0 L76.0 361.0 L91.0 341.0 L98.0 354.0 L76.0 411.0 L88.0 475.0 L149.0 554.0 C218.88 598.72 218.88 598.72 223.0 601.0 C227.12 603.28 331.9 667.78 339.0 667.0 C346.1 666.22 464.0 672.0 464.0 672.0 L577.0 692.0 L742.0 697.0 C922.58 697.24 922.58 697.24 926.0 695.0 C929.42 692.76 1050.05 647.04 1054.0 644.0 C1057.95 640.96 1142.47 589.37 1148.0 587.0 C1153.53 584.63 1201.0 555.0 1201.0 555.0 L1238.0 494.0 L1277.0 448.0 C1313.01 380.38 1313.01 380.38 1318.0 381.0 C1322.99 381.62 1323.0 329.0 1323.0 329.0 L1274.0 257.0 L1221.0 221.0 L1202.0 211.0 L1198.0 206.0 L1193.0 187.0 Z"/>
+            <path class="hit" data-org="microvillus" d="M468.0 157.0 L448.0 120.0 L435.0 75.0 L412.0 46.0 L390.0 46.0 L381.0 65.0 L391.0 101.0 L406.0 135.0 L410.0 159.0 L397.0 153.0 L381.0 103.0 L366.0 78.0 L354.0 81.0 L345.0 66.0 L321.0 57.0 L308.0 76.0 L314.0 89.0 L298.0 85.0 L288.0 95.0 L292.0 116.0 L300.0 143.0 L306.0 160.0 L310.0 175.0 L298.0 158.0 L282.0 132.0 L267.0 130.0 L251.0 113.0 L229.0 109.0 L222.0 119.0 L222.0 132.0 L229.0 145.0 L209.0 133.0 L196.0 139.0 L193.0 150.0 L184.0 165.0 L190.0 185.0 L207.0 208.0 L219.0 227.0 L214.0 233.0 L194.0 201.0 L172.0 165.0 L154.0 147.0 L134.0 125.0 L116.0 126.0 L108.0 143.0 L113.0 169.0 C117.99 180.45 117.99 180.45 118.0 178.0 C118.01 175.55 103.0 168.0 103.0 168.0 L87.0 173.0 L80.0 188.0 L84.0 210.0 L99.0 238.0 L116.0 265.0 L126.0 286.0 L131.0 303.0 L96.0 259.0 L75.0 230.0 L47.0 224.0 L34.0 235.0 L30.0 253.0 L41.0 275.0 L57.0 295.0 L72.0 317.0 L91.0 334.0 L95.0 350.0 L95.0 362.0 L103.0 373.0 L152.0 324.0 L164.0 301.0 L183.0 294.0 L219.0 280.0 L243.0 256.0 L262.0 244.0 L284.0 235.0 L302.0 221.0 L319.0 214.0 L330.0 203.0 L352.0 194.0 L364.0 198.0 L389.0 191.0 L408.0 182.0 L414.0 172.0 L468.0 157.0 Z"/>
+            <path class="hit" data-org="mitochondrion" d="M238.0 428.0 L204.0 430.0 L182.0 445.0 L180.0 469.0 L180.0 501.0 L200.0 543.0 L231.0 575.0 L277.0 607.0 L327.0 627.0 L377.0 617.0 L398.0 586.0 L400.0 548.0 L361.0 515.0 L320.0 495.0 L294.0 468.0 L266.0 441.0 L244.0 430.0 L238.0 428.0 Z"/>
+            <path class="hit" data-org="mitochondrion" d="M268.0 342.0 C278.17 367.39 278.17 367.39 280.0 367.0 C281.83 366.61 309.58 382.61 312.0 382.0 C314.42 381.39 355.0 373.0 355.0 373.0 C381.94 347.65 381.94 347.65 382.0 345.0 C382.06 342.35 428.0 319.0 428.0 319.0 C448.31 301.34 448.31 301.34 449.0 299.0 C449.69 296.66 456.0 271.0 456.0 271.0 L442.0 246.0 L413.0 240.0 L363.0 251.0 L319.0 270.0 L285.0 297.0 L267.0 318.0 L265.0 338.0 L268.0 342.0 Z"/>
+            <path class="hit" data-org="ser" d="M555.0 372.0 L541.0 380.0 L540.0 423.0 L547.0 464.0 L549.0 477.0 L534.0 468.0 L539.0 439.0 L524.0 424.0 L504.0 428.0 L507.0 402.0 L485.0 391.0 L470.0 402.0 L471.0 420.0 L478.0 472.0 L492.0 495.0 L482.0 505.0 L495.0 544.0 L476.0 518.0 L472.0 470.0 L461.0 452.0 L434.0 461.0 L434.0 491.0 L454.0 547.0 L479.0 569.0 L476.0 584.0 L491.0 618.0 L519.0 633.0 L535.0 636.0 L540.0 651.0 L560.0 663.0 L595.0 667.0 L620.0 647.0 L636.0 626.0 L656.0 621.0 L680.0 626.0 L716.0 612.0 L735.0 585.0 L739.0 572.0 C731.77 558.21 731.77 558.21 729.0 559.0 C726.23 559.79 710.0 559.0 710.0 559.0 L712.0 545.0 L727.0 512.0 L734.0 477.0 L720.0 462.0 L691.0 465.0 L691.0 494.0 L679.0 532.0 L678.0 497.0 L675.0 472.0 L650.0 454.0 L630.0 457.0 L636.0 486.0 C632.77 517.52 632.77 517.52 630.0 517.0 C627.23 516.48 617.0 493.0 617.0 493.0 L616.0 465.0 L618.0 442.0 L596.0 437.0 L578.0 447.0 L582.0 468.0 L582.0 480.0 L570.0 450.0 L567.0 422.0 L571.0 392.0 L568.0 376.0 L555.0 372.0 Z"/>
+            <path class="hit" data-org="rer" d="M1201.0 297.0 L1189.0 304.0 L1141.0 346.0 L1063.0 377.0 L987.0 383.0 L886.0 370.0 L805.0 337.0 L792.0 287.0 L804.0 236.0 C848.77 198.17 848.77 198.17 854.0 197.0 C859.23 195.83 864.0 188.0 864.0 188.0 L858.0 174.0 L828.0 153.0 L789.0 162.0 L771.0 166.0 L759.0 151.0 L707.0 167.0 L658.0 213.0 L643.0 257.0 L610.0 258.0 L599.0 308.0 L602.0 363.0 L621.0 424.0 L629.0 452.0 L650.0 450.0 L670.0 463.0 L678.0 487.0 L678.0 507.0 L676.0 524.0 L686.0 507.0 L691.0 473.0 L702.0 460.0 L732.0 462.0 L736.0 479.0 L731.0 509.0 L721.0 531.0 L711.0 549.0 L727.0 555.0 L739.0 565.0 L757.0 593.0 L774.0 600.0 L793.0 593.0 L793.0 575.0 L806.0 556.0 L823.0 554.0 L850.0 554.0 L865.0 551.0 L862.0 531.0 L868.0 520.0 L914.0 505.0 L948.0 499.0 L984.0 494.0 L1020.0 498.0 L1066.0 496.0 L1094.0 503.0 L1099.0 518.0 L1097.0 541.0 L1098.0 560.0 C1093.68 575.15 1093.68 575.15 1094.0 573.0 C1094.32 570.85 1121.0 578.0 1121.0 578.0 L1152.0 559.0 C1170.11 534.77 1170.11 534.77 1170.0 532.0 C1169.89 529.23 1196.0 521.0 1196.0 521.0 L1204.0 491.0 L1223.0 462.0 L1238.0 426.0 L1249.0 385.0 L1255.0 340.0 L1248.0 319.0 L1231.0 327.0 L1215.0 359.0 L1208.0 374.0 L1209.0 321.0 L1209.0 300.0 L1201.0 297.0 Z"/>
+            <path class="hit" data-org="nucleus" d="M961.0 58.0 L1026.0 47.0 L1072.0 57.0 L1125.0 85.0 L1169.0 132.0 L1195.0 190.0 L1200.0 249.0 L1197.0 298.0 L1170.0 331.0 L1117.0 363.0 L1019.0 384.0 L955.0 380.0 L855.0 362.0 L815.0 341.0 L800.0 328.0 L794.0 291.0 C786.61 267.19 786.61 267.19 791.0 265.0 C795.39 262.81 807.0 237.0 807.0 237.0 L828.0 215.0 L857.0 193.0 L876.0 183.0 L885.0 147.0 L891.0 121.0 L915.0 90.0 L961.0 58.0 Z"/>
+            <path class="hit" data-org="nucleolus" d="M981.0 159.0 L955.0 168.0 L936.0 183.0 L923.0 204.0 L917.0 229.0 L916.0 253.0 L930.0 272.0 L956.0 284.0 L983.0 288.0 L1010.0 286.0 L1036.0 277.0 L1049.0 266.0 L1056.0 239.0 L1054.0 221.0 L1046.0 197.0 L1031.0 177.0 L1011.0 164.0 L993.0 159.0 L981.0 159.0 Z"/>
+          </svg>
+        </div>
+        </div>
+        <div class="stage-svg off" id="boxPlant">
+        <div class="diagram" aria-label="Photosynthetic plant cell diagram">
+          <img class="plate" src="assets/cell/plant-cell.png?v=3" width="1314" height="752" alt="3D cutaway of a plant cell with wall, vacuole and chloroplasts" />
+          <svg class="hotspots" viewBox="0 0 1314 752" role="img" aria-hidden="true">
+            <path class="hit" data-org="cytoplasm" d="M1145.0 162.0 L1141.0 245.0 L1193.0 274.0 L1195.0 351.0 L1148.0 459.0 L1082.0 507.0 L1045.0 502.0 L983.0 566.0 L857.0 600.0 L777.0 564.0 L754.0 533.0 L711.0 513.0 L665.0 566.0 L550.0 571.0 L428.0 493.0 L311.0 418.0 L235.0 358.0 L227.0 369.0 L303.0 431.0 L382.0 488.0 L358.0 543.0 L293.0 544.0 L175.0 460.0 L165.0 396.0 L103.0 445.0 L214.0 524.0 L321.0 580.0 L430.0 591.0 L551.0 605.0 L671.0 615.0 L834.0 613.0 L965.0 589.0 L1098.0 518.0 L1156.0 475.0 L1219.0 382.0 L1264.0 311.0 L1241.0 232.0 L1145.0 162.0 Z"/>
+            <path class="hit" data-org="cytoplasm" d="M839.0 93.0 L824.0 142.0 L812.0 143.0 L788.0 110.0 L729.0 123.0 L693.0 110.0 L635.0 137.0 L607.0 174.0 L597.0 249.0 L590.0 247.0 L579.0 213.0 L555.0 211.0 L537.0 174.0 L596.0 168.0 L623.0 127.0 L594.0 98.0 L553.0 94.0 L636.0 93.0 L764.0 94.0 L835.0 87.0 L839.0 93.0 Z"/>
+            <path class="hit" data-org="cytoplasm" d="M549.0 89.0 L549.0 95.0 L505.0 107.0 L482.0 133.0 L486.0 146.0 L442.0 132.0 L375.0 132.0 L276.0 181.0 L234.0 226.0 L202.0 194.0 L357.0 123.0 L475.0 95.0 L549.0 89.0 Z"/>
+            <path class="hit" data-org="cytoplasm" d="M236.0 356.0 L102.0 441.0 L65.0 399.0 L64.0 349.0 L81.0 295.0 L110.0 248.0 L125.0 284.0 L162.0 290.0 L190.0 273.0 L211.0 255.0 L225.0 222.0 L236.0 232.0 L218.0 288.0 L225.0 330.0 L236.0 356.0 Z"/>
+            <path class="hit" data-org="cytoplasm" d="M201.0 191.0 C176.89 202.45 176.89 202.45 166.11 207.57 C163.0 209.05 161.0 210.0 161.0 210.0 C155.47 213.87 155.47 213.87 148.08 219.04 C140.9 224.07 131.96 230.33 124.66 235.44 C116.91 240.87 111.0 245.0 111.0 245.0 L119.0 262.0 L127.0 242.0 L174.0 214.0 L194.0 209.0 L205.0 203.0 L201.0 191.0 Z"/>
+            <path class="hit-ring hit" data-org="wall" d="M306.0 106.0 L384.0 79.0 L471.0 66.0 L563.0 56.0 L653.0 63.0 L729.0 68.0 L801.0 63.0 L847.0 64.0 L842.0 81.0 L796.0 78.0 L727.0 84.0 L675.0 79.0 L598.0 76.0 L501.0 75.0 L415.0 94.0 L329.0 115.0 L260.0 149.0 L209.0 174.0 L144.0 204.0 L81.0 262.0 L47.0 322.0 L54.0 392.0 L88.0 454.0 L199.0 529.0 L288.0 580.0 L385.0 604.0 L478.0 609.0 L587.0 625.0 L764.0 634.0 L893.0 623.0 L980.0 598.0 L1056.0 559.0 L1133.0 515.0 L1176.0 470.0 L1214.0 412.0 L1250.0 374.0 L1278.0 324.0 L1281.0 278.0 L1254.0 223.0 L1212.0 188.0 L1174.0 164.0 L1142.0 146.0 L1135.0 125.0 L1197.0 161.0 L1251.0 196.0 L1293.0 251.0 L1302.0 290.0 L1293.0 379.0 L1271.0 456.0 L1233.0 521.0 L1191.0 571.0 L1117.0 625.0 L1042.0 670.0 L937.0 713.0 L861.0 726.0 L800.0 731.0 L727.0 731.0 L644.0 730.0 L552.0 721.0 L479.0 712.0 L403.0 707.0 L326.0 689.0 L253.0 657.0 L174.0 613.0 L97.0 553.0 L59.0 503.0 L38.0 449.0 L27.0 369.0 L32.0 319.0 L60.0 258.0 L105.0 207.0 L167.0 170.0 L228.0 143.0 L306.0 106.0 Z"/>
+            <path class="hit-ring hit" data-org="membrane" d="M843.0 80.0 L764.0 81.0 L726.0 82.0 L649.0 75.0 L570.0 70.0 L489.0 76.0 L407.0 94.0 L308.0 124.0 L220.0 169.0 L162.0 189.0 L125.0 213.0 L85.0 255.0 L55.0 304.0 L48.0 364.0 L53.0 400.0 L80.0 443.0 L118.0 480.0 L168.0 511.0 L249.0 559.0 L308.0 588.0 L344.0 598.0 L383.0 605.0 L436.0 606.0 L489.0 611.0 L563.0 621.0 L647.0 629.0 L738.0 631.0 L813.0 633.0 L888.0 626.0 L958.0 607.0 L1037.0 567.0 L1097.0 533.0 L1155.0 499.0 L1181.0 462.0 L1201.0 421.0 L1243.0 380.0 L1274.0 334.0 L1282.0 283.0 L1259.0 229.0 L1230.0 201.0 L1198.0 176.0 L1162.0 154.0 L1141.0 144.0 L1145.0 163.0 L1189.0 191.0 L1239.0 232.0 L1265.0 298.0 L1250.0 346.0 L1213.0 390.0 L1185.0 421.0 L1167.0 456.0 L1139.0 491.0 L1091.0 523.0 L1026.0 559.0 L957.0 589.0 L888.0 610.0 L752.0 618.0 L645.0 618.0 L561.0 607.0 L476.0 597.0 L416.0 589.0 L361.0 587.0 L294.0 566.0 L221.0 526.0 L150.0 485.0 L92.0 434.0 L63.0 376.0 L64.0 335.0 L95.0 275.0 L127.0 229.0 L175.0 200.0 L228.0 177.0 L293.0 147.0 L371.0 121.0 L471.0 95.0 L564.0 86.0 L650.0 94.0 L722.0 97.0 L781.0 90.0 L822.0 89.0 L840.0 92.0 L843.0 80.0 Z"/>
+            <path class="hit" data-org="vacuole" d="M426.0 132.0 L496.0 152.0 L557.0 213.0 L544.0 281.0 L580.0 357.0 L644.0 403.0 L699.0 463.0 L703.0 526.0 L640.0 570.0 L540.0 569.0 L460.0 525.0 L383.0 460.0 L271.0 396.0 L227.0 334.0 L221.0 274.0 L245.0 215.0 L305.0 156.0 L375.0 132.0 L426.0 132.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M200.0 200.0 L160.0 213.0 L137.0 227.0 L120.0 254.0 L119.0 276.0 L131.0 290.0 L163.0 288.0 L195.0 270.0 L216.0 252.0 L227.0 220.0 L215.0 202.0 L200.0 200.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M505.0 103.0 L481.0 129.0 L489.0 154.0 L527.0 173.0 L568.0 174.0 L600.0 166.0 L618.0 150.0 L620.0 125.0 L600.0 103.0 L565.0 96.0 L529.0 94.0 L505.0 103.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M488.0 573.0 L483.0 580.0 L491.0 587.0 L497.0 580.0 L495.0 573.0 L488.0 573.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M369.0 556.0 L371.0 565.0 L362.0 568.0 L359.0 556.0 L369.0 556.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M147.0 449.0 L152.0 454.0 L146.0 461.0 L138.0 454.0 L147.0 449.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M194.0 350.0 L200.0 357.0 L192.0 363.0 L183.0 358.0 L194.0 350.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M95.0 341.0 L103.0 341.0 L105.0 350.0 L97.0 354.0 L88.0 345.0 L95.0 341.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M121.0 319.0 L124.0 325.0 L120.0 331.0 L113.0 322.0 L121.0 319.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M579.0 180.0 L584.0 187.0 L579.0 193.0 L568.0 187.0 L571.0 179.0 L579.0 180.0 Z"/>
+            <path class="hit" data-org="chloroplast" d="M642.0 110.0 L651.0 109.0 L652.0 117.0 L643.0 118.0 L642.0 110.0 Z"/>
+            <path class="hit" data-org="mitochondrion" d="M187.0 372.0 L228.0 371.0 L264.0 403.0 L304.0 435.0 L339.0 450.0 L371.0 472.0 L376.0 515.0 L351.0 541.0 L294.0 543.0 L216.0 504.0 L179.0 465.0 L163.0 414.0 L187.0 372.0 Z"/>
+            <path class="hit" data-org="golgi" d="M1187.0 208.0 L1191.0 219.0 L1185.0 223.0 L1176.0 220.0 L1178.0 211.0 L1187.0 208.0 Z"/>
+            <path class="hit" data-org="golgi" d="M1233.0 275.0 L1239.0 281.0 L1234.0 289.0 L1226.0 283.0 L1226.0 276.0 L1233.0 275.0 Z"/>
+            <path class="hit" data-org="rer" d="M815.0 148.0 L798.0 121.0 L776.0 113.0 L730.0 128.0 L718.0 115.0 L700.0 108.0 L666.0 119.0 L631.0 151.0 L602.0 186.0 L597.0 214.0 L595.0 249.0 L586.0 239.0 L576.0 210.0 L561.0 218.0 L557.0 258.0 L557.0 306.0 L568.0 336.0 C586.13 346.06 746.04 476.11 723.93 528.4 C716.73 545.41 824.04 484.27 825.0 482.0 L836.0 450.0 L908.0 432.0 L994.0 435.0 L1040.0 442.0 L1049.0 491.0 L1081.0 504.0 L1116.0 472.0 L1140.0 454.0 L1161.0 410.0 L1187.0 366.0 L1199.0 302.0 L1193.0 269.0 L1149.0 245.0 L1111.0 272.0 L1043.0 318.0 L989.0 325.0 L907.0 330.0 L819.0 312.0 L749.0 278.0 L743.0 236.0 L745.0 203.0 L773.0 174.0 L815.0 148.0 Z"/>
+            <path class="hit" data-org="nucleus" d="M840.0 90.0 L824.0 146.0 L787.0 165.0 L745.0 209.0 L745.0 247.0 L755.0 283.0 L803.0 306.0 L902.0 329.0 L912.0 357.0 L933.0 353.0 L933.0 332.0 L991.0 327.0 L1065.0 308.0 L1117.0 269.0 L1136.0 252.0 L1144.0 210.0 L1139.0 146.0 L1114.0 86.0 L1071.0 45.0 L1027.0 25.0 L979.0 13.0 L931.0 13.0 L885.0 32.0 L861.0 52.0 L840.0 90.0 Z"/>
+            <path class="hit" data-org="nucleolus" d="M894.0 134.0 L868.0 182.0 L882.0 224.0 L951.0 241.0 L994.0 218.0 L995.0 162.0 L948.0 120.0 L889.0 128.0 L894.0 134.0 Z"/>
+          </svg>
+        </div>
+        </div>
+                <div class="stage-svg off" id="boxProk">
+        <div class="under-build" role="status">
+          <div>
+            <b>Prokaryote — under construction</b>
+            Interactive diagram will be added in a later update.<br>
+            Animal and plant cells are ready to explore.
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:#38bdf8"></i>membrane</span>
+        <span><i class="dot" style="background:#60a5fa"></i>nucleus</span>
+        <span><i class="dot" style="background:#fb923c"></i>mitochondrion</span>
+        <span><i class="dot" style="background:#4ade80"></i>chloroplast / wall</span>
+        <span><i class="dot" style="background:#f9a8d4"></i>RER / ribosome</span>
+      </div>
+      <p class="hint-line">Animal and plant diagrams are interactive. Prokaryote diagram is under construction.</p>
+    </section>
+
+    <section class="card" id="panel">
+      <div class="empty" id="placeholder">
+        <b>Select a sub-cellular structure</b>
+        Click any labelled part. The panel fills with the notes wording, how that part is examined, and the line that usually scores 0.
+      </div>
+      <div id="info" hidden>
+        <div class="info-head">
+          <h3 id="title">—</h3>
+          <div class="pills" id="pills"></div>
+        </div>
+        <figure class="detail-fig" id="detailFig" hidden>
+          <img id="detailImg" alt="" />
+          <figcaption id="detailCap"></figcaption>
+        </figure>
+        <div class="info-body">
+          <div class="box"><h4>Structural features</h4><p id="feat"></p></div>
+          <div class="box"><h4>Function — what to write in Paper 1B</h4><p id="func"></p></div>
+          <div class="box ok"><h4>How this is examined (Paper 1A / 1B / CE)</h4><p id="exam"></p></div>
+          <div class="box warn"><h4>Where students lose marks</h4><p id="trap"></p></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="teach">
+    <div class="tabs">
+      <button class="on" data-tab="overview">How the topic is examined</button>
+      <button data-tab="compare">Plant vs animal vs prokaryote</button>
+      <button data-tab="check">Exam-style check (notes order)</button>
+      <button data-tab="mistakes">Hottest traps · concept check</button>
+    </div>
+
+    <div class="pane" id="overview">
+      <h3>What the papers actually ask — not “list every organelle”</h3>
+      <ul>
+        <li><b>Paper 1A / CE MC:</b> which structures are in both plant and animal cells; which plant cells have chloroplasts; cell wall <i>fully</i> permeable vs membrane <i>differentially</i> permeable; mature red blood cell has no nucleus; <b>all flowering-plant cells have a cell wall</b> (not membrane — mature xylem vessels are dead); prokaryote has wall + ribosome + membrane but not mitochondria.</li>
+        <li><b>Common 1A traps on this topic:</b> cytoplasm does <i>not</i> “protect the nucleus”; peptide hormones are made at ribosomes, not the nucleolus; Na⁺ needs a protein path while alcohol crosses the bilayer; herbaceous support is turgor, not a rigid membrane; compare bacterium vs palisade by <i>distinct nucleus</i>, not “no wall”.</li>
+        <li><b>Paper 1B labelling:</b> electron micrograph of a human cell — nucleus, ER, mitochondrion, Golgi. Spelling of the biological term is required.</li>
+        <li><b>Paper 1B “relative amounts”:</b> a table of mitochondria / chloroplasts / ER in four cell types. Palisade mesophyll = chloroplasts; pancreatic / salivary = rough ER; muscle / villus epithelium = mitochondria; epidermis / xylem = none of the fancy ones.</li>
+        <li><b>Paper 1B explain:</b> “This cell has many mitochondria / microvilli / RER. Explain how this is related to its function.” Marks sit on <i>structure → more ATP / more surface area / more protein</i>, not on the name alone.</li>
+      </ul>
+      <div class="ok">Mark-scheme habit: name the structure correctly, then join it to a process with ATP, surface area, or complementary shape. “It helps the cell live” scores 0.</div>
+    </div>
+
+    <div class="pane" id="compare" hidden>
+      <h3>The comparison table from the cell notes</h3>
+      <div class="compare">
+        <table class="cmp">
+          <thead><tr><th></th><th>Animal (eukaryote)</th><th>Plant (eukaryote)</th><th>Prokaryote (e.g. bacterium)</th></tr></thead>
+          <tbody>
+            <tr><th>True nucleus (nuclear membrane)</th><td>yes</td><td>yes</td><td>no — DNA free in cytoplasm</td></tr>
+            <tr><th>Cell membrane</th><td>yes, differentially permeable</td><td>yes in living cells (not in mature dead xylem vessels)</td><td>yes</td></tr>
+            <tr><th>Cell wall</th><td>no</td><td>yes — cellulose; fully permeable (all plant cells)</td><td>yes (not cellulose)</td></tr>
+            <tr><th>Mitochondria / chloroplasts</th><td>mitochondria; no chloroplasts</td><td>mitochondria; chloroplasts only in green parts</td><td>neither (no membrane-bound organelles)</td></tr>
+            <tr><th>Ribosomes</th><td>yes</td><td>yes</td><td>yes (and they have no membrane)</td></tr>
+            <tr><th>Vacuole</th><td>small or absent</td><td>large central vacuole</td><td>no large sap vacuole</td></tr>
+            <tr><th>Food reserve</th><td>glycogen granules</td><td>starch grains</td><td>—</td></tr>
+            <tr><th>Centrioles</th><td>present</td><td>usually absent at this level</td><td>absent</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Notes examples of cells with <b>no nucleus</b> when mature: red blood cells, xylem vessels, sieve-tube cells. Mature <b>xylem vessels</b> are dead: they keep a <b>cell wall</b> but have no living cytoplasm or cell membrane — so “all flowering-plant cells have a membrane” is false; “all have a cell wall” is true.</p>
+    </div>
+
+    <div class="pane" id="check" hidden>
+      <h3>Exam-style check — teaching sequence</h3>
+      <p>Order matches the cell lecture notes (microscope → animal ultrastructure → plant → prokaryote → organisation). All questions are listed below. Correct → <b>Well done — that trap did not catch you</b>. Wrong → what caught you + the correct letter.</p>
+      <div id="quiz"></div>
+    </div>
+
+    <div class="pane" id="mistakes" hidden>
+      <h3>Hottest traps as concept-check MC</h3>
+      <p>All traps on one scroll. From CE misconception notes and HKDSE cell traps. Click an option on each. Correct → <b>Well done — that trap did not catch you</b> + the examiner remark. Wrong → the trap that caught you + the correct line.</p>
+      <div id="trapList"></div>
+    </div>
+  </section>
+
+  <footer>
+    Standalone classroom tutor · HKDSE / CE cell ultrastructure. Animal and plant interactive diagrams. Prokaryote diagram under construction.
+  </footer>
+
+  <script>
+    const ORG = {
+      membrane: {
+        title: "Cell membrane",
+        animal: true, plant: true, prok: true,
+        feat: "Thin boundary made of protein and lipid (phospholipid bilayer). It is differentially permeable — some substances cross, others do not.",
+        func: "It controls which substances enter and leave the cell. Water may move by osmosis; some solutes by diffusion; ions and many polar molecules need membrane proteins (facilitated diffusion or active transport). In absorptive epithelium (e.g. small intestine), the free surface is folded into microvilli so there is more membrane area for uptake. In 1B, name the process (diffusion / osmosis / active transport) and link it to the membrane — do not stop at ‘controls movement’.",
+        exam: "Paper 1A often asks which structures are found in all living cells — the membrane is a safe choice when the distractors are wall, chloroplast or nucleus (but see flowering-plant ‘all cells have…’ below). Paper 1B may ask you to explain absorption, osmosis or active transport with reference to the membrane. Trap MC: ‘All cells in a flowering plant have a cell membrane’ — false, because mature xylem vessels are dead (wall present, no living membrane). The mark there is usually cell wall.",
+        trap: "Do not say the cell wall controls entry. Do not call the membrane ‘fully permeable’. On flowering-plant ‘all cells have…’ MCQs, membrane is often the trap; wall is the mark."
+      },
+      cytoplasm: {
+        title: "Cytoplasm",
+        animal: true, plant: true, prok: true,
+        feat: "Jelly-like fluid: water, proteins and dissolved substances. Organelles sit in it.",
+        func: "It is the site of many enzyme-catalysed reactions (e.g. glycolysis). It also holds organelles in place and lets materials move by diffusion or cytoplasmic streaming. In 1B, prefer ‘site of metabolic / chemical reactions’ over vague ‘keeps the cell alive’.",
+        exam: "Rarely a long explain question. More often a 1A ‘which statement is incorrect?’ item. Correct jobs: holds organelles; medium for reactions; allows transport of materials. Incorrect job that scores 0: ‘protects the nucleus’ — that is the nuclear envelope’s role.",
+        trap: "‘It protects the nucleus’ is the usual wrong line. The nuclear membrane / cytoplasm is not a crash helmet."
+      },
+      microvillus: {
+        title: "Microvillus",
+        img: "assets/cell/microvilli.jpg",
+        imgCap: "Brush border — folds of the membrane (not cilia)",
+        animal: true, plant: false, prok: false,
+        feat: "Finger-like folds of the cell membrane itself on the free (apical) surface of some epithelial cells — not a separate organelle stuck on top. Cytoplasm continues into each finger.",
+        func: "Each fold increases the surface area of the membrane, so more food molecules / ions can be absorbed per unit time (small intestine; also kidney tubules). Under the brush border you often find many mitochondria, because active uptake of some solutes needs ATP. In 1B write: microvilli → larger surface area → faster / more absorption — not ‘to sweep’ or ‘to catch food’.",
+        exam: "CE / HKDSE diagrams of gut epithelium: label the brush border and explain absorption. Marks sit on surface area, not on ‘movement’. Do not confuse with cilia (cilia beat; microvilli do not). Pair the structure with mitochondria if the question asks about energy for absorption.",
+        trap: "Calling microvilli cilia (cilia beat; microvilli do not). Writing ‘to catch food’ in a human gut cell."
+      },
+      nucleoid: {
+        title: "Nucleoid — not a nucleus",
+        animal: false, plant: false, prok: true,
+        feat: "An irregular patch of DNA in the cytoplasm. There is no nuclear membrane, no nucleolus, and no chromosomes of the eukaryotic type at this level.",
+        func: "It carries the bacterium’s genetic information (DNA). Because there is no nuclear envelope, transcription and translation both happen in the cytoplasm — ribosomes can start on mRNA at once. In comparisons with eukaryotic cells, write ‘DNA free in cytoplasm / no distinct nucleus’, not ‘no DNA’.",
+        exam: "HKDSE-style 1A: which set occurs in a prokaryote? Accept wall + ribosome + membrane; reject any option that adds a true nucleus, mitochondrion or chloroplast. 1B comparisons (e.g. bacterium vs palisade): mark ‘no distinct / true nucleus (no nuclear membrane)’ versus ‘distinct nucleus’ — ‘nucleus / no nucleus’ alone is often under-marked.",
+        trap: "Drawing a round nucleus with a double membrane in a bacterium because ‘all cells have a nucleus’. DNA is present; a true nucleus is not."
+      },
+      nucleus: {
+        title: "Nucleus",
+        img: "assets/cell/nucleus.png",
+        imgCap: "Cutaway nucleus — envelope, pores, nucleolus",
+        animal: true, plant: true, prok: false,
+        feat: "Usually round; bounded by a double nuclear membrane with pores. Contains DNA (genetic material). Nucleolus inside (reference: makes ribosomes).",
+        func: "It stores the genetic material (DNA) and controls the activities of the cell by controlling which proteins are made. Some mature cells have no nucleus: red blood cells, xylem vessels, sieve-tube elements. In 1B, ‘contains DNA / genetic material and controls cell activities’ is the expected line — do not give that job to the nucleolus alone.",
+        exam: "Paper 1B EM labelling: the large round body with a double membrane is the nucleus — spelling counts. CE / 1A: mature RBC has no nucleus (and no chromosomes). Never tick ‘all plant cells have a nucleus’ if xylem vessels are possible. Prokaryotes have DNA but no true nucleus — do not confuse nucleoid with nucleus.",
+        trap: "Drawing a nucleus in a mature RBC. Saying prokaryotes have a nucleus because they have DNA. DNA is there; a true nucleus is not."
+      },
+      nucleolus: {
+        title: "Nucleolus",
+        img: "assets/cell/nucleus.png",
+        imgCap: "Dark body inside the nucleus = nucleolus",
+        animal: true, plant: true, prok: false,
+        feat: "Dense, rounded region inside the nucleus. No membrane of its own. Stains darkly on EM / light micrographs.",
+        func: "It makes ribosomes: ribosomal RNA is produced and assembled with ribosomal proteins here. Finished ribosome subunits leave through nuclear pores into the cytoplasm, where they synthesise proteins. In 1B: nucleolus → ribosomes → protein synthesis. Do not write that the nucleolus itself builds peptide hormones such as insulin — that assembly happens at ribosomes (often on RER for secreted proteins).",
+        exam: "Usually a labelling item on a nucleus cutaway or EM (spell nucleolus). Rarely a long explain. Common trap MC: insulin / peptide hormone is synthesised at the nucleolus — wrong; answer is ribosome. Do not credit ‘stores DNA’ or ‘controls the cell’ — those belong to the nucleus / chromatin.",
+        trap: "Saying the nucleolus ‘makes proteins / peptide hormones’ or ‘stores DNA / controls the cell’. DNA is in the chromatin; control is the nucleus as a whole; protein assembly is at ribosomes."
+      },
+      mitochondrion: {
+        title: "Mitochondrion",
+        img: "assets/cell/mitochondrion.png",
+        imgCap: "Cristae = folded inner membrane → more surface for ATP enzymes",
+        animal: true, plant: true, prok: false,
+        feat: "Rod-shaped; double membrane. Inner membrane is highly folded (cristae) — more surface for respiratory enzymes.",
+        func: "It is the main site of aerobic respiration, releasing energy as ATP for the cell’s work. Cells that need a lot of ATP (liver, secreting cells, villus epithelium doing active absorption) have many mitochondria. In 1B use the structure–function chain: folded inner membrane (cristae) → larger surface area → more respiratory enzymes → more ATP.",
+        exam: "Classic HKDSE 1A: which tissue has the greatest number of mitochondria? Inner wall of the small intestine (active absorption), not the air-sac wall (gas exchange by diffusion needs little ATP). Paper 1B explain questions reward the cristae → surface area → ATP link. Never write ‘the mitochondrion dies / is killed’ — it is an organelle, not an organism.",
+        trap: "Air sacs / capillaries look busy so students pick them. Diffusion there is passive. ‘The mitochondrion is killed / dies’ is 0 — it is not an organism."
+      },
+      ribosome: {
+        title: "Ribosome",
+        animal: true, plant: true, prok: true,
+        feat: "Tiny granules. No membrane. Free in cytoplasm or attached to rough ER.",
+        func: "It is the site of protein synthesis (translation): amino acids are joined to make polypeptides. Free ribosomes make proteins used inside the cell; ribosomes on rough ER make proteins for secretion or for membranes / lysosomes. In 1B: ‘ribosome — protein synthesis’ is enough unless the question asks about the secretory pathway.",
+        exam: "Prokaryote 1A: ribosomes are allowed; mitochondria and chloroplasts are not. ‘Which structures have no membrane?’ — ribosome is the usual answer. Peptide hormones (e.g. insulin) are synthesised at ribosomes, not at the nucleolus. Visible clearly only with an electron microscope.",
+        trap: "Putting ribosomes on the prokaryote ‘forbidden’ list. They are the protein factories bacteria still have."
+      },
+      rer: {
+        title: "Rough endoplasmic reticulum",
+        img: "assets/cell/rough-er.png",
+        imgCap: "Rough ER — membrane sacs with ribosomes",
+        animal: true, plant: true, prok: false,
+        feat: "Flattened membrane sacs with ribosomes on the surface.",
+        func: "Ribosomes on its surface synthesise proteins; the RER then helps fold and transport those proteins (especially proteins for secretion). Cells that secrete a lot of protein — salivary gland (amylase), pancreas (digestive enzymes / insulin) — have abundant RER. In 1B: RER → protein synthesis / processing for export — not ‘makes energy’.",
+        exam: "Paper 1B ‘relative amounts’ tables: high RER = secretory protein cell. EM around the nucleus is often RER. Secretory pathway: ribosome → RER → Golgi → vesicle → outside. Do not confuse with smooth ER (lipids) or mitochondrion (ATP).",
+        trap: "Calling all ER ‘for energy’. Energy is mitochondrion. Smooth ER is lipids, not proteins."
+      },
+      ser: {
+        title: "Smooth endoplasmic reticulum",
+        animal: true, plant: true, prok: false,
+        feat: "Membrane tubules without ribosomes.",
+        func: "It synthesises lipids (and is involved in detoxification in some cells). It has no ribosomes, so it is not the main site of protein synthesis. In 1B, contrast clearly with rough ER: SER = lipids; RER = proteins.",
+        exam: "Usually appears in a comparison table or as a distractor against rough ER. Rarely a long essay alone. If the question is about secreted enzymes or peptide hormones, choose RER / ribosome, not SER.",
+        trap: "Writing ‘smooth ER makes proteins’. No ribosomes → not the protein workshop."
+      },
+      golgi: {
+        title: "Golgi apparatus",
+        img: "assets/cell/golgi.png",
+        imgCap: "Golgi — stacked cisternae; vesicles pinch off",
+        animal: true, plant: true, prok: false,
+        feat: "Stack of flattened membrane sacs, often with vesicles pinching off.",
+        func: "It modifies and packages proteins that arrived from the RER, then pinches off vesicles for secretion or for lysosomes. In 1B, place it in the secretory pathway: ribosome → RER → Golgi → secretory vesicle → outside the cell. Do not say Golgi ‘makes the protein from scratch’.",
+        exam: "Favourite 1B story in pancreas / salivary gland cells. Label the stack of flattened sacs on an EM. Marks for packaging / modifying / secreting — not for synthesis of the polypeptide chain (that is ribosome / RER).",
+        trap: "Saying Golgi ‘makes the protein from scratch’. Synthesis is on ribosomes / RER. Golgi finishes and ships."
+      },
+      lysosome: {
+        title: "Lysosome",
+        animal: true, plant: false, prok: false,
+        feat: "Membrane-bound vesicle containing digestive enzymes. Common in animal cells.",
+        func: "It digests worn-out organelles and materials taken into the cell (e.g. by phagocytosis), using hydrolytic enzymes. The membrane keeps those enzymes from damaging the rest of the cytoplasm. In 1B: vesicle with digestive enzymes — break down unwanted material.",
+        exam: "Less common as a stand-alone HKDSE 1A than mitochondrion or nucleus. If labelled, it is the small vesicle with hydrolytic enzymes. Do not call the plant large central vacuole a lysosome — different structure and main roles at this level.",
+        trap: "Labelling the plant sap vacuole as a lysosome. Different jobs."
+      },
+      vacuole: {
+        title: "Vacuole",
+        img: "assets/cell/vacuole.png",
+        imgCap: "Large central vacuole (plant) — watery cell sap",
+        animal: true, plant: true, prok: false,
+        feat: "Animal: small, temporary, may be absent. Plant: large central vacuole with cell sap (water and dissolved substances).",
+        func: "In plant cells it stores water and dissolved substances (cell sap). When full, it presses the cytoplasm against the wall and helps keep the cell turgid — important for support in soft tissues / young seedlings. Animal vacuoles are small and temporary if present. In 1B for plants: storage + turgor / support — not ‘the wall is the vacuole’.",
+        exam: "CE comparison onion epidermis vs cheek cell: plant cell shows large vacuole + cellulose wall. Trap: ‘vacuole is differentially permeable’ — permeability control is the tonoplast / membrane system, not the cellulose wall. Do not draw a huge central vacuole in a typical animal cheek cell.",
+        trap: "Drawing a huge vacuole in a cheek cell. Saying the vacuole is cellulose."
+      },
+      centriole: {
+        title: "Centrioles",
+        animal: true, plant: false, prok: false,
+        feat: "A pair of short cylinders near the nucleus in animal cells. Not membrane-bound in the way mitochondria are.",
+        func: "They help form the spindle during animal cell division (mitosis / meiosis), so chromosomes can be separated. At this level, flowering-plant cells are treated as lacking centrioles. In 1B / MC: animal-only structure used in division — not for photosynthesis or energy.",
+        exam: "Typical 1A: which is found in animal cells only? Centrioles (vs chloroplast / cellulose wall for plants). Do not invent centrioles in palisade cells ‘so they can divide’.",
+        trap: "Inventing centrioles in palisade cells to ‘help them divide’. At this level, plant cells do not show centrioles."
+      },
+      wall: {
+        title: "Cell wall",
+        img: "assets/cell/cell-wall.jpg?v=2",
+        imgCap: "Cellulose wall — rigid, fully permeable; tissue honeycomb",
+        animal: false, plant: true, prok: true,
+        feat: "Plant wall is cellulose and rigid. Fully permeable to water and dissolved substances. Prokaryotes also have a wall — not cellulose.",
+        func: "In plants it gives the cell a fixed shape, mechanical support and protection, and stops the cell bursting when it takes up water (wall pressure balances turgor). It is fully permeable — it does not choose which dissolved substances enter; that is the membrane’s job. In 1B: support / shape / prevent bursting — and say cellulose for flowering plants. Bacterial walls are not cellulose.",
+        exam: "Highest-frequency CE / HKDSE trap: calling the wall differentially / selectively permeable. Correct: wall fully permeable; membrane differentially permeable. ‘All cells in a flowering plant have…’ → cell wall (even dead xylem vessels keep a wall). Cellulose maintains shape / is the structural component of the wall — iodine blue-black is starch, not cellulose.",
+        trap: "Cellulose stores energy / cellulose is starch / wall controls osmosis. Osmosis is about the membrane and water potential. Do not say flowering-plant cells ‘all have a membrane’ — xylem vessels are the counter-example."
+      },
+      chloroplast: {
+        title: "Chloroplast",
+        img: "assets/cell/chloroplast.png",
+        imgCap: "Grana / thylakoids in the stroma — site of light reactions",
+        animal: false, plant: true, prok: false,
+        feat: "Double membrane. Contains chlorophyll, which absorbs light. Inner membranes stacked (grana). In a living cell they sit in the cytoplasm, squeezed to the edge by the large vacuole — never floating in the cell sap.",
+        func: "It is the site of photosynthesis: chlorophyll absorbs light energy to make food (sugars). Only green plant cells have them — mesophyll and guard cells yes; ordinary leaf epidermis (except guard cells), onion epidermis, root and xylem no. In 1B: chloroplast / chlorophyll → absorb light → photosynthesis. Do not write that every plant cell has chloroplasts.",
+        exam: "CE classic: which cells have chloroplasts? Guard cells + leaf mesophyll — not onion epidermis. Root hair vs mesophyll: chlorophyll absent vs present. Never tick ‘all cells of a flowering plant have chloroplasts’. On diagrams, place chloroplasts in the cytoplasm rim, not inside the vacuole.",
+        trap: "Onion epidermis, root hair, and leaf epidermis (ordinary) drawn with green chloroplasts. Guard cells are the epidermal exception."
+      }
+    };
+
+    const QUIZ = [
+      {
+        seq: "1 · Microscope",
+        q: "A blood smear is already in focus under low power. To obtain a useful high-power view of the same cells, which steps are necessary? (1) turn the nosepiece to a higher-power objective (2) use the fine adjustment (3) adjust the condenser / brightness",
+        opts: [
+          { t: "(1) and (2) only", w: "Brightness / condenser usually needs a change as well when you raise power." },
+          { t: "(1) and (3) only", w: "Fine focus is needed after the nosepiece click; coarse focus at high power can crack the slide." },
+          { t: "(2) and (3) only", w: "You must change the objective. Fine focus alone does not raise magnification." },
+          { t: "(1), (2) and (3)", w: "Mark. Notes: nosepiece → fine focus; condenser/iris for a brighter, sharper high-power field." }
+        ],
+        a: 3
+      },
+      {
+        seq: "1 · Microscope",
+        q: "Iodine is added when making a temporary slide of onion epidermis mainly to",
+        opts: [
+          { t: "test whether the onion is storing starch in the epidermis", w: "Epidermal peel is not a starch test of the bulb." },
+          { t: "stop the cells bursting in water", w: "Cover slip / water drop are not this." },
+          { t: "make nuclei and other structures more distinct", w: "Mark. Notes: stain for contrast under LM." },
+          { t: "increase the magnification of the microscope", w: "Stain does not change magnification." }
+        ],
+        a: 2
+      },
+      {
+        seq: "1 · Microscope",
+        q: "Which comparison of the school light microscope and the electron microscope is incorrect?",
+        opts: [
+          { t: "LM uses light; EM uses an electron beam", w: "True." },
+          { t: "LM: lower magnification; EM: higher magnification", w: "True." },
+          { t: "LM can show living cells; EM specimens are prepared dead / in vacuum", w: "True — that is why Hooke never saw organelles." },
+          { t: "LM specimens must be dead; EM can show living cells", w: "Mark. This row is reversed. Living specimens are for LM." }
+        ],
+        a: 3
+      },
+      {
+        seq: "2 · Chemicals in the cell",
+        q: "Cellulose in plant cells",
+        opts: [
+          { t: "is the energy reserve of the cell", w: "That is starch (or glycogen in animals)." },
+          { t: "turns blue-black with iodine", w: "Iodine stains starch, not cellulose." },
+          { t: "helps maintain the shape of the cell", w: "Mark. Notes: structural component of the wall." },
+          { t: "regulates water movement into the cell", w: "That is the differentially permeable membrane." }
+        ],
+        a: 2
+      },
+      {
+        seq: "3 · Animal cell · cytoplasm",
+        q: "Which description of cytoplasm is incorrect?",
+        opts: [
+          { t: "It protects the nucleus", w: "Mark. The nuclear envelope (double membrane) contains the nucleus. Cytoplasm does not ‘protect’ it." },
+          { t: "It holds many organelles", w: "True — organelles are suspended in cytoplasm." },
+          { t: "It is a site of enzyme-catalysed reactions", w: "True — e.g. glycolysis in the cytosol." },
+          { t: "It allows movement and transport of materials", w: "True — cytoplasmic streaming / a medium for diffusion." }
+        ],
+        a: 0
+      },
+      {
+        seq: "3 · Animal cell · membrane",
+        q: "Which descriptions of a plant cell are correct? (1) nucleus contains genetic material (2) vacuole contains water and dissolved salts (3) cell wall is differentially permeable",
+        opts: [
+          { t: "(1) and (2) only", w: "Mark. (3) is the trap — the wall is fully permeable." },
+          { t: "(1) and (3) only", w: "Wall is not differentially permeable." },
+          { t: "(2) and (3) only", w: "Wall is not differentially permeable." },
+          { t: "all three", w: "Students who mix wall with membrane pick this." }
+        ],
+        a: 0
+      },
+      {
+        seq: "3 · Animal cell · membrane",
+        q: "Across the fluid-mosaic membrane: sodium ions need a protein path; a small lipid-soluble molecule (e.g. alcohol) can cross the phospholipid bilayer. Which pairing is correct?",
+        opts: [
+          { t: "Na⁺ through the bilayer; alcohol through a protein channel", w: "Reversed. Ions are charged; they need proteins. Alcohol is lipid-soluble." },
+          { t: "both through the bilayer only", w: "Na⁺ cannot freely cross the hydrophobic core." },
+          { t: "both only through protein channels", w: "Alcohol can dissolve in the bilayer." },
+          { t: "Na⁺ through a protein path; alcohol through the bilayer", w: "Mark. Charged / polar solutes need membrane proteins; lipid-soluble ones cross the bilayer." }
+        ],
+        a: 3
+      },
+      {
+        seq: "3 · Animal cell · ribosome",
+        q: "Insulin is a peptide hormone. It is synthesised at the",
+        opts: [
+          { t: "nucleolus", w: "Nucleolus: rRNA / ribosome assembly, not peptide-bond formation." },
+          { t: "nucleus", w: "Nucleus stores the gene; translation is not here." },
+          { t: "ribosome", w: "Mark. Peptides are assembled at ribosomes (then RER / Golgi for a secreted hormone)." },
+          { t: "smooth endoplasmic reticulum", w: "SER: lipids / detox, not peptide synthesis." }
+        ],
+        a: 2
+      },
+      {
+        seq: "3 · Animal cell · size",
+        q: "Arrange in ascending order of size",
+        opts: [
+          { t: "nucleus → mitochondrion → chloroplast → ribosome", w: "Largest first. Ribosome is smallest (no membrane; needs EM)." },
+          { t: "nucleus → chloroplast → mitochondrion → ribosome", w: "Still largest first." },
+          { t: "ribosome → mitochondrion → chloroplast → nucleus", w: "Mark. Ribosome << mitochondrion < chloroplast < nucleus (typical HKDSE order)." },
+          { t: "ribosome → chloroplast → mitochondrion → nucleus", w: "Chloroplast is usually larger than a mitochondrion." }
+        ],
+        a: 2
+      },
+      {
+        seq: "3 · Animal cell · mitochondrion",
+        tag: "HKDSE 2012 pattern",
+        q: "Which tissue type has the greatest number of mitochondria?",
+        opts: [
+          { t: "wall of an air sac", w: "Thin for diffusion; little ATP. Highest-frequency HKDSE cell trap." },
+          { t: "wall of a capillary", w: "Exchange by diffusion." },
+          { t: "inner wall of a lymph vessel", w: "Not the high-ATP epithelium." },
+          { t: "inner wall of the small intestine", w: "Mark. Active absorption needs ATP." }
+        ],
+        a: 3
+      },
+      {
+        seq: "4 · Plant cell",
+        q: "Which plant cells possess chloroplasts?",
+        opts: [
+          { t: "guard cells and leaf mesophyll cells only", w: "Mark. Onion epidermis is the usual extra that is not green." },
+          { t: "guard cells and onion epidermal cells only", w: "Onion epidermis has no chloroplasts." },
+          { t: "leaf mesophyll and onion epidermal cells only", w: "Misses guard cells; wrongly includes onion epidermis." },
+          { t: "all three", w: "Onion epidermis has a wall and vacuole, not chloroplasts." }
+        ],
+        a: 0
+      },
+      {
+        seq: "4 · Plant cell",
+        q: "Human red blood cells and onion epidermal cells are similar in that they both",
+        opts: [
+          { t: "possess cellulose cell walls", w: "Only the onion cell has a wall." },
+          { t: "possess large central vacuoles", w: "RBC does not." },
+          { t: "have nuclei", w: "Mature RBC has no nucleus; onion cells do." },
+          { t: "have no chloroplasts", w: "Mark. That is the CE comparison they reuse." }
+        ],
+        a: 3
+      },
+      {
+        seq: "4 · Plant cell",
+        q: "All cells in a flowering plant have",
+        opts: [
+          { t: "a nucleus", w: "Mature xylem vessels and mature sieve-tube elements have no nucleus." },
+          { t: "a cell wall", w: "Mark. Every plant cell has a wall (cellulose). Even dead xylem vessels keep their walls." },
+          { t: "a cell membrane", w: "Trap. Mature xylem vessels are dead — no living protoplast / membrane. Do not choose membrane for ‘all’ flowering-plant cells." },
+          { t: "chloroplasts", w: "Roots and most epidermis (except guard cells) do not." }
+        ],
+        a: 1
+      },
+      {
+        seq: "4 · Plant cell · support",
+        q: "A herbaceous stem stays upright mainly because of",
+        opts: [
+          { t: "turgid cells pressing against fully permeable walls", w: "Mark. Turgor + wall. The membrane is not a rigid skeleton." },
+          { t: "woody (lignified) walls in every cell", w: "Herbaceous organs are not woody throughout; lignin is for xylem / sclerenchyma." },
+          { t: "the rigidity of the cell membrane", w: "Membrane is a thin, flexible bilayer — it does not hold the plant up." },
+          { t: "turgor plus a rigid cell membrane", w: "Do not credit membrane rigidity." }
+        ],
+        a: 0
+      },
+      {
+        seq: "5 · Prokaryote",
+        tag: "HKDSE 2020 pattern",
+        q: "Which set can be found in a prokaryotic cell?",
+        opts: [
+          { t: "cell wall, ribosome, cell membrane", w: "Mark. Wall (not cellulose), ribosomes, membrane. No true nucleus, no mitochondria, no chloroplast." },
+          { t: "ribosome, cell membrane, chloroplast", w: "No chloroplast." },
+          { t: "cell wall, cell membrane, mitochondrion", w: "No mitochondrion." },
+          { t: "cell membrane, chloroplast, mitochondrion", w: "Two membrane-bound organelles that prokaryotes lack." }
+        ],
+        a: 0
+      },
+      {
+        seq: "5 · Prokaryote",
+        q: "Which compounds occur in both eukaryotic and prokaryotic cells? (1) DNA (2) cellulose (3) phospholipid",
+        opts: [
+          { t: "(1) and (2) only", w: "Cellulose is the plant wall, not a bacterial wall and not in animal cells." },
+          { t: "(1) and (3) only", w: "Mark. Both have DNA and a phospholipid membrane. Cellulose is not universal." },
+          { t: "(2) and (3) only", w: "Misses DNA; wrongly includes cellulose." },
+          { t: "all three", w: "Cellulose is the trap." }
+        ],
+        a: 1
+      },
+      {
+        seq: "6 · Organisation",
+        q: "A shoot is best classified as a",
+        opts: [
+          { t: "cell", w: "A shoot is many organs." },
+          { t: "tissue", w: "A tissue is one cell type (e.g. mesophyll tissue, not ‘mesophyll cells’ as a tissue name)." },
+          { t: "organ", w: "A leaf is an organ; a shoot is stem + leaves + buds." },
+          { t: "system", w: "Mark. CE: shoot is a system, not an organ." }
+        ],
+        a: 3
+      }
+    ];
+
+    const TRAPS = [
+      {
+        q: "A student writes: “All plant cells contain chloroplasts.”",
+        opts: ["True — every plant cell photosynthesises.", "False — onion epidermis and most root cells have none.", "True for flowering plants only."],
+        a: 1,
+        remark: "Not all plant cells contain chloroplast (e.g. epidermal cells of onion). [CE 91-1-(a)-(i)]"
+      },
+      {
+        q: "“Animal cells have no vacuoles.”",
+        opts: ["True — vacuoles are a plant-only structure.", "False — both can have vacuoles; plant ones are usually large and central.", "True except for red blood cells."],
+        a: 1,
+        remark: "Vacuoles are present in both plant and animal cells, though in plant cells they are usually larger and central in position. [CE 90-1-(a)-(i), (ii)]"
+      },
+      {
+        q: "On a low-power drawing, a student labels the green layer “mesophyll cells”.",
+        opts: ["Correct — tissue and cells are the same word in Biology.", "Better as mesophyll tissue — a tissue is a group of similar cells.", "Correct only if chloroplasts are shown."],
+        a: 1,
+        remark: "Understanding of the term “tissue”, e.g. mesophyll tissue should NOT be named as ‘mesophyll cells’. [CE 2000-1-(b)-(i)]"
+      },
+      {
+        q: "“A shoot is an organ.”",
+        opts: ["True — like a leaf or a heart.", "False — a shoot is a system (stem + leaves + buds working together).", "True only in woody plants."],
+        a: 1,
+        remark: "Shoot is a system (NOT an organ). [CE 2004-1-(b)-(i)-(2)]"
+      },
+      {
+        q: "“The cell wall is differentially / selectively permeable.”",
+        opts: ["True — that is how osmosis happens.", "False — the wall is fully permeable; the membrane controls entry and exit.", "True for cellulose, false for lignin."],
+        a: 1,
+        remark: "The wall is fully permeable. The membrane is differentially permeable and controls movement of substances. (Mixing wall with membrane is the highest-frequency CE / HKDSE cell trap.)"
+      },
+      {
+        q: "“Urea leaves a kidney tubule by osmosis.”",
+        opts: ["True — all dissolved substances move by osmosis.", "False — osmosis is net movement of water only; urea moves by diffusion.", "True if the tubule has a cell wall."],
+        a: 1,
+        remark: "Urea leaves the kidney tubule by diffusion (NOT osmosis). Osmosis involves movement of water molecules only; diffusion involves movement of all kind of molecules. [CE 96-3-(b)-(iii)-(2)]"
+      },
+      {
+        q: "“The plant became plasmolysed in sucrose solution.”",
+        opts: ["Acceptable wording.", "Say the cells became plasmolysed / flaccid — not the whole plant.", "Say the plant became turgid."],
+        a: 1,
+        remark: "The terms flaccid, plasmolysed (and turgid) should only be used to describe the condition of the cells (NOT to describe the plant). [CE 97-3-(b)-(iii)]"
+      },
+      {
+        q: "An animal cell in concentrated solution “plasmolyses”.",
+        opts: ["True — same word as for plants.", "False — plant cells may plasmolyse; animal cells shrink (crenation) and may burst in dilute solution.", "True if it has a large vacuole."],
+        a: 1,
+        remark: "Plant cells may plasmolyse and become flaccid, animal cells do NOT. When put into hypertonic solution, animal cells shrink [crenation]. [CE 91-1-(a)-(iv)]"
+      },
+      {
+        q: "A boiled potato chip in distilled water: “sucrose solution diffuses out because the cells are still selectively permeable.”",
+        opts: ["True — boiling only kills the cytoplasm.", "False — boiling makes the tissue freely permeable; sucrose molecules (not ‘sucrose solution’) can diffuse out.", "True if the peel is left on."],
+        a: 1,
+        remark: "Boiled potato was no longer selectively permeable, so the tissue became freely permeable, and therefore sucrose molecules (NOT sucrose solution) diffuse out to the distilled water. [CE 96-4-(a)-(iv)]"
+      },
+      {
+        q: "“Red blood cells are biconcave so they can carry more oxygen.”",
+        opts: ["True — more volume means more haemoglobin.", "False — the shape gives a large surface area to volume ratio for diffusion of gases, not ‘more cargo space’.", "True because they have no nucleus."],
+        a: 1,
+        remark: "RBC has a biconcave shape to provide a relatively large surface area to facilitate the diffusion of gases (NOT to carry more oxygen). [CE 96-1-(b)-(iii)]"
+      },
+      {
+        q: "“A villus is bound by a cell wall.”",
+        opts: ["True — it is a plant-like absorbing surface.", "False — it is bound by a thin epithelium (animal cells; no cellulose wall).", "True if microvilli are present."],
+        a: 1,
+        remark: "The villus is bound by a thin layer of epithelial cell (epithelium). (NOT cell wall, cell membrane). [CE 87-1-(b)-(i)-(2)]"
+      },
+      {
+        q: "“The cell wall of an artery is thick to pump blood.”",
+        opts: ["True — muscle in the wall creates pressure.", "Two errors: it is the wall (not cell wall), and it withstands pressure — it does not create the pressure.", "True for veins only."],
+        a: 1,
+        remark: "The wall (NOT the cell wall) of the blood vessel is thick. The thick elastic wall withstands / resists high blood pressure, but does NOT create or maintain it, NOR helps to pump the blood. [CE 89 / 92 / 96]"
+      },
+      {
+        q: "A photomicrograph of onion epidermis is supplied. A student draws chloroplasts “because it is a plant cell”.",
+        opts: ["Correct — plant cells always show chloroplasts under LM.", "Wrong — answer from the photo: onion epidermal cells happen to lack chloroplasts.", "Correct if iodine was used."],
+        a: 1,
+        remark: "With reference to the photomicrographs supplied, the WBC happens to be circular (NOT irregular / amoeboid as in the textbook), and the onion epidermal cell, which are plant cells, happen to lack chloroplast. [CE 91-1-(a)-(i)]"
+      },
+      {
+        q: "“Chloroplast and chlorophyll are the same thing.”",
+        opts: ["True — two names for the green pigment.", "False — the chloroplast is the organelle; chlorophyll is the pigment inside it.", "True at CE / HKDSE level."],
+        a: 1,
+        remark: "Chloroplast contains chlorophyll (the pigment). [CE 92-3-(a)-(i)]"
+      },
+      {
+        q: "“Hooke discovered mitochondria with his light microscope.”",
+        opts: ["True — that is how cell theory started.", "False — he saw cork boxes with a light microscope. Organelle ultrastructure needs an electron microscope.", "True for chloroplasts only."],
+        a: 1,
+        remark: "Hooke observed cork cells with a light microscope; that led toward cell theory. Fine structure of organelles became visible only with the electron microscope."
+      },
+      {
+        q: "“The inner wall of an air sac has the most mitochondria because gas exchange is busy work.”",
+        opts: ["True — busy cells need more ATP.", "False — diffusion there is passive. The inner wall of the small intestine needs ATP for active uptake.", "True for capillaries too."],
+        a: 1,
+        remark: "HKDSE 2012 pattern: the tissue with the greatest number of mitochondria is the inner wall of the small intestine, not the air-sac wall. Thin walls are for short diffusion distance, not for ATP."
+      },
+      {
+        q: "“Cytoplasm protects the nucleus.”",
+        opts: ["True — that is why the nucleus sits in cytoplasm.", "False — the nuclear envelope contains the nucleus; cytoplasm does not protect it.", "True only in plant cells."],
+        a: 1,
+        remark: "The nuclear envelope (double membrane) contains the nucleus. Cytoplasm holds organelles and is a site of reactions; it does not ‘protect’ the nucleus."
+      },
+      {
+        q: "“A bacterium has no cell wall.”",
+        opts: ["True — only plants have walls.", "False — bacteria have a wall (not cellulose). The error is writing ‘no wall’ instead of ‘no cellulose wall / no distinct nucleus’.", "True if it is Gram-negative."],
+        a: 1,
+        remark: "Bacteria have a wall (not cellulose). Compare palisade vs bacterium by distinct nucleus and membrane-bound organelles, not by ‘has wall / no wall’."
+      },
+      {
+        q: "“All cells in a flowering plant have a cell membrane.”",
+        opts: ["True — every cell needs a membrane.", "False — mature xylem vessels are dead: they have a wall but no living membrane. The structure all flowering-plant cells share is the cell wall.", "True; the wall is optional."],
+        a: 1,
+        remark: "‘All cells in a flowering plant have…’ → cell wall. Membrane fails because mature xylem vessels have no living contents. (Living plant cells do have membranes — the word ‘all’ is the trap.)"
+      },
+      {
+        q: "“Bacteria have no nucleus; palisade cells have a nucleus.” (full mark comparison)",
+        opts: ["Enough at HKDSE.", "Need distinct / true nucleus (nuclear membrane) vs none — not merely ‘nucleus / no nucleus’.", "Write ‘no DNA’ for bacteria."],
+        a: 1,
+        remark: "Write ‘no distinct nucleus’ / ‘distinct nucleus’ (nuclear membrane), not merely ‘nucleus / no nucleus’. Do not compare cell size or ‘components of the cell wall’ when the question asks cellular organisation."
+      }
+    ];
+
+    const $ = id => document.getElementById(id);
+    let mode = "animal";
+    let selected = null;
+
+    const CHIP_ORDER = [
+      "membrane","microvillus","wall","cytoplasm","nucleus","nucleolus","mitochondrion",
+      "chloroplast","rer","ser","golgi","ribosome","lysosome","vacuole","centriole","nucleoid"
+    ];
+
+    function presentInMode(d) {
+      if (mode === "animal") return d.animal;
+      if (mode === "plant") return d.plant;
+      return d.prok;
+    }
+
+    function rebuildChips() {
+      const row = $("chipRow");
+      row.innerHTML = CHIP_ORDER.filter(id => ORG[id] && presentInMode(ORG[id])).map(id =>
+        `<button type="button" data-org="${id}">${ORG[id].title.replace(/ —.*$/, "")}</button>`
+      ).join("");
+    }
+
+    function setMode(next) {
+      mode = next;
+      selected = null;
+      $("boxAnimal").classList.toggle("off", next !== "animal");
+      $("boxPlant").classList.toggle("off", next !== "plant");
+      $("boxProk").classList.toggle("off", next !== "prok");
+      $("btnAnimal").className = next === "animal" ? "on-animal" : "";
+      $("btnPlant").className = next === "plant" ? "on-plant" : "";
+      $("btnProk").className = next === "prok" ? "on-prok" : "";
+      $("cellCaption").textContent =
+        next === "animal" ? "absorptive animal cell — click microvilli, nucleus, mitochondria…" :
+        next === "plant" ? "plant cell — wall outside; chloroplasts in cytoplasm, not in the vacuole" :
+        "prokaryote diagram — under construction";
+      $("hintLine").textContent =
+        next === "prok"
+          ? "This part is under construction. Switch to Animal or Plant to explore organelles."
+          : "Click a coloured organelle on the diagram, or use the chips. Amber outline = selected. Teaching art, not a TEM.";
+      $("placeholder").hidden = false;
+      $("info").hidden = true;
+      $("detailFig").hidden = true;
+      document.querySelectorAll(".hit").forEach(el => el.classList.remove("on"));
+      if (next === "prok") {
+        $("chipRow").innerHTML = "";
+        $("placeholder").innerHTML = "<b>Prokaryote under construction</b>Come back when the diagram is uploaded. For now use Animal or Plant.";
+      } else {
+        $("placeholder").innerHTML = "<b>Select a sub-cellular structure</b>Click any labelled part. The panel fills with the notes wording, how that part is examined, and the line that usually scores 0.";
+        rebuildChips();
+      }
+    }
+
+    function show(id) {
+      const d = ORG[id];
+      if (!d || !presentInMode(d)) return;
+      selected = id;
+      document.querySelectorAll(".hit").forEach(el => {
+        el.classList.toggle("on", el.dataset.org === id);
+      });
+      document.querySelectorAll("#chipRow button").forEach(b => {
+        b.classList.toggle("on", b.dataset.org === id);
+      });
+      $("placeholder").hidden = true;
+      $("info").hidden = false;
+      $("title").textContent = d.title;
+      const pills = [
+        ["Animal", d.animal],
+        ["Plant", d.plant],
+        ["Prokaryote", d.prok]
+      ].map(([n, yes]) => `<span class="pill ${yes ? "yes" : "no"}">${n}: ${yes ? "present" : "absent"}</span>`).join("");
+      $("pills").innerHTML = pills;
+      const fig = $("detailFig");
+      if (d.img) {
+        $("detailImg").src = d.img;
+        $("detailImg").alt = d.title;
+        $("detailCap").textContent = d.imgCap || "";
+        fig.hidden = false;
+      } else {
+        fig.hidden = true;
+      }
+      $("feat").textContent = d.feat;
+      $("func").textContent = d.func;
+      $("exam").textContent = d.exam;
+      $("trap").textContent = d.trap;
+    }
+
+    document.querySelectorAll(".hit").forEach(el => {
+      el.addEventListener("click", e => {
+        e.stopPropagation();
+        show(el.dataset.org);
+      });
+    });
+    $("chipRow").addEventListener("click", e => {
+      const btn = e.target.closest("button[data-org]");
+      if (btn) show(btn.dataset.org);
+    });
+    $("btnAnimal").onclick = () => setMode("animal");
+    $("btnPlant").onclick = () => setMode("plant");
+    $("btnProk").onclick = () => setMode("prok");
+    rebuildChips();
+
+    document.querySelectorAll(".tabs button").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("on"));
+        btn.classList.add("on");
+        ["overview","compare","check","mistakes"].forEach(id => { $(id).hidden = id !== btn.dataset.tab; });
+      };
+    });
+
+    $("quiz").innerHTML = QUIZ.map((item, i) => `
+      <div class="q" data-i="${i}">
+        <div class="q-meta">
+          <span>${item.seq}</span>
+          ${item.tag ? `<span>${item.tag}</span>` : ""}
+        </div>
+        <p><b>Q${i + 1}. ${item.q}</b></p>
+        ${item.opts.map((o, j) => `<button type="button" data-j="${j}">${"ABCD"[j]}.  ${o.t}</button>`).join("")}
+        <div class="mark"></div>
+      </div>`).join("");
+
+    function quizTrapLine(item) {
+      if (item.trap) return item.trap;
+      const wrong = item.opts.find((o, k) => k !== item.a);
+      return wrong ? ("The usual trap: " + wrong.t) : item.opts[item.a].w;
+    }
+
+    $("quiz").addEventListener("click", e => {
+      const btn = e.target.closest("button[data-j]");
+      if (!btn) return;
+      const box = btn.closest(".q");
+      if (box.dataset.done === "1") return;
+      const item = QUIZ[+box.dataset.i];
+      const j = +btn.dataset.j;
+      box.querySelectorAll("button").forEach(b => {
+        b.classList.remove("picked", "ok-opt", "bad-opt");
+      });
+      btn.classList.add("picked");
+      box.querySelectorAll("button").forEach(b => {
+        const jj = +b.dataset.j;
+        if (jj === item.a) b.classList.add("ok-opt");
+        else if (jj === j && j !== item.a) b.classList.add("bad-opt");
+      });
+      const mark = box.querySelector(".mark");
+      mark.style.display = "block";
+      if (j === item.a) {
+        mark.className = "mark ok";
+        mark.innerHTML = "<b>Well done — that trap did not catch you.</b> " + quizTrapLine(item) + " — " + item.opts[j].w;
+      } else {
+        mark.className = "mark warn";
+        mark.innerHTML = "<b>This trap caught you.</b> " + item.opts[j].w + " Correct: <b>" + "ABCD"[item.a] + "</b>.";
+      }
+      box.dataset.done = "1";
+    });
+
+    $("trapList").innerHTML = TRAPS.map((item, i) => `
+      <div class="q" data-ti="${i}">
+        <div class="q-meta"><span>Trap ${i + 1} / ${TRAPS.length}</span></div>
+        <p><b>${item.q}</b></p>
+        <div class="trap-opts">
+          ${item.opts.map((t, j) => `<button type="button" data-tj="${j}">${"ABCD"[j]}.  ${t}</button>`).join("")}
+        </div>
+        <div class="remark" data-remark></div>
+      </div>`).join("");
+
+    $("trapList").addEventListener("click", e => {
+      const btn = e.target.closest("button[data-tj]");
+      if (!btn) return;
+      const box = btn.closest(".q");
+      if (box.dataset.done === "1") return;
+      const i = +box.dataset.ti;
+      const item = TRAPS[i];
+      const j = +btn.dataset.tj;
+      box.querySelectorAll("button[data-tj]").forEach(b => {
+        b.classList.remove("picked", "ok-opt", "bad-opt");
+        const jj = +b.dataset.tj;
+        if (jj === item.a) b.classList.add("ok-opt");
+        else if (jj === j && j !== item.a) b.classList.add("bad-opt");
+      });
+      btn.classList.add("picked");
+      const rem = box.querySelector("[data-remark]");
+      rem.classList.add("show");
+      if (j === item.a) {
+        rem.classList.add("escaped");
+        rem.innerHTML = "<b>Well done — that trap did not catch you.</b> " + item.remark;
+      } else {
+        rem.classList.remove("escaped");
+        rem.innerHTML = "<b>This trap caught you.</b> " + item.remark + " Correct option: <b>" + "ABCD"[item.a] + "</b>.";
+      }
+      box.dataset.done = "1";
+    });
+  </script>
+</body>
+</html>
