@@ -487,7 +487,7 @@
 
   <footer>
     <div class="wrap">
-      <p><b>計劃：</b>地球生物基因組計劃香港：蝴蝶與下一代科學家（R4002-24）。<a href="http://biodiversity.sls.cuhk.edu.hk/Butterfly/" target="_blank" rel="noopener">計劃網站</a>。<b>來源與授權：</b>物種名單、中英文名及分科按環保協進會《50種常見蝴蝶速查手冊》的公開摺頁對照整理。辨識說明為重新撰寫，供學生參考。能對上的種類照片來自<a href="https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/butterflies" target="_blank" rel="noopener">香港濕地公園「蝴蝶」圖庫</a>；其餘來自 Wikimedia Commons（CC BY / CC BY-SA）。點擊照片可前往原頁。</p>
+      <p><b>計劃：</b>地球生物基因組計劃香港：蝴蝶與下一代科學家（R4002-24）。<a href="http://biodiversity.sls.cuhk.edu.hk/Butterfly/" target="_blank" rel="noopener">計劃網站</a>。<b>來源與授權：</b>物種名單、中英文名及分科按環保協進會《50種常見蝴蝶速查手冊》的公開摺頁對照整理。辨識說明為重新撰寫，供學生參考。能對上的種類照片來自<a href="https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/butterflies" target="_blank" rel="noopener">香港濕地公園「蝴蝶」圖庫</a>；玉斑鳳蝶照片來自<a href="https://www.lcsd.gov.hk/tc/green/butterfly/swallowtails.html" target="_blank" rel="noopener">康文署「市區公園的鳳蝶」</a>；其餘來自 Wikimedia Commons（CC BY / CC BY-SA）。點擊照片可前往原頁。</p>
       <p>本筆記不是該手冊的掃描或重製。建議同時使用正版摺疊手冊帶到校園對照。</p>
       <p>觀察地點：聖士提反女子中學校舍。正式調查數據填計劃調查表。金色種按 <a href="https://www.inaturalist.org/projects/biodiversity-in-ssgc" target="_blank" rel="noopener">iNaturalist Biodiversity in SSGC</a> 整理，方便辨識。</p>
     </div>
@@ -637,12 +637,18 @@
       "東方菜粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/28-Indian_Cabbage_White.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/pieris-canidia"]
     };
 
+    const lcsdPhotos = {
+      "玉斑鳳蝶": ["https://www.lcsd.gov.hk/en/green/butterfly/common/graphics/pic_07_09.jpg", "https://www.lcsd.gov.hk/tc/green/butterfly/swallowtails.html"]
+    };
+
     function photoUrl(d) {
       if (wetlandPhotos[d.zh]) return wetlandPhotos[d.zh][0];
+      if (lcsdPhotos[d.zh]) return lcsdPhotos[d.zh][0];
       return "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/" + encodeURIComponent(d.photo) + "&width=900";
     }
     function filePage(d) {
       if (wetlandPhotos[d.zh]) return wetlandPhotos[d.zh][1];
+      if (lcsdPhotos[d.zh]) return lcsdPhotos[d.zh][1];
       return "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(d.photo.replace(/ /g, "_"));
     }
     function wikiFallback(latin) {
@@ -683,7 +689,7 @@
             </div>
             <div class="meta-row"><span><b>易混</b> ${d.similar}</span></div>
             <div class="meta-row"><span><b>野外提示</b> ${d.tip}</span></div>
-            <div class="meta-row"><span>照片：${wetlandPhotos[d.zh] ? "香港濕地公園" : d.credit}</span></div>
+            <div class="meta-row"><span>照片：${wetlandPhotos[d.zh] ? "香港濕地公園" : lcsdPhotos[d.zh] ? "康樂及文化事務署" : d.credit}</span></div>
           </div>
         </article>
       `).join("");
