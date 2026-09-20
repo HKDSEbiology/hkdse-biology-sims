@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>聖士提反女子中學｜地球生物基因組計劃香港 觀蝶筆記</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1c2416;
+      --muted: #5c6554;
+      --paper: #f6f1e4;
+      --card: #fffdf7;
+      --line: #d9d0b8;
+      --green: #2f5d32;
+      --leaf: #4a7c46;
+      --amber: #c45c1a;
+      --gold: #b45309;
+      --goldbg: #fff4e0;
+      --sky: #2f5d32;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: var(--sky); }
+    header.hero {
+      background: #24351f;
+      color: #f7f0dc;
+      padding: 48px 20px 36px;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; }
+    .kicker {
+      letter-spacing: .28em;
+      font-size: 12px;
+      color: #d7c48a;
+      margin: 0 0 10px;
+    }
+    h1 {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.25;
+      margin: 0 0 12px;
+    }
+    .lede { max-width: 720px; color: #e8dfc8; margin: 0 0 22px; }
+    .hero-meta {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .chip {
+      border: 1px solid #6d7d5c;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: #efe6cf;
+    }
+    nav.sticky {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(246, 241, 228, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+    nav.sticky .wrap {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      padding: 10px 20px;
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 6px 8px;
+    }
+    section { padding: 42px 20px; }
+    h2 {
+      font-family: "Noto Serif TC", serif;
+      font-size: 28px;
+      margin: 0 0 8px;
+      color: var(--green);
+    }
+    h3 { margin: 22px 0 8px; color: var(--green); }
+    .sub { color: var(--muted); margin: 0 0 22px; }
+    .grid-2, .grid-3 {
+      display: grid; gap: 14px;
+    }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .note, .family, .pair, .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .note, .family, .pair { padding: 16px 18px; }
+    .family h3, .pair h3 { margin-top: 0; }
+    .family small, .pair small { color: var(--muted); }
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px;
+    }
+    .filters button, .search {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+    .filters button.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+    .filters button.ssgc-btn {
+      border-color: #e0b36a;
+      color: var(--gold);
+      background: var(--goldbg);
+    }
+    .filters button.ssgc-btn.active {
+      background: var(--gold);
+      color: #fff;
+      border-color: var(--gold);
+    }
+    .search { min-width: min(100%, 280px); }
+    .count { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+    .card {
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+    .card img {
+      width: 100%; height: 100%; min-height: 230px;
+      object-fit: cover; background: #ece6d4;
+    }
+    .card .body { padding: 16px 18px 18px; }
+    .names { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .names h3 { margin: 0; font-size: 22px; }
+    .latin { font-style: italic; color: var(--muted); font-size: 14px; }
+    .en { color: var(--amber); font-weight: 700; font-size: 14px; }
+    .badge {
+      background: #e8f0df;
+      color: var(--green);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge.ssgc {
+      background: var(--goldbg);
+      color: var(--gold);
+    }
+    .card.ssgc-star {
+      border-color: #e0b36a;
+      outline: 2px solid #f3d7a0;
+    }
+    .callout {
+      background: #fff4e0;
+      border: 1px solid #e0b36a;
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    table.protocol {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      font-size: 14px;
+    }
+    table.protocol th, table.protocol td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+    table.protocol th { background: #e8f0df; }
+    .keys { margin: 12px 0 0; padding: 0; list-style: none; }
+    .keys li {
+      position: relative;
+      padding: 4px 0 4px 18px;
+    }
+    .keys li::before {
+      content: "";
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--amber);
+      position: absolute; left: 0; top: 11px;
+    }
+    .meta-row {
+      display: flex; flex-wrap: wrap; gap: 8px 16px;
+      margin-top: 12px; font-size: 14px; color: var(--muted);
+    }
+    .meta-row b { color: var(--ink); }
+    .list { columns: 2; gap: 24px; }
+    .list ol { margin: 0; padding-left: 22px; }
+    footer {
+      padding: 28px 20px 48px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--line);
+    }
+    .quiz label { display: block; margin: 6px 0; cursor: pointer; }
+    .quiz .q { margin-bottom: 18px; }
+    .quiz label.mark-ans {
+      background: #e8f0df;
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .quiz label.mark-wrong { color: #9b2c2c; }
+    #result { margin-top: 16px; }
+    #result ol { margin: 8px 0 0; padding-left: 22px; }
+    #result li { margin: 4px 0; }
+    #result .ok { color: var(--green); font-weight: 700; }
+    #result .no { color: #9b2c2c; }
+    .hidden { display: none !important; }
+    @media (max-width: 800px) {
+      .card { grid-template-columns: 1fr; }
+      .card img { min-height: 200px; max-height: 240px; }
+      .list { columns: 1; }
+    }
+    @media print {
+      nav.sticky, .filters, .search, .quiz button { display: none !important; }
+      .card { break-inside: avoid; grid-template-columns: 180px 1fr; }
+      header.hero { background: #fff; color: #000; }
+      .lede, .chip { color: #222; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="kicker">SSGC · EARTHBIOGENOME PROJECT HONG KONG · BUTTERFLY SURVEY 2026–27</p>
+      <h1>聖士提反女子中學觀蝶筆記</h1>
+      <p class="lede">地球生物基因組計劃香港：蝴蝶與下一代科學家（R4002-24）。同學化身蝴蝶調查員，在校舍按觀察指南記錄種類與數量。金色標籤是校舍過往公開紀錄，方便先認；正式數據請填計劃調查表。</p>
+      <div class="hero-meta">
+        <span class="chip">建議週五 12:30–13:30</span>
+        <span class="chip">校舍步行約 30 分鐘</span>
+        <span class="chip">拍照＋填計劃調查表</span>
+        <span class="chip">2026 年 10 月至 2027 年 7 月</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sticky">
+    <div class="wrap">
+      <a href="#project">計劃簡介</a>
+      <a href="#guide">辨識指引</a>
+      <a href="#howto">用法</a>
+      <a href="#families">分科</a>
+      <a href="#lookalikes">易混種</a>
+      <a href="#species">物種卡</a>
+      <a href="#quiz">自測</a>
+    </div>
+  </nav>
+
+  <section id="project">
+    <div class="wrap">
+      <h2>地球生物基因組計劃香港：蝴蝶與下一代科學家</h2>
+      <p class="sub">EarthBioGenome Project Hong Kong: Butterflies and the Next Generation of Scientists（R4002-24）。由中大統籌，聯同其餘七所大學、漁農自然護理署、鳳園蝴蝶保護區及多所中學。聖士提反於 2026–27 學年加入校園調查。計劃網站：<a href="http://biodiversity.sls.cuhk.edu.hk/Butterfly/" target="_blank" rel="noopener">biodiversity.sls.cuhk.edu.hk/Butterfly</a></p>
+      <div class="callout">
+        <p><b>聖士提反女子中學</b>　列堤頓道 2 號，中環半山。調查地點是<strong>自己的校舍</strong>（不是鳳園）。同學是蝴蝶調查員：記錄種類（richness）與隻數（abundance），並拍照。</p>
+        <p><b>時間：</b>建議逢星期五 12:30–13:30；若需改期，須在當日 06:00–18:00 內完成。<b>每次步行約 30 分鐘。</b>調查期：2026 年 10 月至 2027 年 7 月。</p>
+        <p><b>正式記錄：</b>填寫計劃調查表（種類、數量、天氣、植物、溫度、濕度、GPS，並標示確定程度）。金色標籤只是校舍過往公開紀錄，方便認蝶。</p>
+      </div>
+      <div class="grid-3">
+        <article class="note">
+          <h3>物種豐富度 Species richness</h3>
+          <p>某範圍內<strong>有多少個不同種類</strong>。見到寬邊黃、玉帶、酢漿灰 → richness = 3。黃粉蝶很多隻，仍只算一種。</p>
+        </article>
+        <article class="note">
+          <h3>豐富量 Abundance</h3>
+          <p>某範圍內<strong>每一種有多少隻</strong>。例如寬邊黃 12、玉帶 2、酢漿灰 8。相對豐富量是各佔總隻數的比例；同樣 4 種，可以很平均，也可以一種佔 80%。</p>
+        </article>
+        <article class="note">
+          <h3>多樣性 Diversity</h3>
+          <p>不只看有多少種，還看各種是否平均。兩處都可以 richness = 4，但一處四種各佔 25%，另一處一種獨大，多樣性不同。</p>
+        </article>
+        <article class="note">
+          <h3>基因組學 Genomics</h3>
+          <p>計劃會為香港超過 100 種蝴蝶測序基因組，並連到野外調查。基因組也用來了解蝴蝶與開花植物的關係、氣候變化，以及保育（例如土沉香）。</p>
+        </article>
+      </div>
+      <h3>每次觀察要做什麼</h3>
+      <table class="protocol">
+        <tr><th>步驟</th><th>做什麼</th></tr>
+        <tr><td>1. 出發前</td><td>帶手機／相機、筆記本、這份筆記。在校舍步行約 30 分鐘。不捕捉、不採植物。</td></tr>
+        <tr><td>2. 記錄環境</td><td>天氣、所見植物、溫度、濕度、GPS 位置（計劃表格要求這些欄）。</td></tr>
+        <tr><td>3. 數種類</td><td>見到蝴蝶先拍照，再對手冊／筆記認種。金色「校舍已紀錄」只是提示，不是必填名單。不肯定就標「不確定／低確定」，仍要拍照。</td></tr>
+        <tr><td>4. 數數量</td><td>每種分別計隻數。同一隻不要重複計。飛太快就寫約數，並註明是估計。</td></tr>
+        <tr><td>5. 立刻填表</td><td>觀察結束後馬上填<strong>計劃調查表</strong>。這才是正式數據。</td></tr>
+      </table>
+      <p>調查表連結以計劃／校方公布為準。若暫時未能提交，先把上表資料寫在筆記本，稍後轉填。計劃另有金／銀／銅參與級別，細節以校方公布為準。</p>
+      <h3>本學年重點對（必須拍照）</h3>
+      <p class="sub">工作坊特別要求：記錄時標示確定程度，並優先分清這三組。</p>
+      <div class="grid-3">
+        <article class="note"><h3>裳鳳蝶 vs 金裳鳳蝶</h3><p>兩隻都受保護（《野生動物保護條例》及相關法例）。金裳通常更大。見到不要捕捉。幼蟲吃馬兜鈴科。</p></article>
+        <article class="note"><h3>寬邊黃粉蝶 vs 檗黃粉蝶</h3><p>兩隻都是小黃粉蝶。寬邊黃前翅斑點通常 ≤2，後翅外緣有折角；檗黃（手冊亦稱斑緣黃）前翅 ≥3 點，外緣較圓。幼蟲吃豆科。</p></article>
+        <article class="note"><h3>東方菜粉蝶 vs 菜粉蝶</h3><p>兩隻都是白粉蝶，幼蟲吃十字花科。東方菜粉翅尖較鋸、後翅外緣常有一列黑點；菜粉蝶翅尖較直、沒有那列點。</p></article>
+      </div>
+      <h3>校舍過往已見的蝴蝶</h3>
+      <p class="sub">以下 14 種來自校舍公開紀錄，方便調查時先認外形與寄主。正式調查仍以當日所見為準，並填計劃調查表。</p>
+      <div class="grid-3">
+        <article class="note"><h3>報喜斑粉蝶</h3><p>翅面黑底白斑；務必看翅底：基部紅、中段黃、外緣白。幼蟲吃桑寄生科。</p></article>
+        <article class="note"><h3>金斑蝶</h3><p>橙黃。前翅端大黑斑，內有白點；後翅較乾淨。幼蟲吃馬利筋等蘿藦科。</p></article>
+        <article class="note"><h3>翠袖鋸眼蝶</h3><p>雌雄異型。雄蝶暗褐、後翅可閃藍紫；雌蝶可像斑蝶。常停在棕櫚。幼蟲吃棕櫚科。</p></article>
+        <article class="note"><h3>玉斑鳳蝶</h3><p>大型、有尾。後翅中央一塊大白斑（「玉斑」），外緣有紅新月斑。幼蟲吃芸香科。</p></article>
+        <article class="note"><h3>波蜆蝶</h3><p>小型。橙褐底，滿布黑白細點。幼蟲吃杜莖山等。</p></article>
+        <article class="note"><h3>幻紫斑蛺蝶</h3><p>雄蝶黑翅白斑，白斑外圍可閃紫。雌蝶多型。幼蟲吃爵床科、牽牛類。</p></article>
+        <article class="note"><h3>玉帶鳳蝶</h3><p>黑、有尾。雄蝶後翅一條乳白橫帶；雌蝶可有紅斑。幼蟲吃柑橘、九里香等芸香科。</p></article>
+        <article class="note"><h3>青鳳蝶</h3><p>前翅尖長，中央一條連續藍綠半透明帶。飛行極快。幼蟲吃樟科。</p></article>
+        <article class="note"><h3>幻紫斑蝶</h3><p>深褐。白點較細較疏，紫藍閃光較弱。幼蟲吃夾竹桃科、蘿藦科。</p></article>
+        <article class="note"><h3>白帶螯蛺蝶</h3><p>大型橙褐，飛行有力。後翅有短尾突，像螯。幼蟲吃樟科。</p></article>
+        <article class="note"><h3>裳鳳蝶</h3><p>受法例保護。體型很大，後翅鮮黃。見到不要捕捉。幼蟲吃馬兜鈴科。</p></article>
+        <article class="note"><h3>紅珠鳳蝶</h3><p>黑翅。後翅有紅斑與白斑，飛行慢。幼蟲吃馬兜鈴，有毒。</p></article>
+        <article class="note"><h3>絹斑蝶</h3><p>黑底半透明白斑，像玻璃。飛行慢。幼蟲吃蘿藦科。</p></article>
+        <article class="note"><h3>窄紋袖弄蝶</h3><p>深褐。前翅一條較窄、較直的白帶；腹面可伸到前緣。幼蟲吃薑科。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide">
+    <div class="wrap">
+      <h2>辨識指引</h2>
+      <p class="sub">按手冊由鳳蝶科看到灰蝶科。重點是外形特徵，不必先背學名。</p>
+      <div class="callout">
+        <p><b>調查時怎樣記：</b>先看翅尾、斑帶、眼斑、基部有沒有紅。顏色會變，不要只靠顏色。分不到就拍照再對手冊；再分不到就記到屬，並在調查表標示確定程度。本學年務必分清：裳鳳／金裳、寬邊黃／檗黃、東方菜粉／菜粉蝶。</p>
+        <p><b>受法律保護：</b>金裳鳳蝶與裳鳳蝶都受《野生動物保護條例》（第 170 章）等法例保護。金裳通常更大。見到不要騷擾、不要捕捉。幼蟲吃馬兜鈴科。</p>
+      </div>
+      <div class="grid-2">
+        <article class="note">
+          <h3>容易混淆的種類</h3>
+          <p>玉帶／玉斑／美鳳／藍鳳／碧鳳（先看尾與基部紅斑）。青鳳一條帶、木蘭青三列斑、統帥青綠斑加短尾。遷粉蝶三型 vs 梨花遷粉（合翅雲斑）。寬邊黃前翅 ≤2 點、後翅外緣有折角；檗黃粉蝶 ≥3 點。東方菜粉蝶翅尖鋸齒、後翅有黑點；菜粉蝶較直、沒有那列點。紫斑蝶三兄弟：藍點紫藍光不超過白點、合翅兩排點；幻紫斑通常一排、藍光弱；異型紫斑藍光最多。</p>
+        </article>
+        <article class="note">
+          <h3>現場速記</h3>
+          <p>蜆蝶科停棲呈 V 字並轉圈。弄蝶飛法急、像跳。蛺蝶前足退化。眼蝶看枯葉與眼斑：小眉有白「眉毛」；平頂眉翅尖像被切平；矍眼沒有眉帶。灰蝶可用香港硬幣估大小：無尾波細過一毫、沒有假頭；酢漿灰草地低飛、斑點連成 D 字。草地常見灰蝶斑點相近，請拍照後再對照。</p>
+        </article>
+      </div>
+      <h3>建議對照順序</h3>
+      <table class="protocol">
+        <tr><th>科／亞科</th><th>建議先認的種類</th></tr>
+        <tr><td>鳳蝶科</td><td>金裳／裳鳳蝶（保護種）→ 玉帶 → 玉斑 → 美鳳 → 藍鳳 → 碧鳳 → 青鳳 → 木蘭青 → 統帥青 → 巴黎翠 → 劍鳳蝶（相似種）→ 達摩</td></tr>
+        <tr><td>粉蝶科</td><td>遷粉（三型）→ 梨花遷粉 → 寬邊黃 vs 檗黃 → 報喜斑粉 → 東方菜粉 vs 菜粉蝶 → 鶴頂</td></tr>
+        <tr><td>蜆蝶科</td><td>波蜆蝶、蛇目褐蜆蝶</td></tr>
+        <tr><td>弄蝶科</td><td>沾邊裙 vs 黑邊裙 → 曲紋袖／窄紋袖 → 薑弄 → 秈弄（斑點可很淡）</td></tr>
+        <tr><td>蛺蝶科</td><td>鉤翅眼 → 散紋盛 → 三線蝶類 → 白帶螯 → 黃襟 → 網絲 → 幻紫斑蛺 → 中環 vs 短帶環／珂環 → 蛇眼</td></tr>
+        <tr><td>眼蝶亞科</td><td>睇暮 vs 暮眼 → 小眉 vs 平頂眉 → 翠袖鋸眼 → 矍眼 vs 直帶矍眼（後者多在較高海拔）</td></tr>
+        <tr><td>斑蝶亞科</td><td>金斑 vs 擬態金斑蛺蝶 → 虎斑（雄有香鱗袋）→ 青斑 vs 擬旖 → 藍點紫／幻紫／異型紫</td></tr>
+        <tr><td>灰蝶科</td><td>百娜 vs 古樓娜 → 無尾波 vs 波灰 → 雅灰蝶一組 → 咖灰 → 亮灰 → 酢漿／長腹／無眼等草地灰蝶</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="howto">
+    <div class="wrap">
+      <h2>怎樣用這份筆記</h2>
+      <p class="sub">先看分科，再看翅形與顏色，最後對照易混種。現場請看活蝶，不要捕捉。</p>
+      <div class="grid-3">
+        <article class="note">
+          <h3>1. 遠看分科</h3>
+          <p>打開紙本手冊：一面是鳳蝶、粉蝶、蜆蝶、弄蝶；另一面是蛺蝶、眼蝶、斑蝶、灰蝶。這份筆記用同一順序。遠看先分科，近看再對卡片。</p>
+        </article>
+        <article class="note">
+          <h3>2. 近看三點</h3>
+          <p>每種只記 <b>翅尾、斑帶、眼斑</b> 三件事。筆記裡的橘色圓點就是最有用的辨識位，野外對照照片時先找這些位置。</p>
+        </article>
+        <article class="note">
+          <h3>3. 觀蝶守則</h3>
+          <p>走指定範圍、不採寄主植物、不追逐、不網捕。每次約 30 分鐘。金裳鳳蝶與裳鳳蝶受法例保護。帶筆記本，記下天氣、植物、溫度、濕度、位置。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="families">
+    <div class="wrap">
+      <h2>六科＋兩亞科速查</h2>
+      <p class="sub">香港錄得約 249 種蝴蝶、六科。與紙本手冊相同：六科，另把蛺蝶科裡的斑蝶亞科、眼蝶亞科單獨列出。</p>
+      <div class="grid-2">
+        <article class="family"><h3>鳳蝶科 Papilionidae</h3><small>中至大型，展翅約 4–16 cm</small><p>不少有長尾。合翅時腹部外露。校舍過往已見：玉帶、玉斑、青鳳蝶，以及裳鳳蝶、紅珠鳳蝶。本學年請分清裳鳳與金裳。</p></article>
+        <article class="family"><h3>粉蝶科 Pieridae</h3><small>中小型，多為黃或白，愛訪花</small><p>最常見是寬邊黃粉蝶。報喜斑粉蝶要看翅底紅黃。鶴頂粉蝶前翅端有橙斑，是香港最大型粉蝶。</p></article>
+        <article class="family"><h3>蜆蝶科 Riodinidae</h3><small>小型；停棲常呈「V」形半開</small><p>蛇目褐蜆蝶會不停轉動身體。波蜆蝶紅褐底、滿布黑白細點。教學上仍獨立成科。</p></article>
+        <article class="family"><h3>弄蝶科 Hesperiidae</h3><small>頭大，觸角末端鈎曲，常被當成蛾</small><p>飛行急速。沾邊裙弄蝶後翅有白邊；曲紋袖與窄紋袖前翅都有白帶（校舍過往紀錄是窄紋袖弄蝶）；薑弄蝶有兩塊大白斑。</p></article>
+        <article class="family"><h3>蛺蝶科 Nymphalidae</h3><small>中至大型；部分有登頂行為</small><p>前足退化。中環蛺蝶三條白帶；珂環蛺蝶白帶較碎；網絲蛺蝶像地圖；鉤翅眼蛺蝶翅緣呈鉤狀。</p></article>
+        <article class="family"><h3>眼蝶亞科 Satyrinae</h3><small>蛺蝶科；多在林下貼近地面</small><p>褐色、有眼斑，用來嚇鳥。小眉眼蝶有白斜帶；矍眼蝶一圈圈眼斑；暮眼蝶與睇暮眼蝶黃昏較活躍。</p></article>
+        <article class="family"><h3>斑蝶亞科 Danainae</h3><small>蛺蝶科；幼蟲多吃有毒蘿藦科</small><p>飛行慢，常滑翔，有些會遷飛。虎斑蝶橙底黑脈；金斑蝶翅端大黑塊；青斑蝶／擬旖斑蝶半透明藍白。</p></article>
+        <article class="family"><h3>灰蝶科 Lycaenidae</h3><small>小型；雄蝶翅面常呈金屬藍或紫</small><p>看翅底線條與後翅小尾。酢漿灰蝶全年可見。亮灰蝶有尾和平行白波紋。雅灰蝶雄蝶深金屬藍。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="lookalikes">
+    <div class="wrap">
+      <h2>易混種對照</h2>
+      <p class="sub">最容易看錯的組合。先比「有沒有」某特徵。</p>
+      <div class="grid-2">
+        <article class="pair"><h3>玉帶鳳蝶 ♂ vs 美鳳蝶 ♂ vs 藍鳳蝶</h3><p>玉帶雄蝶有尾、後翅一條白帶。美鳳蝶雄蝶無尾，前翅基部有紅斑。藍鳳蝶無尾、無紅基斑，後翅較修長，邊緣有紅斑。</p></article>
+        <article class="pair"><h3>巴黎翠鳳蝶 vs 碧鳳蝶</h3><p>巴黎翠後翅有一塊又大又亮的金屬藍綠斑。碧鳳蝶藍斑較小較暗。兩者都有尾。</p></article>
+        <article class="pair"><h3>青鳳蝶 vs 統帥青鳳蝶 vs 木蘭青鳳蝶</h3><p>青鳳蝶＝一條連續藍綠帶。統帥青＝多枚分離綠斑，有短尾。木蘭青＝藍綠斑排成較整齊的列，尾極短或不明顯。</p></article>
+        <article class="pair"><h3>虎斑蝶 vs 金斑蝶 vs 青斑蝶</h3><p>虎斑蝶橙紅、翅脈全黑。金斑蝶前翅端有大黑斑加白點，後翅較乾淨。青斑蝶是藍白半透明，不是橙色。</p></article>
+        <article class="pair"><h3>中環蛺蝶 vs 珂環蛺蝶</h3><p>兩者都是黑底白帶。中環蛺蝶三條白帶又直又完整。珂環蛺蝶白帶較碎、較彎，後翅白斑較細。</p></article>
+        <article class="pair"><h3>暮眼蝶 vs 睇暮眼蝶 vs 小眉眼蝶</h3><p>暮眼蝶體型最大，前翅兩枚眼斑相連。睇暮眼蝶更暗、更「巧克力」。小眉眼蝶較小，翅底有一條清楚白斜帶。</p></article>
+        <article class="pair"><h3>鉤翅眼蛺蝶 vs 蛇眼蛺蝶</h3><p>鉤翅眼蛺蝶翅緣呈淺鉤狀，顏色較素褐。蛇眼蛺蝶眼斑更圓、更鮮，翅面有淺色細點。</p></article>
+        <article class="pair"><h3>蛇目褐蜆蝶 vs 波蜆蝶</h3><p>蛇目褐蜆蝶較素褐，半開翅並轉動身體。波蜆蝶紅褐底、滿布黑白波點，較少轉圈。</p></article>
+        <article class="pair"><h3>曲紋袖弄蝶 vs 窄紋袖弄蝶</h3><p>兩隻都是深褐、前翅一條白帶。曲紋袖：白帶較彎，腹面不到前緣，後翅外緣常有一列小白點。窄紋袖：白帶較窄、較直，腹面可伸到前緣，通常只有 m1 室一個小白點。</p></article>
+        <article class="pair"><h3>裳鳳蝶 vs 金裳鳳蝶</h3><p>兩隻都受保護，後翅鮮黃。金裳通常更大。見到只可拍照，不可捕捉。本學年重點對。</p></article>
+        <article class="pair"><h3>寬邊黃粉蝶 vs 檗黃粉蝶</h3><p>寬邊黃：前翅斑點通常 ≤2，後翅外緣有折角。檗黃（斑緣黃）：前翅 ≥3 點，外緣較圓。本學年重點對，請拍照。</p></article>
+        <article class="pair"><h3>東方菜粉蝶 vs 菜粉蝶</h3><p>東方菜粉：翅尖較鋸，後翅外緣常有一列黑點。菜粉蝶：翅尖較直，沒有那列點。本學年重點對，請拍照。</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="species">
+    <div class="wrap">
+      <h2>辨識卡（對手冊順序）</h2>
+      <p class="sub">金色邊框＝校舍過往已有公開紀錄，方便先認。正式調查請填計劃調查表。有濕地公園圖的種類用其官方照片；其餘仍用 Wikimedia。</p>
+      <div class="filters" id="filters"></div>
+      <input class="search" id="search" type="search" placeholder="搜尋：例如 玉帶、Tiger、Eurema…" />
+      <p class="count" id="count"></p>
+      <div id="cards"></div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <div class="wrap">
+      <h2>自測</h2>
+      <p class="sub">答完按「核對答案」，會列出全部標準答案。</p>
+      <div class="quiz note">
+        <div class="q"><b>1.</b> 黑色大鳳蝶，雄蝶後翅有一條白帶，有翅尾。最可能是？<br />
+          <label><input type="radio" name="q1" value="0" /> 美鳳蝶雄蝶</label>
+          <label><input type="radio" name="q1" value="1" /> 玉帶鳳蝶雄蝶</label>
+          <label><input type="radio" name="q1" value="0" /> 藍鳳蝶</label>
+        </div>
+        <div class="q"><b>2.</b> 香港最常見、鮮黃、翅緣有黑寬邊的小型粉蝶是？<br />
+          <label><input type="radio" name="q2" value="1" /> 寬邊黃粉蝶</label>
+          <label><input type="radio" name="q2" value="0" /> 遷粉蝶</label>
+          <label><input type="radio" name="q2" value="0" /> 鶴頂粉蝶</label>
+        </div>
+        <div class="q"><b>3.</b> 橙紅色、黑色翅脈像虎紋，雄蝶後翅有黑香鱗袋。是？<br />
+          <label><input type="radio" name="q3" value="0" /> 金斑蝶</label>
+          <label><input type="radio" name="q3" value="1" /> 虎斑蝶</label>
+          <label><input type="radio" name="q3" value="0" /> 青斑蝶</label>
+        </div>
+        <div class="q"><b>4.</b> 黑翅三條白色橫帶，飛行呈滑翔—急拍交替。是？<br />
+          <label><input type="radio" name="q4" value="1" /> 中環蛺蝶</label>
+          <label><input type="radio" name="q4" value="0" /> 網絲蛺蝶</label>
+          <label><input type="radio" name="q4" value="0" /> 黃襟蛺蝶</label>
+        </div>
+        <div class="q"><b>5.</b> 停棲時半開翅並不停轉動身體，後翅有小眼斑與尖突。是？<br />
+          <label><input type="radio" name="q5" value="1" /> 蛇目褐蜆蝶</label>
+          <label><input type="radio" name="q5" value="0" /> 波蜆蝶</label>
+          <label><input type="radio" name="q5" value="0" /> 矍眼蝶</label>
+        </div>
+        <div class="q"><b>6.</b> 褐色弄蝶，前翅有兩塊醒目大白斑，幼蟲吃薑科。是？<br />
+          <label><input type="radio" name="q6" value="0" /> 沾邊裙弄蝶</label>
+          <label><input type="radio" name="q6" value="1" /> 薑弄蝶</label>
+          <label><input type="radio" name="q6" value="0" /> 秈弄蝶</label>
+        </div>
+        <div class="q"><b>7.</b> 今天見到寬邊黃粉蝶 12 隻、玉帶鳳蝶 2 隻、酢漿灰蝶 1 隻。物種豐富度 richness 是？<br />
+          <label><input type="radio" name="q7" value="0" /> 15（把所有隻數加起來）</label>
+          <label><input type="radio" name="q7" value="1" /> 3（有 3 個不同種類）</label>
+          <label><input type="radio" name="q7" value="0" /> 12（只算最多的那一種）</label>
+        </div>
+        <div class="q"><b>8.</b> 校園觀察結束後，應該把紀錄交到哪裡？<br />
+          <label><input type="radio" name="q8" value="0" /> 下星期一才填，以免匆忙</label>
+          <label><input type="radio" name="q8" value="1" /> 立刻填計劃調查表（種類、數量、天氣、植物、溫度、濕度、GPS）</label>
+          <label><input type="radio" name="q8" value="0" /> 學期結束一次過交</label>
+        </div>
+        <button type="button" id="check">核對答案</button>
+        <p id="result"></p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>手冊沒有、校舍仍要識</h2>
+      <p><b>裳鳳蝶</b> <i>Troides helena</i> 與 <b>金裳鳳蝶</b> <i>Troides aeacus</i>：均受保護，後翅鮮黃，金裳通常更大。幼蟲吃馬兜鈴科。見到不要捕捉。<b>紅珠鳳蝶</b> <i>Pachliopta aristolochiae</i>：黑翅，後翅紅白斑。<b>絹斑蝶</b> <i>Parantica aglea</i>：半透明玻璃白斑。幼蟲吃蘿藦科。<b>窄紋袖弄蝶</b> <i>Notocrypta paralysos</i>：深褐，前翅窄白帶，腹面可到前緣。幼蟲吃薑科。手冊收的是外形相近的曲紋袖弄蝶。</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p><b>計劃：</b>地球生物基因組計劃香港：蝴蝶與下一代科學家（R4002-24）。<a href="http://biodiversity.sls.cuhk.edu.hk/Butterfly/" target="_blank" rel="noopener">計劃網站</a>。<b>來源與授權：</b>物種名單、中英文名及分科按環保協進會《50種常見蝴蝶速查手冊》的公開摺頁對照整理。辨識說明為重新撰寫，供學生參考。能對上的種類照片來自<a href="https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/butterflies" target="_blank" rel="noopener">香港濕地公園「蝴蝶」圖庫</a>；其餘來自 Wikimedia Commons（CC BY / CC BY-SA）。點擊照片可前往原頁。</p>
+      <p>本筆記不是該手冊的掃描或重製。建議同時使用正版摺疊手冊帶到校園對照。</p>
+      <p>觀察地點：聖士提反女子中學校舍。正式調查數據填計劃調查表。金色種按校舍過往公開紀錄整理，方便辨識。</p>
+    </div>
+  </footer>
+
+  <script>
+    const families = [
+      ["ssgc", "校舍已紀錄"],
+      ["all", "全部"],
+      ["papilionidae", "鳳蝶科"],
+      ["pieridae", "粉蝶科"],
+      ["riodinidae", "蜆蝶科"],
+      ["hesperiidae", "弄蝶科"],
+      ["nymphalinae", "蛺蝶科"],
+      ["satyrinae", "眼蝶亞科"],
+      ["danainae", "斑蝶亞科"],
+      ["lycaenidae", "灰蝶科"]
+    ];
+
+    const data = [
+      {f:"papilionidae", zh:"玉帶鳳蝶", ssgc:2, en:"Common Mormon", la:"Papilio polytes", span:"8–10 cm", host:"芸香科：柑橘、九里香、兩面針", photo:"Papilio_polytes_polytes_bytreef.jpg", credit:"攝於香港鳳園 / Wikimedia", keys:["雄蝶：黑翅、有尾，後翅有一條乳白色橫帶（「玉帶」）。","雌蝶有兩型：白帶型像雄蝶；白斑型後翅白斑碎裂並有紅斑。","前翅沒有巴黎翠那種大型翠斑。"], similar:"美鳳蝶雄蝶無尾且有紅基斑。", tip:"手冊第一張鳳蝶。這張對照照在鳳園拍攝。"},
+      {f:"papilionidae", zh:"玉斑鳳蝶", ssgc:2, en:"Red Helen", la:"Papilio helenus", span:"9–12 cm", host:"芸香科", photo:"Red_Helen_(Papilio_helenus)_at_Samsing,_Duars,_WB_W_IMG_6219.jpg", credit:"Wikimedia Commons", keys:["體型大，有尾。","後翅中央有一塊碩大白斑（「玉斑」）。","後翅外緣有新月形紅斑。"], similar:"白斑比玉帶鳳蝶大而集中。", tip:"林緣、溪谷較易見，訪花時停留較久。"},
+      {f:"papilionidae", zh:"美鳳蝶（雄）", ssgc:1, en:"Great Mormon ♂", la:"Papilio memnon", span:"11–14 cm", host:"芸香科柑橘類", photo:"Papilio-pjt1.jpg", credit:"Wikimedia Commons", keys:["香港最大型常見鳳蝶之一。","雄蝶無尾，翅黑，前翅基部有紅斑。","體型明顯大於玉帶鳳蝶。"], similar:"藍鳳蝶也無尾，但沒有紅基斑，後翅更修長。", tip:"手冊把雄、雌分成兩張，記錄時要寫性別。"},
+      {f:"papilionidae", zh:"美鳳蝶（雌）", ssgc:1, en:"Great Mormon ♀", la:"Papilio memnon", span:"11–14 cm", host:"芸香科柑橘類", photo:"Great_mormon_(Papilio_memnon_alcanor)_female_Pak_Long.jpg", credit:"Wikimedia Commons", keys:["雌蝶與雄蝶差很遠：後翅常有白斑。","可有尾或無尾，是多型種。","體型仍然很大。"], similar:"不要把有白斑的雌美鳳蝶當成玉斑鳳蝶；玉斑的白斑更圓、更居中。", tip:"遇見大型黑鳳蝶先看體型，再看有沒有紅基斑或白斑。"},
+      {f:"papilionidae", zh:"藍鳳蝶", ssgc:1, en:"Spangle", la:"Papilio protenor", span:"9–11 cm", host:"芸香科", photo:"Spangle_(Papilio_protenor_protenor)_on_pagoda_flower_(Clerodendrum_paniculatum)_Jiannan_Road.jpg", credit:"Wikimedia Commons", keys:["大型、無尾。","翅面黑中帶藍閃，翅脈清楚。","後翅外緣有紅斑；前翅基部沒有紅斑。"], similar:"美鳳蝶雄蝶有紅基斑。", tip:"飛行較慢，常沿林道巡行。"},
+      {f:"papilionidae", zh:"碧鳳蝶", ssgc:1, en:"Chinese Peacock", la:"Papilio bianor", span:"8–12 cm", host:"芸香科", photo:"Open_wing_position_of_Papilio_bianor_Cramer,_1777_–_Common_Peacock_WLB_DSC_4064.jpg", credit:"Wikimedia Commons", keys:["有尾。黑翅有藍綠閃光。","後翅藍斑比巴黎翠小而暗。","整體較「墨藍」。"], similar:"後翅翠斑又大又亮→巴黎翠；較暗較小→碧鳳蝶。", tip:"最好拍後翅再判斷。"},
+      {f:"papilionidae", zh:"巴黎翠鳳蝶", ssgc:1, en:"Paris Peacock", la:"Papilio paris", span:"8–10 cm", host:"芸香科：兩面針、三椏苦", photo:"Paris_peacock_swallowtail_(Papilio_paris_nakaharai)_Xindian.jpg", credit:"Wikimedia Commons", keys:["黑翅密布閃亮綠點。","後翅有一塊大型金屬藍綠色圓斑。","有黑色長尾，飛行常帶滑翔。"], similar:"碧鳳蝶的翠斑沒有這麼大、這麼亮。", tip:"陽光下翠斑會隨角度變色。"},
+      {f:"papilionidae", zh:"統帥青鳳蝶", ssgc:1, en:"Tailed Jay", la:"Graphium agamemnon", span:"8–10 cm", host:"番荔枝科", photo:"Graphium_agamemnon_20131222.jpg", credit:"Wikimedia Commons", keys:["黑底上有多枚分離的鮮綠斑點。","後翅有短尾。","斑點像一排軍階。"], similar:"青鳳蝶是一條連續帶；木蘭青斑點較藍、較整齊。", tip:"比青鳳蝶較肯停在花上。"},
+      {f:"papilionidae", zh:"達摩鳳蝶", ssgc:1, en:"Lime Butterfly", la:"Papilio demoleus", span:"8–9 cm", host:"芸香科柑橘、九里香", photo:"Common_Lime_Butterfly_Papilio_demoleus_by_Kadavoor.JPG", credit:"Wikimedia Commons", keys:["無尾。黃綠色底，佈滿黑色斑紋。","外形像小型「虎紋鳳蝶」，但屬鳳蝶科。","前翅外緣黑齒紋明顯。"], similar:"其他大型黑鳳蝶都較黑；本種遠看是黃綠的。", tip:"村邊、校園柑橘盆很常見。"},
+      {f:"papilionidae", zh:"斑鳳蝶", ssgc:1, en:"Common Mime", la:"Papilio clytia", span:"8–10 cm", host:"樟科", photo:"Open_wing_position_of_Papilio_clytia,_Form_Dissimilis,_Linnaeus,_1758_–_Common_Mime_WLB.jpg", credit:"Wikimedia Commons", keys:["無尾或尾極短。","擬態斑蝶：褐底白斑或橙黑虎斑。","飛得比一般鳳蝶慢。"], similar:"真正的紫斑蝶前足退化；本種仍是鳳蝶，前足正常。", tip:"手冊達摩鳳蝶旁那張深色帶淡斑的，就是用來教擬態。"},
+      {f:"papilionidae", zh:"青鳳蝶", ssgc:2, en:"Common Bluebottle", la:"Graphium sarpedon", span:"7–8 cm", host:"樟科", photo:"Common_Bluebottle_Graphium_sarpedon_UP_by_Dr._Raju_Kasambe_DSCN1849_(10).jpg", credit:"Wikimedia Commons", keys:["前翅尖長，中央有一條連續藍綠色半透明帶。","後翅翅底常有紅點。","飛行極快。"], similar:"統帥青、木蘭青都是碎斑，不是一條帶。", tip:"林道高速來回，清晨較易近看。"},
+      {f:"papilionidae", zh:"木蘭青鳳蝶", ssgc:1, en:"Common Jay", la:"Graphium doson", span:"7–8 cm", host:"木蘭科、樟科", photo:"Common_Jay_(Graphium_doson).jpg", credit:"Wikimedia Commons", keys:["黑底，有一列較整齊的藍綠色斑。","尾極短或不明顯。","斑色比統帥青更偏藍。"], similar:"統帥青綠斑更碎、有短尾；青鳳蝶是連續帶。", tip:"手冊最後一張鳳蝶。停棲時斑列很清楚。"},
+      {f:"papilionidae", zh:"裳鳳蝶", ssgc:2, en:"Common Birdwing", la:"Troides helena", span:"14–16 cm", host:"馬兜鈴科", photo:"Troides_helena.jpg", credit:"Wikimedia Commons", keys:["受《野生動物保護條例》保護。大型，後翅鮮黃。","飛行緩慢、有力。","本學年重點：與金裳鳳蝶成對分辨。"], similar:"金裳鳳蝶通常更大；兩隻都受保護，只可拍照。", tip:"見到不要騷擾、不要捕捉。幼蟲吃馬兜鈴科。"},
+      {f:"papilionidae", zh:"金裳鳳蝶", ssgc:1, en:"Golden Birdwing", la:"Troides aeacus", span:"14–16 cm 或以上", host:"馬兜鈴科", photo:"Troides_aeacus.jpg", credit:"Wikimedia Commons", keys:["受《野生動物保護條例》（第170章）及《保護瀕危動植物物種條例》（第586章）保護。","後翅鮮黃，體型通常比裳鳳蝶大。","本學年重點對。只可拍照，不可捕捉。"], similar:"裳鳳蝶較小。兩隻都吃馬兜鈴科。", tip:"工作坊指出生境與裳鳳蝶相近。"},
+      {f:"papilionidae", zh:"紅珠鳳蝶", ssgc:2, en:"Common Rose", la:"Pachliopta aristolochiae", span:"8–11 cm", host:"馬兜鈴科", photo:"Pachliopta_aristolochiae.jpg", credit:"Wikimedia Commons", keys:["黑翅，後翅有紅斑與白斑。","飛行慢。幼蟲吃馬兜鈴，有毒。","比裳鳳蝶細很多。"], similar:"不要當成裳鳳蝶：本種後翅是紅白斑，不是整塊鮮黃。", tip:"幼蟲吃馬兜鈴科。飛行慢，容易近看後翅斑。"},
+
+      {f:"pieridae", zh:"遷粉蝶", ssgc:1, en:"Lemon Emigrant", la:"Catopsilia pomona", span:"6–7 cm", host:"決明屬等豆科", photo:"Common_Emigrant_(Catopsilia_pomona)_W_IMG_9386.jpg", credit:"Wikimedia Commons", keys:["淺檸檬黃，前翅端常有黑邊。","有多種斑紋型，部分翅底有小紅點。","飛行快。"], similar:"梨花遷粉蝶更白綠，翅底有污斑。", tip:"手冊粉蝶科第一張。數量可突然增多。"},
+      {f:"pieridae", zh:"梨花遷粉蝶", ssgc:1, en:"Mottled Emigrant", la:"Catopsilia pyranthe", span:"5–7 cm", host:"豆科", photo:"Catopsilia_pyranthe.jpg", credit:"Wikimedia Commons", keys:["底色白中帶綠。","翅底有褐色雲斑，像污跡。","前翅端黑斑通常較弱。"], similar:"遷粉蝶較黃、較潔淨。", tip:"合翅看翅底最準。"},
+      {f:"pieridae", zh:"寬邊黃粉蝶", ssgc:1, en:"Common Grass Yellow", la:"Eurema hecabe", span:"4–5 cm", host:"豆科", photo:"Common_grass_yellow_(Eurema_hecabe_hecabe)_underside_dry_season_form_Tad_Thong.jpg", credit:"Wikimedia Commons", keys:["鮮黃色，翅面外緣有黑色寬邊。","前翅斑點通常 ≤2。後翅外緣有折角。","本學年重點：與檗黃粉蝶成對分辨。"], similar:"檗黃粉蝶前翅 ≥3 點，外緣較圓。", tip:"香港常見。不肯定就拍照，並在調查表標示確定程度。"},
+      {f:"pieridae", zh:"檗黃粉蝶", ssgc:1, en:"Three-spot Grass Yellow", la:"Eurema blanda", span:"4–5 cm", host:"豆科", photo:"Eurema_blanda.jpg", credit:"Wikimedia Commons", keys:["鮮黃，外形像寬邊黃。","前翅斑點通常 ≥3。後翅外緣較圓、較沒有折角。","手冊亦稱斑緣黃粉蝶。本學年重點對。"], similar:"寬邊黃前翅 ≤2 點，後翅外緣有折角。", tip:"兩隻很容易看錯。請拍前翅斑點和後翅外緣。"},
+      {f:"pieridae", zh:"報喜斑粉蝶", ssgc:2, en:"Red-base Jezebel", la:"Delias pasithoe", span:"6–8 cm", host:"桑寄生科", photo:"Open_wing_nectaring_position_of_Delias_pasithoe_(Linnaeus,_1767)_–_Red-base_Jezebel_DSC_7614.jpg", credit:"Wikimedia Commons", keys:["翅面黑底白斑。","翅底才是重點：後翅鮮黃，基部有紅斑。","飛行慢而低。"], similar:"一定要看翅底紅黃，不要只看黑色翅面。", tip:"冬季仍可見。警戒色。"},
+      {f:"pieridae", zh:"東方菜粉蝶", ssgc:1, en:"Indian Cabbage White", la:"Pieris canidia", span:"5–5.5 cm", host:"十字花科", photo:"Indian_Cabbage_White_Butterfly.jpg", credit:"Wikimedia Commons", keys:["雪白，前翅端及中室有淡黑斑。","翅尖較鋸齒；後翅外緣常有一列黑點。","本學年重點：與菜粉蝶成對分辨。"], similar:"菜粉蝶翅尖較直，後翅沒有那列黑點。", tip:"幼蟲吃蔬菜。不肯定就拍照。"},
+      {f:"pieridae", zh:"菜粉蝶", ssgc:1, en:"Cabbage White", la:"Pieris rapae", span:"4.5–5.5 cm", host:"十字花科", photo:"Pieris_rapae.jpg", credit:"Wikimedia Commons", keys:["雪白，外形像東方菜粉蝶。","翅尖較直。後翅外緣通常沒有一列黑點。","本學年重點對。幼蟲吃十字花科。"], similar:"東方菜粉蝶翅尖較鋸，後翅外緣常有一列黑點。", tip:"兩隻飛行中很難分，請拍照後再認。"},
+      {f:"pieridae", zh:"鶴頂粉蝶", ssgc:1, en:"Great Orange Tip", la:"Hebomoia glaucippe", span:"8–9 cm", host:"山柑科", photo:"Open_wing_position_of_Hebomoia_glaucippe_Linnaeus,_1758_–_Great_Orange-tip.jpg", credit:"Wikimedia Commons", keys:["香港最大型粉蝶。","白色，前翅端部有鑲黑邊的大橙斑。","飛行極快，很少長停。"], similar:"橙斑只在前翅尖；金斑蝶整隻偏橙。", tip:"手冊粉蝶科最後一張。"},
+
+      {f:"riodinidae", zh:"波蜆蝶", ssgc:2, en:"Punchinello", la:"Zemeros flegyas", span:"3.5–4 cm", host:"杜莖山等", photo:"Open_wing_position_of_Zemeros_flegyas_Cramer,_1780_–_Punchinello_WLB_DSC_3780.jpg", credit:"Wikimedia Commons", keys:["紅褐色，滿布黑白細點，像波點布。","小型。","停在葉面時斑點非常清楚。"], similar:"蛇目褐蜆蝶較素褐、會轉圈。", tip:"手冊蜆蝶科第一張。"},
+      {f:"riodinidae", zh:"蛇目褐蜆蝶", ssgc:1, en:"Plum Judy", la:"Abisara echerius", span:"3.5–4 cm", host:"紫金牛科", photo:"PlumJudyJavadi.jpg", credit:"Wikimedia Commons", keys:["褐色，翅緣有淺色波紋。","後翅有小眼斑，末端尖突。","停棲時呈 V 形半開，並不斷轉動身體。"], similar:"轉圈行為幾乎是本種的指紋。", tip:"手冊特別標明 V 形半開與轉圈。林下小徑常見。"},
+
+      {f:"hesperiidae", zh:"沾邊裙弄蝶", ssgc:0, en:"Water Snow Flat", la:"Tagiades litigiosa", span:"3.5–4.5 cm", host:"薯蕷科", photo:"Open_wing_basking_position_of_Tagiades_litigiosa_(Möschler,_1878)_-_Water_Snow_Flat_(2)_WLB.jpg", credit:"Wikimedia Commons", keys:["後翅外緣有白邊，像沾了霜。","前翅深褐，有半透明白斑。","停棲時常平展四翅。"], similar:"其他弄蝶沒有這麼闊的白裙邊。", tip:"手冊弄蝶科第一張。學名亦寫 litigiosus。"},
+      {f:"hesperiidae", zh:"曲紋袖弄蝶", ssgc:1, en:"Restricted Demon", la:"Notocrypta curvifascia", span:"3.5–4 cm", host:"薑科", photo:"Notocrypta_curvifascia_-_Restricted_Demon_29.jpg", credit:"Wikimedia Commons", keys:["黑褐色，前翅有一條較彎的白帶。","白帶腹面通常不到前緣。","後翅外緣常有一列小白點。"], similar:"窄紋袖弄蝶白帶較窄較直，腹面可到前緣；薑弄蝶是兩塊大白斑。", tip:"幼蟲吃薑科。與窄紋袖外形接近，請拍前翅白帶和後翅外緣。"},
+      {f:"hesperiidae", zh:"窄紋袖弄蝶", ssgc:2, en:"Common Banded Demon", la:"Notocrypta paralysos", span:"3.5–4.5 cm", host:"薑科", photo:"Notocrypta_paralysos_-_Common_Banded_Demon_01.jpg", credit:"Wikimedia Commons", keys:["深褐。前翅白帶較窄、較直。","白帶腹面可伸到前緣；通常只有 m1 室一個小白點。","後翅外緣通常沒有一列小白點。"], similar:"曲紋袖弄蝶白帶較彎、腹面不到前緣，後翅外緣有小白點。", tip:"幼蟲吃薑科。見到袖弄蝶請拍前翅白帶與腹面。"},
+      {f:"hesperiidae", zh:"薑弄蝶", ssgc:1, en:"Grass Demon", la:"Udaspes folus", span:"3.5–4.5 cm", host:"薑科", photo:"Udaspes_folus_N04886.jpg", credit:"Wikimedia Commons", keys:["深褐。前翅有兩塊非常醒目的大白斑。","後翅也可有白斑。","幼蟲吃薑、薑黃。"], similar:"曲紋袖弄蝶是一條彎白帶；本種是兩大塊白。", tip:"手冊上這張最好認。現亦用 Ancistroides folus。"},
+      {f:"hesperiidae", zh:"秈弄蝶", ssgc:1, en:"Formosan Swift", la:"Borbo cinnara", span:"3–3.5 cm", host:"禾本科、水稻", photo:"Borbo_cinnara_(Rice_swift)_on_a_leaf.jpg", credit:"Wikimedia Commons", keys:["小型褐弄蝶，前翅有幾枚半透明小白點。","飛行極快，像小蛾。","觸角末端鈎狀。"], similar:"沒有薑弄蝶或裙弄蝶那麼顯眼的白塊／白邊。", tip:"草地、荒地。手冊提醒弄蝶常被誤認為蛾。"},
+
+      {f:"nymphalinae", zh:"鉤翅眼蛺蝶", ssgc:1, en:"Chocolate Pansy", la:"Junonia iphita", span:"5–6 cm", host:"爵床科", photo:"Chocolate_pansy_(Junonia_iphita_iphita)_Kuang_Si.jpg", credit:"Wikimedia Commons", keys:["褐色，像巧克力。","前翅外緣略呈鉤狀。","眼斑較淡，不如蛇眼蛺蝶鮮豔。"], similar:"蛇眼蛺蝶眼斑更圓、翅面有淺色細點。", tip:"手冊蛺蝶科左上／中上那張褐色的。"},
+      {f:"nymphalinae", zh:"散紋盛蛺蝶", ssgc:1, en:"Common Jester", la:"Symbrenthia lilaea", span:"4–5 cm", host:"苧麻等", photo:"Common_Jestor_(Symbrenthia_hippoclus)_I_IMG_6675.jpg", credit:"Wikimedia Commons", keys:["橙黃底，有黑色鋸齒紋和細碎斑。","體型比黃襟蛺蝶略小。","翅緣波浪狀。"], similar:"黃襟蛺蝶較素、較沒有「鋸齒漫畫」感。", tip:"林緣陽光處。"},
+      {f:"nymphalinae", zh:"白帶螯蛺蝶", ssgc:2, en:"Tawny Rajah", la:"Charaxes bernardus", span:"7–9 cm", host:"樟科等", photo:"Tawny_Rajah_(Charaxes_bernardus),_Vietnam.jpg", credit:"Wikimedia Commons", keys:["體型大，橙褐，飛行有力。","後翅有短尾突，像螯。","翅面有淺色帶。"], similar:"比黃襟蛺蝶大得多，飛起來更猛。", tip:"喜歡在高處停棲，有登頂行為。"},
+      {f:"nymphalinae", zh:"黃襟蛺蝶", ssgc:1, en:"Rustic", la:"Cupha erymanthis", span:"5–5.5 cm", host:"大風子科等", photo:"Rustic_(Cupha_erymanthis_lotis)_Godavari.jpg", credit:"Wikimedia Commons", keys:["翅面橙褐，翅端較黑。","翅底黃棕，有不規則斑與黑點。","喜歡在陽光下緩慢滑翔。"], similar:"散紋盛蛺蝶斑紋更碎、更黑。", tip:"林道陽光斑塊是熱點。"},
+      {f:"nymphalinae", zh:"網絲蛺蝶", ssgc:1, en:"Common Mapwing", la:"Cyrestis thyodamas", span:"4.5–5.5 cm", host:"桑科（構樹）", photo:"Common_mapwing_(Cyrestis_thyodamas_formosana)_male_Jiannan_Road.jpg", credit:"Wikimedia Commons", keys:["翅面細線如地圖等高線。","翅緣波浪狀，後翅有小尾突。","停棲時常張開四翅。"], similar:"外形獨特，幾乎沒有替身種。", tip:"沿構樹搜尋。"},
+      {f:"nymphalinae", zh:"幻紫斑蛺蝶", ssgc:2, en:"Great Eggfly", la:"Hypolimnas bolina", span:"7–8.5 cm", host:"爵床科、牽牛類", photo:"Open_wing_Nectaring_of_Hypolimnas_bolina_(Linnaeus,_1758)_-_Great_Eggfly_(Male)_WLB_DSC_0884a.jpg", credit:"Wikimedia Commons", keys:["雄蝶黑翅白斑，白斑外圍可閃紫藍。","雌蝶多型，有些模擬金斑蝶。","停棲時常張開四翅。"], similar:"雄蝶白斑帶紫暈，可與純白斑區分。", tip:"開揚荒地、村邊空地。"},
+      {f:"nymphalinae", zh:"中環蛺蝶", ssgc:1, en:"Common Sailer", la:"Neptis hylas", span:"5–5.5 cm", host:"豆科", photo:"Neptis_hylas-Kadavoor-2016-07-26-001.jpg", credit:"Wikimedia Commons", keys:["黑底三條白色橫帶，又直又完整。","翅底紅褐，同樣有白帶。","飛行：滑翔數下再急拍。"], similar:"珂環蛺蝶白帶較碎、較彎。", tip:"手冊上最標準的「三條白帶」。"},
+      {f:"nymphalinae", zh:"蛇眼蛺蝶", ssgc:1, en:"Lemon Pansy", la:"Junonia lemonias", span:"4.5–5.5 cm", host:"爵床科", photo:"Junonia_lemonias_-_Lemon_Pansy_25.jpg", credit:"Wikimedia Commons", keys:["褐色，眼斑圓而清楚，有淺色細點。","不像鉤翅眼蛺蝶那麼「鉤」。","停棲時常開翅晒太陽。"], similar:"鉤翅眼蛺蝶較素、翅緣較鉤。", tip:"手冊英文是 Lemon Pansy，中文是蛇眼蛺蝶。"},
+      {f:"nymphalinae", zh:"珂環蛺蝶", ssgc:1, en:"Southern Sullied Sailer", la:"Neptis clinia", span:"5–6 cm", host:"豆科等", photo:"Southern_sullied_sailer_(Neptis_clinia_susrata)_Luang_Prabang.jpg", credit:"Wikimedia Commons", keys:["黑底白帶，但白帶較碎、較彎。","後翅白斑較細。","飛行方式仍像「航行」。"], similar:"中環蛺蝶的白帶更直、更完整。", tip:"兩種環蛺蝶一定要並排比較。"},
+
+      {f:"satyrinae", zh:"睇暮眼蝶", ssgc:1, en:"Dark Evening Brown", la:"Melanitis phedima", span:"6–7 cm", host:"禾本科", photo:"Melanitis_phedima_-_Dark_Evening_Brown_03.JPG", credit:"Wikimedia Commons", keys:["比暮眼蝶更暗，像深巧克力。","前翅也有眼斑，但整體更黑。","黃昏較活躍。"], similar:"暮眼蝶較淡、較「枯葉」；本種更暗。", tip:"手冊眼蝶亞科第一張。林下落葉間。"},
+      {f:"satyrinae", zh:"小眉眼蝶", ssgc:1, en:"Dark-brand Bush Brown", la:"Mycalesis mineus", span:"4–5 cm", host:"禾本科", photo:"Mycalesis_mineus-Kadavoor-2017-04-26-001.jpg", credit:"Wikimedia Commons", keys:["翅面深褐，前翅有一枚帶白瞳的眼斑。","翅底有一條斜白帶，外側一列眼斑。","喜歡林下陰涼處。"], similar:"矍眼蝶眼斑更多更圓，沒有這麼清楚的一條白斜帶。", tip:"香港分布極廣。先找白斜帶。"},
+      {f:"satyrinae", zh:"翠袖鋸眼蝶", ssgc:2, en:"Common Palmfly", la:"Elymnias hypermnestra", span:"6–7 cm", host:"棕櫚科", photo:"Common_Palmfly_Im_IMG_6967.jpg", credit:"Wikimedia Commons", keys:["雌雄異型。雌蝶可模擬斑蝶；雄蝶較暗，後翅有藍紫閃。","與棕櫚、蒲葵關係密切。","飛行較慢。"], similar:"雌蝶不要立刻當成青斑蝶：看它停在棕櫚上。", tip:"校園有棕櫚樹也可觀察。"},
+      {f:"satyrinae", zh:"矍眼蝶", ssgc:1, en:"Common Five-ring", la:"Ypthima baldus", span:"3–4 cm", host:"禾本科", photo:"Common_fivering_(Ypthima_baldus_newboldi)_underside_Phuket.jpg", credit:"Wikimedia Commons", keys:["褐色，翅底有一列內黑外黃的眼斑。","前翅面通常有一枚大眼斑。","後翅眼斑讓人聯想到「五環」。"], similar:"小眉眼蝶較暗、有白斜帶。", tip:"開揚草坡晒太陽時最好數眼斑。"},
+      {f:"satyrinae", zh:"暮眼蝶", ssgc:1, en:"Common Evening Brown", la:"Melanitis leda", span:"6–7 cm", host:"禾本科", photo:"Melanitis_leda-Kadavoor-2017-04-26-001.jpg", credit:"Wikimedia Commons", keys:["香港最大型常見眼蝶。","前翅面有兩枚相連眼斑。","濕季型眼斑明顯；旱季型像枯葉。"], similar:"睇暮眼蝶更暗。兩者都黃昏較活躍。", tip:"請與紙本手冊最後一排核對。白天常停在落葉間。"},
+      {f:"satyrinae", zh:"白帶黛眼蝶", ssgc:1, en:"Banded Treebrown", la:"Lethe confusa", span:"5–6 cm", host:"竹", photo:"Banded_treebrown_(Lethe_confusa_apara)_Double_Haven.jpg", credit:"香港印洲塘 / Wikimedia", keys:["深褐。前翅頂端有明顯白色斜帶。","後翅緣有一列眼斑。","竹林是最佳生境。"], similar:"小眉眼蝶也有白帶，但本種白帶更靠翅尖、體型較大。", tip:"香港竹林常見。請與紙本手冊核對是否收錄。"},
+
+      {f:"danainae", zh:"金斑蝶", ssgc:2, en:"Plain Tiger", la:"Danaus chrysippus", span:"7–8 cm", host:"馬利筋等蘿藦科", photo:"Danaus_chrysippus_Female_by_kadavoor.jpg", credit:"Wikimedia Commons", keys:["橙黃底。前翅端部有大黑斑，內有白點。","後翅脈紋較淡，中央較乾淨。","開揚草地、花圃較多。"], similar:"虎斑蝶翅脈全黑，像虎皮。", tip:"手冊斑蝶亞科第一張。"},
+      {f:"danainae", zh:"虎斑蝶", ssgc:1, en:"Common Tiger", la:"Danaus genutia", span:"7–8 cm", host:"蘿藦科", photo:"Common_tiger_(Danaus_genutia)_2.jpg", credit:"Wikimedia Commons", keys:["橙紅色，所有主要翅脈黑色。","雄蝶後翅有黑色香鱗袋。","有群聚及過冬習性。"], similar:"金斑蝶翅端大黑塊，後翅較素。", tip:"警戒色，有毒。"},
+      {f:"danainae", zh:"青斑蝶", ssgc:1, en:"Blue Tiger", la:"Tirumala limniace", span:"8–9 cm", host:"蘿藦科", photo:"Blue_tiger_(Tirumala_limniace_exoticus).jpg", credit:"Wikimedia Commons", keys:["黑底配淡藍白長斑，對比強。","斑紋粗而清楚。","飛行慢。"], similar:"擬旖斑蝶斑點更密、更像玻璃馬賽克。", tip:"訪花時好認。"},
+      {f:"danainae", zh:"擬旖斑蝶", ssgc:1, en:"Ceylon Blue Glassy Tiger", la:"Ideopsis similis", span:"8–8.5 cm", host:"蘿藦科", photo:"Ideopsis_similis.jpg", credit:"Wikimedia Commons", keys:["黑褐底，布滿半透明淡藍斑點。","翅面與翅底圖案相近。","飛行慢，多滑翔。"], similar:"青斑蝶斑紋更成長條、對比更強。", tip:"逆光看會更透明。"},
+      {f:"danainae", zh:"絹斑蝶", ssgc:2, en:"Glassy Tiger", la:"Parantica aglea", span:"7–8.5 cm", host:"蘿藦科", photo:"Glassy_Tiger.jpg", credit:"Wikimedia Commons", keys:["黑底半透明白斑，斑點較擬旖更長、更「玻璃」。","飛行慢。","幼蟲吃蘿藦科。"], similar:"擬旖斑蝶斑點更密、更圓；青斑蝶斑紋更粗、更藍白。", tip:"逆光看更清楚。幼蟲吃蘿藦科。"},
+      {f:"danainae", zh:"藍點紫斑蝶", ssgc:1, en:"Blue-spotted Crow", la:"Euploea midamus", span:"7–8 cm", host:"夾竹桃科／蘿藦科", photo:"EuploeaMidamusMidamusMUpUn.jpg", credit:"香港標本照 / Wikimedia", keys:["深褐至黑褐，翅面密布白點。","陽光下前翅可閃紫藍色。","翅底近外緣有兩列整齊白點。"], similar:"幻紫斑蝶白點較疏、紫閃較弱。", tip:"對照圖來自香港。"},
+      {f:"danainae", zh:"幻紫斑蝶", ssgc:2, en:"Common Indian Crow", la:"Euploea core", span:"7–8.5 cm", host:"夾竹桃科、蘿藦科", photo:"Common_crow_(Euploea_core_core)_underside.jpg", credit:"Wikimedia Commons", keys:["深褐，白點較細較少。","紫藍色光澤較淡。","手冊英文用 Common Indian Crow。"], similar:"先數白點密度，再看紫閃。", tip:"常與其他斑蝶一起訪花。"},
+
+      {f:"lycaenidae", zh:"百娜灰蝶", ssgc:0, en:"Rounded 6-line Blue", la:"Nacaduba berenice", span:"約 2.5 cm", host:"豆科等", photo:"Nacaduba_berenice_berenice.jpg", credit:"Wikimedia Commons", keys:["翅底有多條細白線，像六條線。","後翅可有細尾。","比酢漿灰蝶線條更多、更密。"], similar:"無尾波灰蝶線條較少，通常無尾。香港亦有極相似的古樓娜灰蝶。", tip:"手冊灰蝶科第一張。看翅底細線。"},
+      {f:"lycaenidae", zh:"無尾波灰蝶", ssgc:1, en:"Tailless Line Blue", la:"Prosotas dubiosa", span:"約 2 cm", host:"豆科", photo:"Tailless_Lineblue_(Prosotas_dubiosa_indica)_in_Talakona_forest,_AP_W_IMG_8483.jpg", credit:"Wikimedia Commons", keys:["細小。翅底有波狀細線。","後翅無尾，故名「無尾」。","雄蝶翅面暗藍。"], similar:"亮灰蝶有尾，而且白波紋更粗、更平行。", tip:"停在葉背時看有沒有尾。"},
+      {f:"lycaenidae", zh:"雅灰蝶", ssgc:1, en:"Dark Cerulean", la:"Jamides bochus", span:"2.5–3 cm", host:"豆科", photo:"Dark_cerulean_(Jamides_bochus_bochus)_underside_Godavari.jpg", credit:"Wikimedia Commons", keys:["雄蝶翅面深金屬藍，外緣黑邊較寬。","翅底褐灰，有細白線與後翅眼斑。","後翅可有短尾。"], similar:"咖灰蝶（Forget-me-not）翅底斑點較圓、較散。", tip:"停在葉背看翅底白線。"},
+      {f:"lycaenidae", zh:"咖灰蝶", ssgc:1, en:"Forget-me-not", la:"Catochrysops strabo", span:"約 2.5–3 cm", host:"豆科", photo:"Forget-me-not_(Catochrysops_strabo)_female_Nepalgunj.jpg", credit:"Wikimedia Commons", keys:["翅底淡褐，有褐色圓斑。","後翅有橙黑眼斑。","手冊英文是 Forget-me-not。"], similar:"亮灰蝶有平行白波紋和小銀尾。", tip:"花圃、荒地。"},
+      {f:"lycaenidae", zh:"亮灰蝶", ssgc:1, en:"Long-tailed Blue", la:"Lampides boeticus", span:"約 3 cm", host:"豆科", photo:"Long-tailed_blue_(Lampides_boeticus)_Corfu.jpg", credit:"Wikimedia Commons", keys:["後翅有細小銀尾。","翅底有平行的白色波浪紋。","後翅有橙黑眼斑，騙天敵啄錯位置。"], similar:"無尾波灰蝶無尾；本種波紋更粗。", tip:"全球廣布，豆棚常見。"},
+      {f:"lycaenidae", zh:"酢漿灰蝶", ssgc:1, en:"Pale Grass Blue", la:"Zizeeria maha", span:"2–3 cm", host:"酢漿草", photo:"Pale_grass_blue_(Pseudozizeeria_maha_okinawana)_underside_Jiannan_Road.jpg", credit:"Wikimedia Commons", keys:["極常見。雄蝶翅面淺藍，雌蝶較灰。","翅底淡灰，有較大的深褐斑點。","成蟲常在酢漿草草坪低飛。"], similar:"其他灰蝶翅底多是細線，本種是散開的圓點。", tip:"手冊學名用 Zizeeria maha；現亦作 Pseudozizeeria maha。校園草坪就能觀察。"}
+    ];
+
+    const filtersEl = document.getElementById("filters");
+    const cardsEl = document.getElementById("cards");
+    const countEl = document.getElementById("count");
+    const searchEl = document.getElementById("search");
+    let current = "ssgc";
+
+    families.forEach(([id, label], i) => {
+      const b = document.createElement("button");
+      b.textContent = label;
+      b.dataset.id = id;
+      if (id === "ssgc") b.classList.add("ssgc-btn");
+      if (i === 0) b.classList.add("active");
+      b.onclick = () => {
+        current = id;
+        [...filtersEl.children].forEach(x => x.classList.toggle("active", x === b));
+        render();
+      };
+      filtersEl.appendChild(b);
+    });
+
+    const famLabel = Object.fromEntries(families);
+
+    const wetlandPhotos = {
+      "黃斑弄蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/01-Bush_Hopper.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/ampittia-dioscorides"],
+      "秈弄蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/02-Formosan_Swift.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/borbo-cinnara"],
+      "薑弄蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/31-Grass_Demon.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/udaspes-folus"],
+      "彩灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/33-Purple_Sapphire.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/heliophorus-epicles"],
+      "鈕灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/26-Common_Hedge_Blue.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/acytolepis-puspa"],
+      "曲紋紫灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/32-Plains_Cupid.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/luthrodes-pandava"],
+      "亮灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/04-Long-tailed_Blue.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/lampides-boeticus"],
+      "無尾波灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/Butterfly_100_Tailless_Line_Blue_Prosotas_dubiosa_825x550.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/prosotas-dubiosa"],
+      "酢漿灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/22-Pale_Grass_Blue.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/zizeeria-maha"],
+      "波蜆蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/21-Punchinello.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/zemeros-flegyas"],
+      "萊灰蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/03-Chocolate_Royal.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/remelana-jangala"],
+      "金斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/11_Plain_Tiger.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/danaus-chrysippus"],
+      "虎斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/12-Common_Tiger.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/danaus-genutia"],
+      "幻紫斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/10-Common_Indian_Crow.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/euploea-core"],
+      "藍點紫斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/29-Blue-spotted_Crow.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/euploea-midamus"],
+      "絹斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/35-Glassy_Tiger.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/parantica-aglea"],
+      "青斑蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/34-Blue_Tiger.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/tirumala-limniace"],
+      "黑脈蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/30-Red_Ring_Skirt.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/hestina-assimilis"],
+      "幻紫斑蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/27-Great_Eggfly.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/hypolimnas-bolina"],
+      "美眼蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/05-Peacock_Pansy.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/junonia-almana"],
+      "波紋眼蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/06-Grey_Pansy.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/junonia-atlites"],
+      "蛇眼蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/Butterfly_133_Lemon_Pansy.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/junonia-lemonias"],
+      "翠藍眼蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/07-Blue_Pansy.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/junonia-orithya"],
+      "琉璃蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/09-Blue_Admiral.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/kaniska-canace"],
+      "中環蛺蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/08-Common_Sailer.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/neptis-hylas"],
+      "翠袖鋸眼蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/17-Common_Palmfly.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/elymnias-hypermnestra"],
+      "小眉眼蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/18-Dark-brand_Bush_Brown.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/mycalesis-mineus"],
+      "統帥青鳳蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/15-Tailed_Jay.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/graphium-agamemnon"],
+      "青鳳蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/16-Common_Bluebottle.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/graphium-sarpedon"],
+      "巴黎翠鳳蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/13-Paris_Peacock.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/papilio-paris"],
+      "玉帶鳳蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/14-Common_Mormon.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/papilio-polytes"],
+      "遷粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/24-Lemon_Emigrant.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/catopsilia-pomona"],
+      "梨花遷粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/25-Mottled_Emigrant.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/catopsilia-pyranthe"],
+      "寬邊黃粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/23-Common_Grass_Yellow.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/eurema-hecabe"],
+      "報喜斑粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/19-Red-base_Jezebel.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/delias-pasithoe"],
+      "鶴頂粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/20-Great_Orange_Tip.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/hebomoia-glaucippe"],
+      "東方菜粉蝶": ["https://www.wetlandpark.gov.hk/filemanager/photos/public/Ecological/6_Butterflies/28-Indian_Cabbage_White.jpg", "https://www.wetlandpark.gov.hk/tc/biodiversity/beauty-of-wetlands/wildlife/pieris-canidia"]
+    };
+
+    function photoUrl(d) {
+      if (wetlandPhotos[d.zh]) return wetlandPhotos[d.zh][0];
+      return "https://commons.wikimedia.org/w/index.php?title=Special:Redirect/file/" + encodeURIComponent(d.photo) + "&width=900";
+    }
+    function filePage(d) {
+      if (wetlandPhotos[d.zh]) return wetlandPhotos[d.zh][1];
+      return "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(d.photo.replace(/ /g, "_"));
+    }
+    function wikiFallback(latin) {
+      return "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(latin);
+    }
+
+    function render() {
+      const q = searchEl.value.trim().toLowerCase();
+      const list = data.filter(d => {
+      const famOk = current === "all"
+        || (current === "ssgc" && d.ssgc === 2)
+        || d.f === current;
+      const text = (d.zh + d.en + d.la + d.keys.join(" ")).toLowerCase();
+      return famOk && (!q || text.includes(q));
+    }).sort((a, b) => (b.ssgc || 0) - (a.ssgc || 0));
+      countEl.textContent = "顯示 " + list.length + " / " + data.length + " 張" + (current === "ssgc" ? "（校舍過往已見）" : "");
+      cardsEl.innerHTML = list.map((d, i) => `
+        <article class="card${d.ssgc===2 ? ' ssgc-star' : ''}" style="margin-bottom:14px">
+          <a href="${filePage(d)}" target="_blank" rel="noopener">
+            <img src="${photoUrl(d)}" alt="${d.zh}" loading="lazy" data-latin="${d.la}" onerror="window.fixPhoto(this)" />
+          </a>
+          <div class="body">
+            <div class="names">
+              <div>
+                <h3>${d.zh}</h3>
+                <div class="en">${d.en}</div>
+                <div class="latin">${d.la}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+                <span class="badge">${famLabel[d.f]}</span>
+                ${d.ssgc===2 ? '<span class="badge ssgc">校舍已紀錄</span>' : d.ssgc===1 ? '<span class="badge ssgc">校舍在iNat未有紀錄</span>' : ''}
+              </div>
+            </div>
+            <ul class="keys">${d.keys.map(k => `<li>${k}</li>`).join("")}</ul>
+            <div class="meta-row">
+              <span><b>展翅</b> ${d.span}</span>
+              <span><b>寄主</b> ${d.host}</span>
+            </div>
+            <div class="meta-row"><span><b>易混</b> ${d.similar}</span></div>
+            <div class="meta-row"><span><b>野外提示</b> ${d.tip}</span></div>
+            <div class="meta-row"><span>照片：${wetlandPhotos[d.zh] ? "香港濕地公園" : d.credit}</span></div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    window.fixPhoto = function (img) {
+      if (img.dataset.triedWiki) {
+        img.onerror = null;
+        img.style.background = "#ece6d4";
+        img.alt = img.alt + "（照片暫時未能載入）";
+        return;
+      }
+      img.dataset.triedWiki = "1";
+      fetch(wikiFallback(img.dataset.latin))
+        .then(r => r.json())
+        .then(j => {
+          if (j.thumbnail && j.thumbnail.source) img.src = j.thumbnail.source;
+        })
+        .catch(() => {});
+    };
+
+    searchEl.addEventListener("input", render);
+    render();
+
+    document.getElementById("check").onclick = () => {
+      const answers = [
+        "玉帶鳳蝶雄蝶（黑、有尾、後翅一條白帶）",
+        "寬邊黃粉蝶（鮮黃、翅緣黑寬邊）",
+        "虎斑蝶（橙紅、翅脈全黑；雄蝶有香鱗袋）",
+        "中環蛺蝶（黑底三條完整白帶）",
+        "蛇目褐蜆蝶（半開翅並轉圈）",
+        "薑弄蝶（前翅兩塊大白斑；幼蟲吃薑科）",
+        "3（有 3 個不同種類＝richness）",
+        "每一次觀察結束後立刻填計劃調查表"
+      ];
+      document.querySelectorAll(".quiz label").forEach(el => {
+        el.classList.remove("mark-ans", "mark-wrong");
+      });
+      let score = 0;
+      const lines = [];
+      for (let i = 1; i <= 8; i++) {
+        const picked = document.querySelector('input[name="q' + i + '"]:checked');
+        const correctInput = document.querySelector('input[name="q' + i + '"][value="1"]');
+        if (correctInput && correctInput.parentElement) {
+          correctInput.parentElement.classList.add("mark-ans");
+        }
+        const ok = !!(picked && picked.value === "1");
+        if (ok) score++;
+        if (picked && picked.value !== "1" && picked.parentElement) {
+          picked.parentElement.classList.add("mark-wrong");
+        }
+        lines.push(
+          "<li class=\"" + (ok ? "ok" : "no") + "\"><b>" + i + ".</b> " +
+          answers[i - 1] +
+          (picked ? (ok ? "　你選對了。" : "　你選了：" + picked.parentElement.textContent.trim() + "。") : "　尚未作答。") +
+          "</li>"
+        );
+      }
+      document.getElementById("result").innerHTML =
+        "<b>你答對 " + score + " / 8 題。</b>綠底是標準答案。" +
+        "<ol>" + lines.join("") + "</ol>";
+    };
+  </script>
+</body>
+</html>
