@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cell cycle and division</title>
+<style>
+  :root { --ink:#1c2430; --line:#d5dbe3; --paper:#f6f7f9; --card:#fff; --accent:#1f4e79; --bad:#8c2f2f; --ok:#1d6b3a; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:17px/1.45 "Segoe UI", "Noto Sans", sans-serif; color:var(--ink); background:var(--paper); }
+  header { background:var(--accent); color:#fff; padding:18px 20px 16px; }
+  header h1 { margin:0; font-size:1.35rem; font-weight:650; }
+  header p { margin:6px 0 0; opacity:.92; font-size:.95rem; }
+  main { max-width:760px; margin:0 auto; padding:18px 16px 48px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:0 0 14px; }
+  label { display:block; font-weight:650; margin:0 0 6px; }
+  input[type=text], select { width:100%; font:inherit; padding:10px 12px; border:1px solid #b7c0cc; border-radius:8px; background:#fff; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .row-name { margin-bottom:12px; }
+  button { font:inherit; cursor:pointer; }
+  button.primary, button.ghost { border-radius:8px; padding:10px 14px; }
+  button.primary { background:var(--accent); color:#fff; border:0; }
+  button.ghost { background:#fff; border:1px solid #b7c0cc; }
+  button:disabled { opacity:.45; cursor:default; }
+  .sessions { display:grid; gap:10px; }
+  .session { text-align:left; width:100%; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .session strong { display:block; color:var(--accent); }
+  .bar { height:8px; background:#e4e9ef; border-radius:99px; overflow:hidden; margin:8px 0 14px; }
+  .bar span { display:block; height:100%; background:var(--accent); }
+  .stem { white-space:pre-wrap; margin:0 0 12px; }
+  .opts { display:grid; gap:8px; }
+  .choice { text-align:left; width:100%; border:1px solid #c5ced8; background:#fff; border-radius:10px; padding:10px 12px; }
+  .choice.on { border-color:var(--accent); background:#eef4fa; }
+  .nav { display:flex; justify-content:space-between; gap:8px; margin-top:14px; }
+  .score { font-size:1.8rem; font-weight:700; margin:0; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  .miss { border-top:1px solid var(--line); padding-top:10px; margin-top:10px; }
+  .small { color:#526070; font-size:.92rem; }
+  .fig { max-width:min(100%, 320px); height:auto; border:1px solid var(--line); border-radius:8px; margin:.35rem auto; background:#fff; display:block; }
+  .fig-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .fig-row { justify-content:center; } .fig-row img { max-width:22%; }
+  table.grid { width:100%; border-collapse:collapse; margin:8px 0; font-size:.95rem; }
+  table.grid td, table.grid th { border:1px solid var(--line); padding:4px 8px; }
+  @media (max-width:560px) { .row { grid-template-columns:1fr; } .fig-row img { max-width:46%; } }
+  @media print { header, .noprint { display:none !important; } body { background:#fff; } .card { border:0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Cell cycle and division</h1>
+  <p>One practice. Enter your name in English (same as your ID card), class, class number and biology division, then start.</p>
+</header>
+<main id="app"></main>
+<script src="questions.js"></script>
+<script>
+const BANK = window.F4_BANK;
+const app = document.getElementById("app");
+const KEY = "cell-div-mc-v1";
+const SUBMIT_TOKEN = "cell-div-2026";
+const SUBMIT_URL = "";
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+  catch (e) { return []; }
+}
+function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+
+let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[] };
+
+function el(html) { app.innerHTML = html; }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function figsHtml(it) {
+  if (!it.figs || !it.figs.length) return "";
+  const imgs = it.figs.map(src => `<img class="fig" src="${esc(src)}" alt="">`).join("");
+  const wrap = it.figs.length > 1 ? `<div class="fig-row">${imgs}</div>` : imgs;
+  const cap = it.caption ? `<p class="small">${esc(it.caption)}</p>` : "";
+  return wrap + cap;
+}
+function tableHtml(rows) {
+  if (!rows || !rows.length) return "";
+  const body = rows.map((row, i) => {
+    const tag = i === 0 ? "th" : "td";
+    return "<tr>" + row.map(c => `<${tag}>${esc(c)}</${tag}>`).join("") + "</tr>";
+  }).join("");
+  return `<table class="grid">${body}</table>`;
+}
+
+function home() {
+  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo && a.division === state.division);
+  const past = attempts.length ? attempts.slice().reverse().map(a =>
+    `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td></tr>`
+  ).join("") : "";
+  el(`
+    <section class="card">
+      <div class="row-name">
+        <label for="name">Name in English (same as ID card name)</label>
+        <input id="name" type="text" autocomplete="name" placeholder="e.g. CHAN Tai Man" value="${esc(state.name)}">
+      </div>
+      <div class="row">
+        <div><label for="cls">Class</label><input id="cls" type="text" placeholder="e.g. 4A" value="${esc(state.cls)}"></div>
+        <div><label for="cno">Class number</label><input id="cno" type="text" inputmode="numeric" placeholder="e.g. 12" value="${esc(state.classNo)}"></div>
+        <div>
+          <label for="bdiv">Biology division</label>
+          <select id="bdiv">
+            <option value="">Select</option>
+            <option value="Div B"${state.division==="Div B"?" selected":""}>Div B</option>
+            <option value="Div C"${state.division==="Div C"?" selected":""}>Div C</option>
+            <option value="Div E"${state.division==="Div E"?" selected":""}>Div E</option>
+            <option value="Not applicable"${state.division==="Not applicable"?" selected":""}>Not applicable</option>
+          </select>
+        </div>
+      </div>
+    </section>
+    <section class="sessions">
+      ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
+    </section>
+    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
+    <p class="small">When you finish, you can download or print your personal report.</p>
+  `);
+  document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
+  document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
+  document.getElementById("cno").addEventListener("input", e => state.classNo = e.target.value.trim());
+  document.getElementById("bdiv").addEventListener("change", e => state.division = e.target.value.trim());
+  app.querySelectorAll(".session").forEach(b => b.addEventListener("click", () => start(b.dataset.id)));
+}
+
+function start(id) {
+  const nameEl = document.getElementById("name");
+  const clsEl = document.getElementById("cls");
+  const cnoEl = document.getElementById("cno");
+  const divEl = document.getElementById("bdiv");
+  if (nameEl) state.name = nameEl.value.trim();
+  if (clsEl) state.cls = clsEl.value.trim();
+  if (cnoEl) state.classNo = cnoEl.value.trim();
+  if (divEl) state.division = divEl.value.trim();
+  if (!state.name || !state.cls || !state.classNo || !state.division) {
+    alert("Enter your name in English (same as your ID card), class, class number and biology division first.");
+    return;
+  }
+  state.session = BANK.find(s => s.id === id);
+  state.i = 0;
+  state.picks = state.session.items.map(() => "");
+  renderQ();
+}
+
+function renderQ() {
+  const s = state.session;
+  const it = s.items[state.i];
+  const pct = Math.round(state.i / s.items.length * 100);
+  el(`
+    <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+    <div class="bar"><span style="width:${pct}%"></span></div>
+    <section class="card">
+      <p class="small">Question ${state.i + 1} of ${s.items.length}</p>
+      ${it.directions ? `<p class="small">${esc(it.directions)}</p>` : ""}
+      ${tableHtml(it.table)}
+      <p class="stem"></p>
+      ${figsHtml(it)}
+      <div class="opts">
+        ${["A","B","C","D"].map(k => `<button class="choice ${state.picks[state.i]===k?"on":""}" data-k="${k}"><strong>${k}.</strong> ${esc(it.options[k])}</button>`).join("")}
+      </div>
+      <div class="nav">
+        <button class="ghost" id="back" ${state.i===0?"disabled":""}>Back</button>
+        <button class="primary" id="next">${state.i === s.items.length - 1 ? "Submit" : "Next"}</button>
+      </div>
+    </section>
+  `);
+  app.querySelector(".stem").textContent = it.stem;
+  app.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
+    state.picks[state.i] = b.dataset.k;
+    renderQ();
+  }));
+  document.getElementById("back").addEventListener("click", () => { state.i--; renderQ(); });
+  document.getElementById("next").addEventListener("click", () => {
+    if (!state.picks[state.i]) { alert("Choose an answer."); return; }
+    if (state.i === s.items.length - 1) finish();
+    else { state.i++; renderQ(); }
+  });
+}
+
+function finish() {
+  const s = state.session;
+  let score = 0;
+  const misses = [];
+  const byTopic = {};
+  const answers = s.items.map((it, idx) => {
+    const pick = state.picks[idx];
+    const right = pick === it.answer;
+    if (right) score++;
+    if (!byTopic[it.topic]) byTopic[it.topic] = { right:0, n:0 };
+    byTopic[it.topic].n++;
+    if (right) byTopic[it.topic].right++;
+    if (!right) {
+      misses.push({
+        n: it.n, pick, answer: it.answer,
+        stem: it.stem, chosen: it.options[pick], correct: it.options[it.answer],
+        note: pick === it.trap ? it.why : it.fix,
+      });
+    }
+    return {
+      qn: it.n, topic: it.topic, chosen: pick, correct: it.answer, trap: it.trap,
+      option_A: it.options.A, option_B: it.options.B, option_C: it.options.C, option_D: it.options.D,
+      stem: it.stem, right
+    };
+  });
+  const when = new Date().toLocaleString();
+  const whenIso = new Date().toISOString();
+  const rec = {
+    name: state.name, cls: state.cls, classNo: state.classNo, division: state.division, title: s.title + " — " + s.subtitle,
+    when, score, total: s.items.length, picks: state.picks.slice()
+  };
+  const all = load(); all.push(rec); save(all);
+  const weak = Object.entries(byTopic)
+    .map(([t, v]) => ({ t, lost: v.n - v.right, n: v.n, right: v.right }))
+    .sort((a, b) => b.lost - a.lost);
+  const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
+    .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
+  const payload = {
+    paper: "Cell cycle and division MC",
+    token: SUBMIT_TOKEN,
+    attempt_id: (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2)),
+    when_iso: whenIso,
+    name: state.name,
+    cls: state.cls,
+    class_no: state.classNo,
+    division: state.division,
+    practice_id: s.id,
+    practice_title: s.title + " — " + s.subtitle,
+    score, total: s.items.length,
+    percent: Math.round(1000 * score / s.items.length) / 10,
+    answers
+  };
+  downloadJson(payload);
+  el(`
+    <section class="card" id="report">
+      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+      <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
+      <p>${Math.round(score / s.items.length * 100)}%</p>
+      <p class="small" id="save-status">You can download or print your personal report below.</p>
+      <h2>Personal report</h2>
+      <p>${misses.length === 0
+        ? "Every item in this practice was correct."
+        : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
+      ${misses.map(m => `
+        <div class="miss">
+          <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
+          <p class="stem"></p>
+          <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
+          <p><strong>Answer.</strong> ${esc(m.correct)}</p>
+          <p>${esc(m.note)}</p>
+        </div>`).join("") || "<p>No incorrect answers in this practice.</p>"}
+    </section>
+    <p class="noprint">
+      <button class="ghost" id="dl-report">Download my report</button>
+      <button class="ghost" id="print">Print report</button>
+      <button class="primary" id="again">Back to practices</button>
+    </p>
+  `);
+  app.querySelectorAll(".miss").forEach((box, i) => {
+    const stem = box.querySelector(".stem");
+    if (stem) stem.textContent = misses[i].stem;
+  });
+  document.getElementById("dl-report").addEventListener("click", () => downloadReport(s, score, misses, weakLine, when));
+  document.getElementById("print").addEventListener("click", () => window.print());
+  document.getElementById("again").addEventListener("click", home);
+  sendAttempt(payload).then(ok => {
+    const box = document.getElementById("save-status");
+    if (!box) return;
+    box.textContent = ok
+      ? "Your answers have been recorded. Download or print your personal report if you want a copy."
+      : "Download or print your personal report if you want a copy.";
+  });
+}
+
+function downloadFile(filename, text, type) {
+  const blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadReport(s, score, misses, weakLine, when) {
+  const pct = Math.round(score / s.items.length * 100);
+  const missHtml = misses.length ? misses.map(m => `
+    <div class="miss">
+      <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
+      <p>${esc(m.stem).replace(/\n/g, "<br>")}</p>
+      <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
+      <p><strong>Answer.</strong> ${esc(m.correct)}</p>
+      <p>${esc(m.note)}</p>
+    </div>`).join("") : "<p>No incorrect answers in this practice.</p>";
+  const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Personal report · ${esc(state.name)}</title>
+<style>
+  body { font: 16px/1.45 "Segoe UI", "Noto Sans", sans-serif; max-width: 720px; margin: 24px auto; color: #1c2430; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .score { font-size: 1.8rem; font-weight: 700; margin: 0.4rem 0; }
+  .ok { color: #1d6b3a; } .bad { color: #8c2f2f; }
+  .miss { border-top: 1px solid #d5dbe3; padding-top: 10px; margin-top: 10px; }
+  .small { color: #526070; font-size: 0.92rem; }
+</style></head><body>
+<h1>Cellular organisation · personal report</h1>
+<p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)}</p>
+<p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
+<p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
+<p>${misses.length === 0
+    ? "Every item in this practice was correct."
+    : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
+${missHtml}
+<p class="small">Personal report · HKDSE Biology · Cell cycle and division</p>
+</body></html>`;
+  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + s.id)
+    .replace(/[^\w\-]+/g, "_");
+  downloadFile("report_cell_div_" + safe + ".html", html, "text/html;charset=utf-8");
+}
+
+function downloadJson(payload) {
+  const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + (payload.division || "") + "_" + payload.practice_id)
+    .replace(/[^\w\-]+/g, "_");
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "cell_div_" + safe + ".json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function sendAttempt(payload) {
+  if (!SUBMIT_URL || SUBMIT_URL.indexOf("http") !== 0) {
+    return Promise.resolve(false);
+  }
+  return fetch(SUBMIT_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(r => r.json()).then(d => !!(d && d.ok)).catch(() => false);
+}
+
+home();
+</script>
+</body>
+</html>
