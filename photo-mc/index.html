@@ -1,377 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Photosynthesis · HKDSE Biology Paper 1A</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photosynthesis · MC</title>
 <style>
-:root { --ink:#14221b; --muted:#4b5d54; --paper:#f6f3ea; --card:#fffdf7; --line:#d7cfc0; --teal:#0f6b5c; --wrong:#9b2c2c; --ok:#1b6b3a; }
-*{box-sizing:border-box}
-body{margin:0;font:16px/1.45 "Segoe UI", Calibri, sans-serif;background:var(--paper);color:var(--ink)}
-header{background:#16352d;color:#f3efe4;padding:1.1rem 1.4rem}
-header h1{margin:0;font-family:Georgia,serif;font-size:1.45rem}
-header p{margin:.35rem 0 0;opacity:.9;font-size:.95rem}
-.wrap{max-width:820px;margin:0 auto;padding:1rem 1.1rem 5rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin:0 0 1rem}
-label{display:block;font-size:.82rem;color:var(--muted);margin:.2rem 0}
-input,select,button,textarea{font:inherit}
-input,select{padding:.4rem .55rem;border:1px solid var(--line);border-radius:8px;width:100%}
-.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem}
-@media(max-width:700px){.row{grid-template-columns:1fr}}
-.q{padding:.15rem 0}
-.q h3{margin:0 0 .4rem;font-size:1.02rem;white-space:pre-wrap}
-.pre{font-size:.9rem;color:var(--muted);margin:0 0 .45rem}
-.opts label.opt{display:flex;gap:.55rem;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:.4rem .5rem;margin:.3rem 0;cursor:pointer;background:#fff}
-.opts input{width:auto;margin-top:.2rem}
-.fig-svg{display:block;max-width:340px;width:100%;height:auto;margin:.35rem 0 .5rem;border:1px solid var(--line);border-radius:8px;background:#fff}
-.bar{position:sticky;bottom:0;background:#16352d;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;z-index:5}
-.bar button,.card button{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:.45rem .8rem;cursor:pointer}
-.bar button.secondary,.card button.secondary{background:#4a5c54}
-.mark.ok{color:var(--ok);font-weight:700}
-.mark.bad{color:var(--wrong);font-weight:700}
-.why{font-size:.92rem;color:var(--muted);margin:.25rem 0 .6rem}
-.hidden{display:none}
-.kpi{display:flex;gap:1.2rem;flex-wrap:wrap;margin:.6rem 0}
-.kpi b{display:block;font-size:1.45rem}
-.review{border:1px solid var(--line);border-radius:10px;padding:.7rem .8rem;margin:.55rem 0;background:#fff}
-.review.ok{border-left:5px solid var(--ok)}
-.review.bad{border-left:5px solid var(--wrong)}
-.teach-link{font-size:.8rem;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;padding:0}
-textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:8px;padding:.5rem}
-table.simple{border-collapse:collapse;font-size:.85rem;margin:.3rem 0;width:100%}
-table.simple td,table.simple th{border:1px solid var(--line);padding:.2rem .4rem;text-align:left}
+  :root { --ink:#1c2430; --line:#d5dbe3; --paper:#f6f7f9; --card:#fff; --accent:#1f4e79; --bad:#8c2f2f; --ok:#1d6b3a; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:17px/1.45 "Segoe UI", "Noto Sans", sans-serif; color:var(--ink); background:var(--paper); }
+  header { background:var(--accent); color:#fff; padding:18px 20px 16px; }
+  header h1 { margin:0; font-size:1.35rem; font-weight:650; }
+  header p { margin:6px 0 0; opacity:.92; font-size:.95rem; }
+  main { max-width:760px; margin:0 auto; padding:18px 16px 48px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:0 0 14px; }
+  label { display:block; font-weight:650; margin:0 0 6px; }
+  input[type=text], select { width:100%; font:inherit; padding:10px 12px; border:1px solid #b7c0cc; border-radius:8px; background:#fff; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .row-name { margin-bottom:12px; }
+  button { font:inherit; cursor:pointer; }
+  button.primary, button.ghost { border-radius:8px; padding:10px 14px; }
+  button.primary { background:var(--accent); color:#fff; border:0; }
+  button.ghost { background:#fff; border:1px solid #b7c0cc; }
+  button:disabled { opacity:.45; cursor:default; }
+  .sessions { display:grid; gap:10px; }
+  .session { text-align:left; width:100%; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .session strong { display:block; color:var(--accent); }
+  .bar { height:8px; background:#e4e9ef; border-radius:99px; overflow:hidden; margin:8px 0 14px; }
+  .bar span { display:block; height:100%; background:var(--accent); }
+  .stem { white-space:pre-wrap; margin:0 0 12px; }
+  .opts { display:grid; gap:8px; }
+  .choice { text-align:left; width:100%; border:1px solid #c5ced8; background:#fff; border-radius:10px; padding:10px 12px; }
+  .choice.on { border-color:var(--accent); background:#eef4fa; }
+  .nav { display:flex; justify-content:space-between; gap:8px; margin-top:14px; }
+  .score { font-size:1.8rem; font-weight:700; margin:0; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  .miss { border-top:1px solid var(--line); padding-top:10px; margin-top:10px; }
+  .small { color:#526070; font-size:.92rem; }
+  .fig { max-width:100%; height:auto; border:1px solid var(--line); border-radius:8px; margin:.4rem 0; background:#fff; }
+  .fig-row { display:flex; gap:8px; flex-wrap:wrap; }
+  .fig-row img { max-width:48%; }
+  table.grid { width:100%; border-collapse:collapse; margin:8px 0; font-size:.95rem; }
+  table.grid td, table.grid th { border:1px solid var(--line); padding:4px 8px; }
+  @media (max-width:560px) { .row { grid-template-columns:1fr; } .fig-row img { max-width:100%; } }
+  @media print { header, .noprint { display:none !important; } body { background:#fff; } .card { border:0; } }
 </style>
 </head>
 <body>
 <header>
-  <h1>HKDSE Biology</h1>
-  <p>Part A · Photosynthesis HKCEE &nbsp;·&nbsp; Part B · HKDSE style &nbsp;·&nbsp; Paper 1A multiple choice</p>
+  <h1>Photosynthesis · MC</h1>
+  <p>Four practices from the compiled photosynthesis paper. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
 </header>
-<div class="wrap">
-  <div class="card" id="gate">
-    <p>Enter your name in English (same as your ID card), class, class number and biology division, then choose a paper.</p>
-    <p><label for="name">Name in English (same as ID card name)</label>
-      <input id="name" autocomplete="name" placeholder="e.g. CHAN Tai Man" /></p>
-    <div class="row">
-      <div><label for="klass">Class</label><input id="klass" placeholder="e.g. 5E" /></div>
-      <div><label for="cno">Class number</label><input id="cno" inputmode="numeric" placeholder="e.g. 12" /></div>
-      <div>
-        <label for="bdiv">Biology division</label>
-        <select id="bdiv">
-          <option value="">Select</option>
-          <option value="Div B">Div B</option>
-          <option value="Div C">Div C</option>
-          <option value="Div E">Div E</option>
-        </select>
-      </div>
-    </div>
-    <p><label>Paper</label>
-      <select id="part">
-        <option value="A1">Part A · Photosynthesis HKCEE · Exercise 1 (16 questions, about 30 min)</option>
-        <option value="A2">Part A · Photosynthesis HKCEE · Exercise 2 (16 questions, about 30 min)</option>
-        <option value="B1">Part B · HKDSE style · Exercise 3 (16 questions, about 30 min)</option>
-        <option value="B2">Part B · HKDSE style · Exercise 4 (16 questions, about 30 min)</option>
-      </select>
-    </p>
-    <p style="margin:.8rem 0 0"><button type="button" id="startBtn">Start</button></p>
-  </div>
-  <div id="quiz"></div>
-  <div class="card hidden" id="done"></div>
-</div>
-<div class="bar hidden" id="bar"><span id="prog">0 / 0</span><span><button type="button" id="submitBtn">Submit</button></span></div>
+<main id="app"></main>
 <script src="questions.js"></script>
 <script>
-const ALL = window.PHOTO_MC || [];
-const PART_NAME = {
-  A1: "Part A · Photosynthesis HKCEE · Exercise 1",
-  A2: "Part A · Photosynthesis HKCEE · Exercise 2",
-  B1: "Part B · HKDSE style · Exercise 3",
-  B2: "Part B · HKDSE style · Exercise 4"
-};
-const SVG = {
-starch: `<svg class="fig-svg" viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-label="Starch test">
-<rect x="8" y="38" width="70" height="55" rx="6" fill="#dbeafe" stroke="#1e3a5f"/>
-<ellipse cx="43" cy="95" rx="38" ry="8" fill="#94a3b8"/>
-<path d="M43 95 L43 118 L20 130 L66 130 Z" fill="#64748b"/>
-<text x="43" y="28" text-anchor="middle" font-size="10">1 boil in water</text>
-<text x="118" y="80" font-size="16">→</text>
-<rect x="140" y="30" width="50" height="70" rx="8" fill="#fef9c3" stroke="#a16207"/>
-<rect x="128" y="78" width="74" height="28" rx="4" fill="#e0f2fe" stroke="#0369a1"/>
-<text x="165" y="22" text-anchor="middle" font-size="10">2 ethanol in water bath</text>
-<text x="218" y="80" font-size="16">→</text>
-<rect x="238" y="70" width="88" height="48" rx="4" fill="#f8fafc" stroke="#334155"/>
-<path d="M268 92 Q280 70 292 92" fill="#86efac" stroke="#166534"/>
-<text x="282" y="28" text-anchor="middle" font-size="10">3 iodine</text>
-<text x="282" y="42" text-anchor="middle" font-size="10">on white tile</text>
-</svg>`,
-koh: `<svg class="fig-svg" viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-label="Leaf in flask with KOH">
-<rect x="200" y="70" width="70" height="55" rx="4" fill="#d6d3d1" stroke="#444"/>
-<rect x="210" y="40" width="8" height="40" fill="#4d7c0f"/>
-<ellipse cx="230" cy="38" rx="22" ry="14" fill="#65a30d"/>
-<ellipse cx="248" cy="32" rx="16" ry="10" fill="#4d7c0f"/>
-<text x="235" y="140" text-anchor="middle" font-size="10">leaf in air</text>
-<path d="M40 70 L110 70 L120 120 L30 120 Z" fill="#e0f2fe" stroke="#0f766e"/>
-<rect x="70" y="48" width="10" height="24" fill="#4d7c0f"/>
-<ellipse cx="85" cy="48" rx="18" ry="11" fill="#65a30d"/>
-<rect x="48" y="100" width="54" height="14" fill="#a7f3d0" stroke="#047857"/>
-<text x="75" y="111" text-anchor="middle" font-size="9">KOH</text>
-<text x="75" y="140" text-anchor="middle" font-size="10">leaf + KOH (no CO₂)</text>
-</svg>`,
-foil: `<svg class="fig-svg" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" aria-label="Partly covered leaf">
-<ellipse cx="140" cy="55" rx="90" ry="40" fill="#4d7c0f" stroke="#14532d"/>
-<rect x="95" y="28" width="70" height="54" fill="#cbd5e1" stroke="#475569"/>
-<text x="130" y="58" text-anchor="middle" font-size="10">foil</text>
-<text x="200" y="58" font-size="10" fill="#ecfccb">light</text>
-</svg>`,
-variegated: `<svg class="fig-svg" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" aria-label="Variegated leaf starch result">
-<ellipse cx="90" cy="55" rx="55" ry="38" fill="#bbf7d0" stroke="#14532d"/>
-<ellipse cx="90" cy="55" rx="24" ry="16" fill="#fefce8" stroke="#a16207"/>
-<text x="90" y="100" text-anchor="middle" font-size="10">before iodine</text>
-<text x="140" y="55" font-size="14">→</text>
-<ellipse cx="200" cy="55" rx="55" ry="38" fill="#1e3a8a" stroke="#14532d"/>
-<ellipse cx="200" cy="55" rx="24" ry="16" fill="#fde68a" stroke="#a16207"/>
-<text x="200" y="100" text-anchor="middle" font-size="10">after iodine (dark = starch)</text>
-</svg>`,
-leaf: `<svg class="fig-svg" viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" aria-label="Leaf transverse section">
-<rect x="20" y="18" width="240" height="6" fill="#eab308"/>
-<text x="270" y="24" font-size="11">1 cuticle</text>
-<rect x="20" y="24" width="240" height="16" fill="#fde68a"/>
-<text x="270" y="36" font-size="11">2 upper epidermis</text>
-<g fill="#16a34a">${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${28+i*28}" y="42" width="22" height="38" rx="3"/>`).join("")}</g>
-<text x="270" y="64" font-size="11">3 palisade</text>
-<g fill="#86efac">${[[40,88],[70,95],[100,86],[130,98],[160,90],[190,96],[55,108],[115,110],[175,108]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="16" ry="11"/>`).join("")}</g>
-<text x="270" y="100" font-size="11">4 spongy</text>
-<ellipse cx="70" cy="88" rx="28" ry="22" fill="#fecaca" stroke="#7f1d1d"/>
-<rect x="58" y="78" width="10" height="22" fill="#94a3b8"/>
-<text x="48" y="74" font-size="10">5</text>
-<rect x="74" y="80" width="10" height="18" fill="#fbbf24"/>
-<text x="86" y="76" font-size="10">6</text>
-<rect x="20" y="128" width="90" height="14" fill="#fde68a"/>
-<rect x="130" y="128" width="90" height="14" fill="#fde68a"/>
-<ellipse cx="175" cy="128" rx="8" ry="10" fill="#4d7c0f"/>
-<text x="270" y="132" font-size="11">7 stoma</text>
-</svg>`,
-spectrum: `<svg class="fig-svg" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg" aria-label="Absorption spectrum">
-<line x1="40" y1="100" x2="320" y2="100" stroke="#333"/>
-<line x1="40" y1="20" x2="40" y2="100" stroke="#333"/>
-<path d="M50 90 C70 20 90 25 110 88 C150 95 180 92 210 88 C250 18 280 22 310 92" fill="none" stroke="#0f766e" stroke-width="2.5"/>
-<text x="80" y="118" font-size="10">blue</text>
-<text x="165" y="118" font-size="10">green</text>
-<text x="265" y="118" font-size="10">red</text>
-<text x="8" y="24" font-size="9">abs.</text>
-</svg>`,
-chloro: `<svg class="fig-svg" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg" aria-label="Chloroplast">
-<ellipse cx="140" cy="65" rx="110" ry="50" fill="#ecfccb" stroke="#3f6212" stroke-width="3"/>
-<ellipse cx="140" cy="65" rx="100" ry="40" fill="none" stroke="#65a30d"/>
-<g fill="#166534">${[[90,50],[90,62],[90,74],[150,48],[150,60],[150,72]].map(([x,y])=>`<rect x="${x}" y="${y}" width="36" height="8" rx="1"/>`).join("")}</g>
-<text x="108" y="44" font-size="10">grana</text>
-<text x="175" y="100" font-size="10">stroma</text>
-</svg>`,
-calvin: `<svg class="fig-svg" viewBox="0 0 360 220" xmlns="http://www.w3.org/2000/svg" aria-label="Carbon fixation flowchart">
-<text x="8" y="28" font-size="12">carbon dioxide</text>
-<text x="8" y="44" font-size="12">acceptor</text>
-<line x1="118" y1="34" x2="198" y2="34" stroke="#222" stroke-width="2"/>
-<polygon points="198,34 186,28 186,40" fill="#222"/>
-<text x="206" y="28" font-size="12">first product of</text>
-<text x="206" y="44" font-size="12">carbon fixation</text>
-<line x1="300" y1="54" x2="210" y2="108" stroke="#222" stroke-width="2"/>
-<polygon points="210,108 224,100 222,114" fill="#222"/>
-<text x="118" y="124" font-size="13">carbohydrate</text>
-<line x1="112" y1="112" x2="70" y2="52" stroke="#222" stroke-width="2"/>
-<polygon points="70,52 84,58 76,68" fill="#222"/>
-<line x1="176" y1="132" x2="176" y2="172" stroke="#222" stroke-width="2"/>
-<polygon points="176,176 170,162 182,162" fill="#222"/>
-<text x="148" y="198" font-size="12">glucose</text>
-</svg>`,
-limit: `<svg class="fig-svg" viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg" aria-label="Rate versus light">
-<line x1="40" y1="120" x2="280" y2="120" stroke="#333"/>
-<line x1="40" y1="20" x2="40" y2="120" stroke="#333"/>
-<path d="M40 110 C90 108 120 40 160 32 L270 32" fill="none" stroke="#0f766e" stroke-width="2.5"/>
-<path d="M40 110 C90 108 130 70 170 62 L270 62" fill="none" stroke="#b45309" stroke-width="2"/>
-<text x="248" y="26" font-size="9">25 °C</text>
-<text x="248" y="56" font-size="9">15 °C</text>
-<text x="200" y="134" font-size="10">light intensity</text>
-<text x="4" y="16" font-size="9">rate</text>
-<circle cx="160" cy="32" r="3" fill="#0f766e"/>
-<text x="168" y="22" font-size="9">Z</text>
-</svg>`,
-day: `<svg class="fig-svg" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" aria-label="Net CO2 over 24 hours">
-<line x1="30" y1="70" x2="300" y2="70" stroke="#999"/>
-<line x1="30" y1="20" x2="30" y2="125" stroke="#333"/>
-<line x1="30" y1="125" x2="300" y2="125" stroke="#333"/>
-<path d="M30 95 C70 95 90 70 110 70 C150 20 200 25 230 70 C250 70 270 95 300 95" fill="none" stroke="#0f766e" stroke-width="2.5"/>
-<text x="100" y="82" font-size="9">dawn</text>
-<text x="218" y="82" font-size="9">dusk</text>
-<text x="140" y="36" font-size="9">net CO₂ uptake</text>
-<text x="40" y="118" font-size="9">net release</text>
-<text x="250" y="138" font-size="10">time of day</text>
-</svg>`,
-elodea: `<svg class="fig-svg" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg" aria-label="Pondweed collecting gas">
-<rect x="40" y="40" width="140" height="85" fill="#e0f2fe" stroke="#0369a1"/>
-<rect x="55" y="70" width="50" height="45" fill="#4d7c0f"/>
-<path d="M80 70 L80 30 L120 30 L120 55" fill="none" stroke="#334155" stroke-width="3"/>
-<rect x="108" y="18" width="24" height="40" fill="#fff" stroke="#334155"/>
-<circle cx="95" cy="62" r="3" fill="#bae6fd"/>
-<circle cx="88" cy="50" r="2.5" fill="#bae6fd"/>
-<text x="120" y="135" text-anchor="middle" font-size="10">illuminated pondweed</text>
-</svg>`
-};
-const $ = id => document.getElementById(id);
-function esc(s){return String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
-let paper = [];
-function start(){
-  const name = $("name").value.trim();
-  const klass = $("klass").value.trim();
-  const cno = $("cno").value.trim();
-  const division = $("bdiv").value.trim();
-  if(!name || !klass || !cno || !division){
+const BANK = window.PHOTO_BANK;
+const app = document.getElementById("app");
+const KEY = "photo-mc-compiled-v1";
+const SUBMIT_TOKEN = "photo-mc-2026";
+const SUBMIT_URL = "";
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+  catch (e) { return []; }
+}
+function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
+
+let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[] };
+
+function el(html) { app.innerHTML = html; }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function figsHtml(it) {
+  if (!it.figs || !it.figs.length) return "";
+  const imgs = it.figs.map(src => `<img class="fig" src="${esc(src)}" alt="">`).join("");
+  const wrap = it.figs.length > 1 ? `<div class="fig-row">${imgs}</div>` : imgs;
+  const cap = it.caption ? `<p class="small">${esc(it.caption)}</p>` : "";
+  return wrap + cap;
+}
+function tableHtml(rows) {
+  if (!rows || !rows.length) return "";
+  const body = rows.map((row, i) => {
+    const tag = i === 0 ? "th" : "td";
+    return "<tr>" + row.map(c => `<${tag}>${esc(c)}</${tag}>`).join("") + "</tr>";
+  }).join("");
+  return `<table class="grid">${body}</table>`;
+}
+
+function home() {
+  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo && a.division === state.division);
+  const past = attempts.length ? attempts.slice().reverse().map(a =>
+    `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td></tr>`
+  ).join("") : "";
+  el(`
+    <section class="card">
+      <div class="row-name">
+        <label for="name">Name in English (same as ID card name)</label>
+        <input id="name" type="text" autocomplete="name" placeholder="e.g. CHAN Tai Man" value="${esc(state.name)}">
+      </div>
+      <div class="row">
+        <div><label for="cls">Class</label><input id="cls" type="text" placeholder="e.g. 4A" value="${esc(state.cls)}"></div>
+        <div><label for="cno">Class number</label><input id="cno" type="text" inputmode="numeric" placeholder="e.g. 12" value="${esc(state.classNo)}"></div>
+        <div>
+          <label for="bdiv">Biology division</label>
+          <select id="bdiv">
+            <option value="">Select</option>
+            <option value="Div B"${state.division==="Div B"?" selected":""}>Div B</option>
+            <option value="Div C"${state.division==="Div C"?" selected":""}>Div C</option>
+            <option value="Div E"${state.division==="Div E"?" selected":""}>Div E</option>
+          </select>
+        </div>
+      </div>
+    </section>
+    <section class="sessions">
+      ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
+    </section>
+    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
+    <p class="small">When you finish, you can download or print your personal report.</p>
+  `);
+  document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
+  document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
+  document.getElementById("cno").addEventListener("input", e => state.classNo = e.target.value.trim());
+  document.getElementById("bdiv").addEventListener("change", e => state.division = e.target.value.trim());
+  app.querySelectorAll(".session").forEach(b => b.addEventListener("click", () => start(b.dataset.id)));
+}
+
+function start(id) {
+  const nameEl = document.getElementById("name");
+  const clsEl = document.getElementById("cls");
+  const cnoEl = document.getElementById("cno");
+  const divEl = document.getElementById("bdiv");
+  if (nameEl) state.name = nameEl.value.trim();
+  if (clsEl) state.cls = clsEl.value.trim();
+  if (cnoEl) state.classNo = cnoEl.value.trim();
+  if (divEl) state.division = divEl.value.trim();
+  if (!state.name || !state.cls || !state.classNo || !state.division) {
     alert("Enter your name in English (same as your ID card), class, class number and biology division first.");
     return;
   }
-  const part = $("part").value;
-  paper = ALL.filter(q => q.part===part);
-  $("gate").classList.add("hidden");
-  $("done").classList.add("hidden");
-  $("bar").classList.remove("hidden");
-  renderQuiz();
-  window.scrollTo(0,0);
+  state.session = BANK.find(s => s.id === id);
+  state.i = 0;
+  state.picks = state.session.items.map(() => "");
+  renderQ();
 }
-function renderQuiz(){
-  const box = $("quiz");
-  box.innerHTML = "";
-  let lastPre = "";
-  paper.forEach((q,idx)=>{
-    const d = document.createElement("div");
-    d.className = "q card";
-    let h = "";
-    if(q.preamble && q.preamble!==lastPre){ h += `<p class="pre">${esc(q.preamble)}</p>`; lastPre=q.preamble; }
-    h += `<h3>${idx+1}. ${esc(q.q)}</h3>`;
-    if(q.svg && SVG[q.svg]) h += SVG[q.svg];
-    h += `<div class="opts">`;
-    "ABCD".split("").forEach(k=>{
-      if(!q.opts || q.opts[k]==null) return;
-      h += `<label class="opt"><input type="radio" name="a${q.id}" value="${k}" /><span><b>${k}.</b> ${esc(q.opts[k])}</span></label>`;
-    });
-    h += `</div>`;
-    d.innerHTML = h;
-    box.appendChild(d);
+
+function renderQ() {
+  const s = state.session;
+  const it = s.items[state.i];
+  const pct = Math.round(state.i / s.items.length * 100);
+  el(`
+    <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+    <div class="bar"><span style="width:${pct}%"></span></div>
+    <section class="card">
+      <p class="small">Question ${state.i + 1} of ${s.items.length}</p>
+      ${it.directions ? `<p class="small">${esc(it.directions)}</p>` : ""}
+      ${tableHtml(it.table)}
+      <p class="stem"></p>
+      ${figsHtml(it)}
+      <div class="opts">
+        ${["A","B","C","D"].map(k => `<button class="choice ${state.picks[state.i]===k?"on":""}" data-k="${k}"><strong>${k}.</strong> ${esc(it.options[k])}</button>`).join("")}
+      </div>
+      <div class="nav">
+        <button class="ghost" id="back" ${state.i===0?"disabled":""}>Back</button>
+        <button class="primary" id="next">${state.i === s.items.length - 1 ? "Submit" : "Next"}</button>
+      </div>
+    </section>
+  `);
+  app.querySelector(".stem").textContent = it.stem;
+  app.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
+    state.picks[state.i] = b.dataset.k;
+    renderQ();
+  }));
+  document.getElementById("back").addEventListener("click", () => { state.i--; renderQ(); });
+  document.getElementById("next").addEventListener("click", () => {
+    if (!state.picks[state.i]) { alert("Choose an answer."); return; }
+    if (state.i === s.items.length - 1) finish();
+    else { state.i++; renderQ(); }
   });
-  $("prog").textContent = "0 / "+paper.length+" answered";
-  box.onchange = ()=>{
-    const n = paper.filter(q => document.querySelector(`input[name=a${q.id}]:checked`)).length;
-    $("prog").textContent = n+" / "+paper.length+" answered";
-  };
 }
-function collect(){
-  const answers = {};
-  let right=0, blank=0;
-  const detail=[];
-  paper.forEach(q=>{
-    const el = document.querySelector(`input[name=a${q.id}]:checked`);
-    const ch = el ? el.value : "";
-    answers[q.id]=ch;
-    const ok = ch && ch===q.ans;
-    if(!ch) blank++;
-    else if(ok) right++;
-    detail.push({id:q.id, chosen:ch, correct:q.ans, ok:!!ok, q:q.q, opts:q.opts, why:q.why||"", part:q.part, svg:q.svg||""});
-  });
-  return {
-    name: $("name").value.trim()||"(no name)",
-    class: $("klass").value.trim()||"(no class)",
-    class_no: $("cno").value.trim()||"",
-    division: $("bdiv").value.trim()||"",
-    part: $("part").value,
-    paperName: PART_NAME[$("part").value],
-    ts: new Date().toISOString(),
-    n: paper.length, right, blank,
-    wrong: paper.length-right-blank,
-    answers, detail
-  };
-}
-function submit(){
-  const res = collect();
-  localStorage.setItem("photo_mc_last", JSON.stringify(res));
-  $("quiz").innerHTML = "";
-  $("bar").classList.add("hidden");
-  $("done").classList.remove("hidden");
-  const pct = Math.round(1000*res.right/res.n)/10;
-  let html = `<h2>Your results</h2>
-    <p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.division)} · ${esc(res.paperName)}</p>
-    <div class="kpi">
-      <div><span>Score</span><b>${res.right} / ${res.n}</b></div>
-      <div><span>Percentage</span><b>${pct}%</b></div>
-      <div><span>Unanswered</span><b>${res.blank}</b></div>
-    </div>
-    <p>Check each item below. Green = correct. Red = your choice was not the key.</p>`;
-  res.detail.forEach((d,i)=>{
-    const chosen = d.chosen ? d.chosen+". "+(d.opts[d.chosen]||"") : "no answer";
-    const key = d.correct+". "+(d.opts[d.correct]||"");
-    html += `<div class="review ${d.ok?"ok":"bad"}">
-      <p><b>${i+1}.</b> ${esc(d.q)}</p>
-      ${d.svg && SVG[d.svg] ? SVG[d.svg] : ""}
-      <p>Your answer: ${esc(chosen)}</p>
-      <p>Key: ${esc(key)} <span class="mark ${d.ok?"ok":"bad"}">${d.ok?"Correct":"Incorrect"}</span></p>
-      <p class="why">${esc(d.why)}</p>
-    </div>`;
-  });
-  html += `<p>
-    <button type="button" id="dl-report">Download my report</button>
-    <button type="button" id="again">Try another exercise</button>
-    <button type="button" class="secondary" id="dl">Download results for teacher</button></p>`;
-  $("done").innerHTML = html;
-  window.scrollTo(0,0);
-  $("again").onclick = ()=>{ $("done").classList.add("hidden"); $("gate").classList.remove("hidden"); };
-  $("dl-report").onclick = ()=> downloadPhotoReport(res, pct);
-  $("dl").onclick = ()=>{
-    const blob = new Blob([JSON.stringify(res,null,2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `photosynthesis_MC_${res.class}_${res.class_no}_${(res.division||"").replace(/\s+/g,"_")}_${res.name.replace(/\s+/g,"_")}.json`;
-    a.click();
-  };
-}
-function downloadPhotoReport(res, pct){
+
+function finish() {
+  const s = state.session;
+  let score = 0;
   const misses = [];
-  (res.detail || []).forEach((d, i) => { if (!d.ok) misses.push({ n: i + 1, ...d }); });
-  const missHtml = misses.length ? misses.map(d => {
-    const chosen = d.chosen ? d.chosen+". "+(d.opts[d.chosen]||"") : "no answer";
-    const key = d.correct+". "+(d.opts[d.correct]||"");
-    return `<div class="miss">
-      <p><strong>Question ${d.n}.</strong></p>
-      <p>${esc(d.q).replace(/\n/g,"<br>")}</p>
-      <p><strong>Your choice.</strong> ${esc(chosen)}</p>
-      <p><strong>Answer.</strong> ${esc(key)}</p>
-      <p>${esc(d.why)}</p>
-    </div>`;
-  }).join("") : "<p>Every item in this exercise was correct.</p>";
+  const byTopic = {};
+  const answers = s.items.map((it, idx) => {
+    const pick = state.picks[idx];
+    const right = pick === it.answer;
+    if (right) score++;
+    if (!byTopic[it.topic]) byTopic[it.topic] = { right:0, n:0 };
+    byTopic[it.topic].n++;
+    if (right) byTopic[it.topic].right++;
+    if (!right) {
+      misses.push({
+        n: it.n, pick, answer: it.answer,
+        stem: it.stem, chosen: it.options[pick], correct: it.options[it.answer],
+        note: pick === it.trap ? it.why : it.fix,
+      });
+    }
+    return {
+      qn: it.n, topic: it.topic, chosen: pick, correct: it.answer, trap: it.trap,
+      option_A: it.options.A, option_B: it.options.B, option_C: it.options.C, option_D: it.options.D,
+      stem: it.stem, right
+    };
+  });
+  const when = new Date().toLocaleString();
+  const whenIso = new Date().toISOString();
+  const rec = {
+    name: state.name, cls: state.cls, classNo: state.classNo, division: state.division, title: s.title + " — " + s.subtitle,
+    when, score, total: s.items.length, picks: state.picks.slice()
+  };
+  const all = load(); all.push(rec); save(all);
+  const weak = Object.entries(byTopic)
+    .map(([t, v]) => ({ t, lost: v.n - v.right, n: v.n, right: v.right }))
+    .sort((a, b) => b.lost - a.lost);
+  const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
+    .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
+  const payload = {
+    paper: "Photosynthesis MC",
+    token: SUBMIT_TOKEN,
+    attempt_id: (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2)),
+    when_iso: whenIso,
+    name: state.name,
+    cls: state.cls,
+    class_no: state.classNo,
+    division: state.division,
+    practice_id: s.id,
+    practice_title: s.title + " — " + s.subtitle,
+    score, total: s.items.length,
+    percent: Math.round(1000 * score / s.items.length) / 10,
+    answers
+  };
+  downloadJson(payload);
+  el(`
+    <section class="card" id="report">
+      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+      <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
+      <p>${Math.round(score / s.items.length * 100)}%</p>
+      <p class="small" id="save-status">You can download or print your personal report below.</p>
+      <h2>Personal report</h2>
+      <p>${misses.length === 0
+        ? "Every item in this practice was correct."
+        : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
+      ${misses.map(m => `
+        <div class="miss">
+          <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
+          <p class="stem"></p>
+          <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
+          <p><strong>Answer.</strong> ${esc(m.correct)}</p>
+          <p>${esc(m.note)}</p>
+        </div>`).join("") || "<p>No incorrect answers in this practice.</p>"}
+    </section>
+    <p class="noprint">
+      <button class="ghost" id="dl-report">Download my report</button>
+      <button class="ghost" id="print">Print report</button>
+      <button class="primary" id="again">Back to practices</button>
+    </p>
+  `);
+  app.querySelectorAll(".miss").forEach((box, i) => {
+    const stem = box.querySelector(".stem");
+    if (stem) stem.textContent = misses[i].stem;
+  });
+  document.getElementById("dl-report").addEventListener("click", () => downloadReport(s, score, misses, weakLine, when));
+  document.getElementById("print").addEventListener("click", () => window.print());
+  document.getElementById("again").addEventListener("click", home);
+  sendAttempt(payload).then(ok => {
+    const box = document.getElementById("save-status");
+    if (!box) return;
+    box.textContent = ok
+      ? "Your answers have been recorded. Download or print your personal report if you want a copy."
+      : "Download or print your personal report if you want a copy.";
+  });
+}
+
+function downloadFile(filename, text, type) {
+  const blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadReport(s, score, misses, weakLine, when) {
+  const pct = Math.round(score / s.items.length * 100);
+  const missHtml = misses.length ? misses.map(m => `
+    <div class="miss">
+      <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
+      <p>${esc(m.stem).replace(/\n/g, "<br>")}</p>
+      <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
+      <p><strong>Answer.</strong> ${esc(m.correct)}</p>
+      <p>${esc(m.note)}</p>
+    </div>`).join("") : "<p>No incorrect answers in this practice.</p>";
   const html = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<title>Personal report · ${esc(res.name)}</title>
+<title>Personal report · ${esc(state.name)}</title>
 <style>
-  body { font: 16px/1.45 "Segoe UI", Calibri, sans-serif; max-width: 720px; margin: 24px auto; color: #14221b; }
-  h1 { font-size: 1.3rem; }
-  .score { font-size: 1.8rem; font-weight: 700; }
-  .ok { color: #1b6b3a; } .bad { color: #9b2c2c; }
-  .miss { border-top: 1px solid #d7cfc0; padding-top: 10px; margin-top: 10px; }
-  .small { color: #4b5d54; font-size: 0.92rem; }
+  body { font: 16px/1.45 "Segoe UI", "Noto Sans", sans-serif; max-width: 720px; margin: 24px auto; color: #1c2430; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .score { font-size: 1.8rem; font-weight: 700; margin: 0.4rem 0; }
+  .ok { color: #1d6b3a; } .bad { color: #8c2f2f; }
+  .miss { border-top: 1px solid #d5dbe3; padding-top: 10px; margin-top: 10px; }
+  .small { color: #526070; font-size: 0.92rem; }
 </style></head><body>
 <h1>Photosynthesis · personal report</h1>
-<p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.division)}</p>
-<p>${esc(res.paperName)}</p>
-<p class="score ${pct>=70?"ok":"bad"}">${res.right} / ${res.n} &nbsp; ${pct}%</p>
-<p>Unanswered: ${res.blank}</p>
+<p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)}</p>
+<p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
+<p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
+<p>${misses.length === 0
+    ? "Every item in this practice was correct."
+    : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
 ${missHtml}
 <p class="small">Personal report · HKDSE Biology · Photosynthesis</p>
 </body></html>`;
-  const safe = (res.name+"_"+res.class+"_"+res.class_no+"_"+(res.division||"")+"_"+res.part).replace(/[^\w\-]+/g,"_");
-  const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + s.id)
+    .replace(/[^\w\-]+/g, "_");
+  downloadFile("report_photosynthesis_" + safe + ".html", html, "text/html;charset=utf-8");
+}
+
+function downloadJson(payload) {
+  const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + (payload.division || "") + "_" + payload.practice_id)
+    .replace(/[^\w\-]+/g, "_");
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "report_photosynthesis_"+safe+".html";
+  a.download = "photosynthesis_" + safe + ".json";
   a.click();
+  URL.revokeObjectURL(a.href);
 }
-$("startBtn").onclick=start;
-$("submitBtn").onclick=submit;
+
+function sendAttempt(payload) {
+  if (!SUBMIT_URL || SUBMIT_URL.indexOf("http") !== 0) {
+    return Promise.resolve(false);
+  }
+  return fetch(SUBMIT_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(r => r.json()).then(d => !!(d && d.ok)).catch(() => false);
+}
+
+home();
 </script>
 </body>
 </html>
