@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photosynthesis · Teacher desk</title>
+<style>
+:root { --ink:#14221b; --muted:#4b5d54; --paper:#f6f3ea; --card:#fffdf7; --line:#d7cfc0; --teal:#0f6b5c; }
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.45 "Segoe UI", Calibri, sans-serif;background:var(--paper);color:var(--ink)}
+header{background:#16352d;color:#f3efe4;padding:1.1rem 1.4rem}
+header h1{margin:0;font-family:Georgia,serif;font-size:1.45rem}
+header p{margin:.35rem 0 0;opacity:.9;font-size:.95rem}
+.wrap{max-width:820px;margin:0 auto;padding:1rem 1.1rem 3rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin:0 0 1rem}
+button{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:.45rem .8rem;cursor:pointer;font:inherit}
+button.secondary{background:#4a5c54}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:8px;padding:.5rem;font:inherit}
+.kpi{display:flex;gap:1.2rem;flex-wrap:wrap;margin:.6rem 0}
+.kpi b{display:block;font-size:1.45rem}
+table.simple{border-collapse:collapse;font-size:.85rem;margin:.3rem 0;width:100%}
+table.simple td,table.simple th{border:1px solid var(--line);padding:.2rem .4rem;text-align:left}
+.small{color:var(--muted);font-size:.9rem}
+a{color:var(--teal)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Photosynthesis · Teacher desk</h1>
+  <p>Import student result files. Download item statistics as CSV.</p>
+</header>
+<div class="wrap">
+  <div class="card">
+    <p>Students download a JSON file when they submit. Import those files here. Data stay on this computer.</p>
+    <p><input type="file" id="files" accept=".json,.txt" multiple></p>
+    <label class="small">Or paste JSON</label>
+    <textarea id="paste"></textarea>
+    <p>
+      <button type="button" id="analyseBtn">Analyse</button>
+      <button type="button" class="secondary" id="exportCsv">Download CSV</button>
+    </p>
+    <div id="teachOut"></div>
+  </div>
+  <p class="small"><a href="../teacher/index.html">Teacher master page</a> · <a href="index.html">Student practice</a></p>
+</div>
+<script>
+const PART_NAME = {
+  A1: "Part A · Photosynthesis HKCEE · Exercise 1",
+  A2: "Part A · Photosynthesis HKCEE · Exercise 2",
+  B1: "Part B · HKDSE style · Exercise 3",
+  B2: "Part B · HKDSE style · Exercise 4"
+};
+const $ = id => document.getElementById(id);
+function esc(s){return String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+let lastRows = [];
+function analyse(){
+  const files = $("files").files;
+  const payloads = [];
+  const done = ()=> paint(payloads);
+  const text = $("paste").value.trim();
+  if(text){
+    try{
+      const t = JSON.parse(text);
+      (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x));
+    }catch(e){
+      text.split(/\n/).forEach(line=>{ try{ if(line.trim()) payloads.push(JSON.parse(line)); }catch(_){} });
+    }
+  }
+  if(!files.length){ done(); return; }
+  let n=0;
+  [...files].forEach(f=>{
+    const r = new FileReader();
+    r.onload = ()=>{ try{ const t=JSON.parse(r.result); (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x)); }catch(e){} n++; if(n===files.length) done(); };
+    r.readAsText(f);
+  });
+}
+function paint(payloads){
+  const by = {};
+  payloads.forEach(p=>{
+    (p.detail||[]).forEach(d=>{
+      const k = d.id;
+      if(!by[k]) by[k]={id:k,q:d.q,opts:d.opts||{},part:d.part,correct:d.correct,n:0,ok:0,counts:{A:0,B:0,C:0,D:0,blank:0}};
+      const s=by[k]; s.n++;
+      if(d.ok) s.ok++;
+      const ch=d.chosen||"blank";
+      if(s.counts[ch]==null) s.counts[ch]=0;
+      s.counts[ch]++;
+    });
+  });
+  const rows = Object.values(by).sort((a,b)=> (1-a.ok/Math.max(1,a.n)) - (1-b.ok/Math.max(1,a.n)));
+  lastRows = rows;
+  const hard = rows.filter(r=> r.n>=1 && (1-r.ok/r.n)>=0.4);
+  let h = `<div class="kpi"><div><span>Scripts</span><b>${payloads.length}</b></div><div><span>Items</span><b>${rows.length}</b></div><div><span>≥40% wrong</span><b>${hard.length}</b></div></div>`;
+  h += `<h3>Hard items (wrong rate ≥ 40%)</h3><table class="simple"><tr><th>ID</th><th>Wrong%</th><th>n</th><th>Key</th><th>Top distractor</th><th>Question</th></tr>`;
+  hard.forEach(r=>{
+    const wrong = Math.round(1000*(1-r.ok/r.n))/10;
+    let top="—", topn=-1;
+    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+" — "+(r.opts[k]||""); }});
+    h += `<tr><td>${esc(r.id)}</td><td>${wrong}</td><td>${r.n}</td><td>${esc(r.correct)}</td><td>${esc(top)}</td><td>${esc(r.q)}</td></tr>`;
+  });
+  h += `</table>`;
+  $("teachOut").innerHTML = h;
+}
+function exportCsv(){
+  const lines = ["id,paper,n,n_correct,pct_wrong,key,top_distractor,question"];
+  lastRows.forEach(r=>{
+    const pct = r.n? (1-r.ok/r.n):"";
+    let top=""; let topn=-1;
+    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+": "+(r.opts[k]||"").replace(/"/g,'""'); }});
+    lines.push([r.id, PART_NAME[r.part]||r.part, r.n, r.ok, pct, r.correct, '"'+top+'"', '"'+(r.q||"").replace(/"/g,'""')+'"'].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="photosynthesis_MC_item_analysis.csv"; a.click();
+}
+$("analyseBtn").onclick=analyse;
+$("exportCsv").onclick=exportCsv;
+</script>
+</body>
+</html>

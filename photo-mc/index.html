@@ -65,22 +65,9 @@ table.simple td,table.simple th{border:1px solid var(--line);padding:.2rem .4rem
       </select>
     </p>
     <p style="margin:.8rem 0 0"><button type="button" id="startBtn">Start</button></p>
-    <p style="margin:.7rem 0 0"><button type="button" class="teach-link" id="teachBtn">Teacher desk</button>
-      · <a class="teach-link" href="../teacher/index.html">All MC topics and statistics</a></p>
   </div>
   <div id="quiz"></div>
   <div class="card hidden" id="done"></div>
-  <div class="card hidden" id="teacher">
-    <h2>Teacher desk</h2>
-    <p>Import students’ result files. Download a CSV, or use the <a href="../teacher/index.html">master teacher page</a> for all MC topics.</p>
-    <p><input type="file" id="files" accept=".json,.txt" multiple /></p>
-    <label>Or paste JSON</label>
-    <textarea id="paste"></textarea>
-    <p><button type="button" id="analyseBtn">Analyse</button>
-       <button type="button" class="secondary" id="exportCsv">Download CSV</button>
-       <button type="button" class="secondary" id="backGate">Back</button></p>
-    <div id="teachOut"></div>
-  </div>
 </div>
 <div class="bar hidden" id="bar"><span id="prog">0 / 0</span><span><button type="button" id="submitBtn">Submit</button></span></div>
 <script src="questions.js"></script>
@@ -218,7 +205,6 @@ function start(){
   const part = $("part").value;
   paper = ALL.filter(q => q.part===part);
   $("gate").classList.add("hidden");
-  $("teacher").classList.add("hidden");
   $("done").classList.add("hidden");
   $("bar").classList.remove("hidden");
   renderQuiz();
@@ -314,77 +300,8 @@ function submit(){
     a.click();
   };
 }
-function teacher(){
-  $("gate").classList.add("hidden");
-  $("teacher").classList.remove("hidden");
-}
-let lastRows = [];
-function analyse(){
-  const files = $("files").files;
-  const payloads = [];
-  const done = ()=> paint(payloads);
-  const text = $("paste").value.trim();
-  if(text){
-    try{
-      const t = JSON.parse(text);
-      (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x));
-    }catch(e){
-      text.split(/\n/).forEach(line=>{ try{ if(line.trim()) payloads.push(JSON.parse(line)); }catch(_){} });
-    }
-  }
-  if(!files.length){ done(); return; }
-  let n=0;
-  [...files].forEach(f=>{
-    const r = new FileReader();
-    r.onload = ()=>{ try{ const t=JSON.parse(r.result); (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x)); }catch(e){} n++; if(n===files.length) done(); };
-    r.readAsText(f);
-  });
-}
-function paint(payloads){
-  const by = {};
-  payloads.forEach(p=>{
-    (p.detail||[]).forEach(d=>{
-      const k = d.id;
-      if(!by[k]) by[k]={id:k,q:d.q,opts:d.opts||{},part:d.part,correct:d.correct,n:0,ok:0,counts:{A:0,B:0,C:0,D:0,blank:0}};
-      const s=by[k]; s.n++;
-      if(d.ok) s.ok++;
-      const ch=d.chosen||"blank";
-      if(s.counts[ch]==null) s.counts[ch]=0;
-      s.counts[ch]++;
-    });
-  });
-  const rows = Object.values(by).sort((a,b)=> (1-a.ok/Math.max(1,a.n)) - (1-b.ok/Math.max(1,b.n)));
-  lastRows = rows;
-  const hard = rows.filter(r=> r.n>=1 && (1-r.ok/r.n)>=0.4);
-  let h = `<div class="kpi"><div><span>Scripts</span><b>${payloads.length}</b></div><div><span>Items</span><b>${rows.length}</b></div><div><span>≥40% wrong</span><b>${hard.length}</b></div></div>`;
-  h += `<h3>Hard items (wrong rate ≥ 40%)</h3><table class="simple"><tr><th>ID</th><th>Wrong%</th><th>n</th><th>Key</th><th>Top distractor</th><th>Question</th></tr>`;
-  hard.forEach(r=>{
-    const wrong = Math.round(1000*(1-r.ok/r.n))/10;
-    let top="—", topn=-1;
-    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+" — "+(r.opts[k]||""); }});
-    h += `<tr><td>${esc(r.id)}</td><td>${wrong}</td><td>${r.n}</td><td>${esc(r.correct)}</td><td>${esc(top)}</td><td>${esc(r.q)}</td></tr>`;
-  });
-  h += `</table>`;
-  $("teachOut").innerHTML = h;
-}
-function exportCsv(){
-  const lines = ["id,paper,n,n_correct,pct_wrong,key,top_distractor,question"];
-  lastRows.forEach(r=>{
-    const pct = r.n? (1-r.ok/r.n):"";
-    let top=""; let topn=-1;
-    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+": "+(r.opts[k]||"").replace(/"/g,'""'); }});
-    lines.push([r.id, PART_NAME[r.part]||r.part, r.n, r.ok, pct, r.correct, '"'+top+'"', '"'+(r.q||"").replace(/"/g,'""')+'"'].join(","));
-  });
-  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="photosynthesis_MC_item_analysis.csv"; a.click();
-}
 $("startBtn").onclick=start;
 $("submitBtn").onclick=submit;
-$("teachBtn").onclick=teacher;
-$("analyseBtn").onclick=analyse;
-$("exportCsv").onclick=exportCsv;
-$("backGate").onclick=()=>{ $("teacher").classList.add("hidden"); $("gate").classList.remove("hidden"); history.replaceState(null,"",location.pathname); };
-if (location.hash === "#teacher") teacher();
 </script>
 </body>
 </html>

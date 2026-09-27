@@ -110,7 +110,6 @@ function home() {
     </section>
     ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
     <p class="small">When you finish, you will see a personal report and a results file will download for your teacher.</p>
-    <p class="small noprint"><a href="../teacher/index.html">Teachers: MC topics and class statistics</a></p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
