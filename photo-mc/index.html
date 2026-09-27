@@ -16,7 +16,7 @@ header p{margin:.35rem 0 0;opacity:.9;font-size:.95rem}
 label{display:block;font-size:.82rem;color:var(--muted);margin:.2rem 0}
 input,select,button,textarea{font:inherit}
 input,select{padding:.4rem .55rem;border:1px solid var(--line);border-radius:8px;width:100%}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem}
 @media(max-width:700px){.row{grid-template-columns:1fr}}
 .q{padding:.15rem 0}
 .q h3{margin:0 0 .4rem;font-size:1.02rem;white-space:pre-wrap}
@@ -49,12 +49,21 @@ table.simple td,table.simple th{border:1px solid var(--line);padding:.2rem .4rem
 </header>
 <div class="wrap">
   <div class="card" id="gate">
-    <p>Enter your name in English (same as your ID card), class and class number, then choose a paper.</p>
+    <p>Enter your name in English (same as your ID card), class, class number and biology division, then choose a paper.</p>
     <p><label for="name">Name in English (same as ID card name)</label>
       <input id="name" autocomplete="name" placeholder="e.g. CHAN Tai Man" /></p>
     <div class="row">
       <div><label for="klass">Class</label><input id="klass" placeholder="e.g. 5E" /></div>
       <div><label for="cno">Class number</label><input id="cno" inputmode="numeric" placeholder="e.g. 12" /></div>
+      <div>
+        <label for="bdiv">Biology division</label>
+        <select id="bdiv">
+          <option value="">Select</option>
+          <option value="Div B">Div B</option>
+          <option value="Div C">Div C</option>
+          <option value="Div E">Div E</option>
+        </select>
+      </div>
     </div>
     <p><label>Paper</label>
       <select id="part">
@@ -214,8 +223,9 @@ function start(){
   const name = $("name").value.trim();
   const klass = $("klass").value.trim();
   const cno = $("cno").value.trim();
-  if(!name || !klass || !cno){
-    alert("Enter your name in English (same as your ID card), class and class number first.");
+  const division = $("bdiv").value.trim();
+  if(!name || !klass || !cno || !division){
+    alert("Enter your name in English (same as your ID card), class, class number and biology division first.");
     return;
   }
   const part = $("part").value;
@@ -269,6 +279,7 @@ function collect(){
     name: $("name").value.trim()||"(no name)",
     class: $("klass").value.trim()||"(no class)",
     class_no: $("cno").value.trim()||"",
+    division: $("bdiv").value.trim()||"",
     part: $("part").value,
     paperName: PART_NAME[$("part").value],
     ts: new Date().toISOString(),
@@ -285,7 +296,7 @@ function submit(){
   $("done").classList.remove("hidden");
   const pct = Math.round(1000*res.right/res.n)/10;
   let html = `<h2>Your results</h2>
-    <p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.paperName)}</p>
+    <p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.division)} · ${esc(res.paperName)}</p>
     <div class="kpi">
       <div><span>Score</span><b>${res.right} / ${res.n}</b></div>
       <div><span>Percentage</span><b>${pct}%</b></div>
@@ -315,7 +326,7 @@ function submit(){
     const blob = new Blob([JSON.stringify(res,null,2)], {type:"application/json"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `photosynthesis_MC_${res.class}_${res.class_no}_${res.name.replace(/\s+/g,"_")}.json`;
+    a.download = `photosynthesis_MC_${res.class}_${res.class_no}_${(res.division||"").replace(/\s+/g,"_")}_${res.name.replace(/\s+/g,"_")}.json`;
     a.click();
   };
 }
@@ -345,14 +356,14 @@ function downloadPhotoReport(res, pct){
   .small { color: #4b5d54; font-size: 0.92rem; }
 </style></head><body>
 <h1>Photosynthesis · personal report</h1>
-<p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)})</p>
+<p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.division)}</p>
 <p>${esc(res.paperName)}</p>
 <p class="score ${pct>=70?"ok":"bad"}">${res.right} / ${res.n} &nbsp; ${pct}%</p>
 <p>Unanswered: ${res.blank}</p>
 ${missHtml}
 <p class="small">Personal report · HKDSE Biology · Photosynthesis</p>
 </body></html>`;
-  const safe = (res.name+"_"+res.class+"_"+res.class_no+"_"+res.part).replace(/[^\w\-]+/g,"_");
+  const safe = (res.name+"_"+res.class+"_"+res.class_no+"_"+(res.division||"")+"_"+res.part).replace(/[^\w\-]+/g,"_");
   const blob = new Blob([html], {type:"text/html;charset=utf-8"});
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);

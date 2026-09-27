@@ -85,7 +85,7 @@
     <article class="card topic">
       <span class="level">F.4 · live</span>
       <h3>Cellular organisation</h3>
-      <p>Two 32-item practices. Students enter name in English (ID card), class and class number. Personal report after submit.</p>
+      <p>Two 32-item practices. Students enter name in English (ID card), class, class number and biology division. Personal report after submit.</p>
       <div class="links">
         <a class="btn primary" href="../cell-f4-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../cell-f4-mc/teacher.html">Item statistics</a>
@@ -94,7 +94,7 @@
     <article class="card topic">
       <span class="level">HKCEE / HKDSE · live</span>
       <h3>Photosynthesis</h3>
-      <p>Four short exercises. Same name, class and class number fields. Download CSV from this paper’s teacher desk or from the importer below.</p>
+      <p>Four short exercises. Same name, class, class number and biology division. Download CSV from this paper’s teacher desk or from the importer below.</p>
       <div class="links">
         <a class="btn primary" href="../photo-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../photo-mc/teacher.html">Paper statistics</a>
@@ -157,6 +157,7 @@ function normalize(obj) {
       name: obj.name || "",
       cls: obj.cls || obj.class || "",
       class_no: obj.class_no || obj.classNo || "",
+      division: obj.division || "",
       practice_id: obj.practice_id || "",
       practice_title: obj.practice_title || obj.paper || "",
       score: obj.score,
@@ -173,6 +174,7 @@ function normalize(obj) {
       name: obj.name || "",
       cls: obj.class || obj.cls || "",
       class_no: obj.class_no || obj.classNo || "",
+      division: obj.division || "",
       practice_id: obj.part || "photo",
       practice_title: obj.paperName || "Photosynthesis",
       score: obj.right,
@@ -238,6 +240,7 @@ function render() {
     : "No files imported yet.";
   const people = attempts.slice().sort((a, b) =>
     String(a.paper).localeCompare(String(b.paper)) ||
+    (a.division || "").localeCompare(b.division || "") ||
     (a.cls || "").localeCompare(b.cls || "") ||
     String(a.class_no).localeCompare(String(b.class_no), undefined, { numeric: true }) ||
     (a.name || "").localeCompare(b.name || "")
@@ -245,13 +248,14 @@ function render() {
   document.getElementById("people").innerHTML = people.length ? `
     <h2>Individual performance</h2>
     <table>
-      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Practice</th><th>Score</th><th>%</th></tr>
+      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Score</th><th>%</th></tr>
       ${people.map(a => `
         <tr>
           <td>${esc(a.paper)}</td>
           <td>${esc(a.name)}</td>
           <td>${esc(a.cls)}</td>
           <td>${esc(a.class_no)}</td>
+          <td>${esc(a.division || "")}</td>
           <td>${esc(a.practice_title || a.practice_id)}</td>
           <td>${a.score}/${a.total}</td>
           <td>${a.percent != null ? a.percent : ""}</td>
@@ -298,10 +302,10 @@ document.getElementById("clear").addEventListener("click", () => {
   render();
 });
 document.getElementById("csv-people").addEventListener("click", () => {
-  const lines = ["paper,name_english,class,class_no,practice,score,total,percent,when"];
+  const lines = ["paper,name_english,class,class_no,division,practice,score,total,percent,when"];
   attempts.forEach(a => {
     lines.push([
-      csvCell(a.paper), csvCell(a.name), csvCell(a.cls), csvCell(a.class_no),
+      csvCell(a.paper), csvCell(a.name), csvCell(a.cls), csvCell(a.class_no), csvCell(a.division || ""),
       csvCell(a.practice_title || a.practice_id), a.score, a.total, a.percent, csvCell(a.when_iso)
     ].join(","));
   });

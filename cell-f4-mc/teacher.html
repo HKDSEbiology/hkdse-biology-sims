@@ -116,18 +116,20 @@ function render() {
     ? attempts.length + " student attempt(s) imported."
     : "No files imported yet.";
   const people = attempts.slice().sort((a, b) =>
+    (a.division || "").localeCompare(b.division || "") ||
     (a.cls || "").localeCompare(b.cls || "") ||
     String(a.class_no || a.classNo || "").localeCompare(String(b.class_no || b.classNo || ""), undefined, { numeric: true }) ||
     (a.name || "").localeCompare(b.name || "")
   );
   document.getElementById("people").innerHTML = people.length ? `
     <table>
-      <tr><th>Name in English</th><th>Class</th><th>Class no.</th><th>Practice</th><th>Score</th><th>%</th><th>When</th><th>Answers</th></tr>
+      <tr><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Score</th><th>%</th><th>When</th><th>Answers</th></tr>
       ${people.map(a => `
         <tr>
           <td>${esc(a.name)}</td>
           <td>${esc(a.cls)}</td>
           <td>${esc(a.class_no || a.classNo || "")}</td>
+          <td>${esc(a.division || "")}</td>
           <td>${esc(a.practice_title || a.practice_id)}</td>
           <td>${a.score}/${a.total}</td>
           <td>${a.percent != null ? a.percent : Math.round(100 * a.score / a.total)}</td>
@@ -166,7 +168,7 @@ function render() {
     paper: "Cellular organisation F.4 MC",
     n_attempts: attempts.length,
     individuals: people.map(a => ({
-      name: a.name, class: a.cls, class_no: a.class_no || a.classNo || "", practice: a.practice_title,
+      name: a.name, class: a.cls, class_no: a.class_no || a.classNo || "", division: a.division || "", practice: a.practice_title,
       score: a.score, total: a.total, percent: a.percent,
       when: a.when_iso,
       answers: (a.answers || []).map(x => ({ q: x.qn, chosen: x.chosen, correct: x.correct, right: x.chosen === x.correct }))
@@ -218,12 +220,12 @@ document.getElementById("csv").addEventListener("click", () => {
   a.click();
 });
 document.getElementById("peoplecsv").addEventListener("click", () => {
-  const lines = ["name_english,class,class_no,practice,score,total,percent,when"];
+  const lines = ["name_english,class,class_no,division,practice,score,total,percent,when"];
   attempts.forEach(a => {
     const pct = a.percent != null ? a.percent : (a.total ? Math.round(1000 * a.score / a.total) / 10 : "");
     const name = '"' + String(a.name || "").replace(/"/g, '""') + '"';
     lines.push([
-      name, a.cls || "", a.class_no || a.classNo || "",
+      name, a.cls || "", a.class_no || a.classNo || "", a.division || "",
       '"' + String(a.practice_title || a.practice_id || "").replace(/"/g, '""') + '"',
       a.score, a.total, pct, a.when_iso || ""
     ].join(","));

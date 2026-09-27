@@ -14,8 +14,8 @@
   main { max-width:760px; margin:0 auto; padding:18px 16px 48px; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:0 0 14px; }
   label { display:block; font-weight:650; margin:0 0 6px; }
-  input[type=text] { width:100%; font:inherit; padding:10px 12px; border:1px solid #b7c0cc; border-radius:8px; }
-  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  input[type=text], select { width:100%; font:inherit; padding:10px 12px; border:1px solid #b7c0cc; border-radius:8px; background:#fff; }
+  .row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
   .row-name { margin-bottom:12px; }
   button { font:inherit; cursor:pointer; }
   button.primary, button.ghost { border-radius:8px; padding:10px 14px; }
@@ -48,7 +48,7 @@
 <body>
 <header>
   <h1>Cellular organisation · F.4</h1>
-  <p>Two practices of 32 questions. Enter your name in English (same as your ID card), class and class number, then choose one practice.</p>
+  <p>Two practices of 32 questions. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
 </header>
 <main id="app"></main>
 <script src="questions.js"></script>
@@ -65,7 +65,7 @@ function load() {
 }
 function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
-let state = { name:"", cls:"", classNo:"", session:null, i:0, picks:[] };
+let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[] };
 
 function el(html) { app.innerHTML = html; }
 function esc(s) {
@@ -90,7 +90,7 @@ function tableHtml(rows) {
 }
 
 function home() {
-  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo);
+  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo && a.division === state.division);
   const past = attempts.length ? attempts.slice().reverse().map(a =>
     `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td></tr>`
   ).join("") : "";
@@ -103,6 +103,15 @@ function home() {
       <div class="row">
         <div><label for="cls">Class</label><input id="cls" type="text" placeholder="e.g. 4A" value="${esc(state.cls)}"></div>
         <div><label for="cno">Class number</label><input id="cno" type="text" inputmode="numeric" placeholder="e.g. 12" value="${esc(state.classNo)}"></div>
+        <div>
+          <label for="bdiv">Biology division</label>
+          <select id="bdiv">
+            <option value="">Select</option>
+            <option value="Div B"${state.division==="Div B"?" selected":""}>Div B</option>
+            <option value="Div C"${state.division==="Div C"?" selected":""}>Div C</option>
+            <option value="Div E"${state.division==="Div E"?" selected":""}>Div E</option>
+          </select>
+        </div>
       </div>
     </section>
     <section class="sessions">
@@ -114,6 +123,7 @@ function home() {
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
   document.getElementById("cno").addEventListener("input", e => state.classNo = e.target.value.trim());
+  document.getElementById("bdiv").addEventListener("change", e => state.division = e.target.value.trim());
   app.querySelectorAll(".session").forEach(b => b.addEventListener("click", () => start(b.dataset.id)));
 }
 
@@ -121,11 +131,13 @@ function start(id) {
   const nameEl = document.getElementById("name");
   const clsEl = document.getElementById("cls");
   const cnoEl = document.getElementById("cno");
+  const divEl = document.getElementById("bdiv");
   if (nameEl) state.name = nameEl.value.trim();
   if (clsEl) state.cls = clsEl.value.trim();
   if (cnoEl) state.classNo = cnoEl.value.trim();
-  if (!state.name || !state.cls || !state.classNo) {
-    alert("Enter your name in English (same as your ID card), class and class number first.");
+  if (divEl) state.division = divEl.value.trim();
+  if (!state.name || !state.cls || !state.classNo || !state.division) {
+    alert("Enter your name in English (same as your ID card), class, class number and biology division first.");
     return;
   }
   state.session = BANK.find(s => s.id === id);
@@ -139,7 +151,7 @@ function renderQ() {
   const it = s.items[state.i];
   const pct = Math.round(state.i / s.items.length * 100);
   el(`
-    <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+    <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
     <div class="bar"><span style="width:${pct}%"></span></div>
     <section class="card">
       <p class="small">Question ${state.i + 1} of ${s.items.length}</p>
@@ -197,7 +209,7 @@ function finish() {
   const when = new Date().toLocaleString();
   const whenIso = new Date().toISOString();
   const rec = {
-    name: state.name, cls: state.cls, classNo: state.classNo, title: s.title + " — " + s.subtitle,
+    name: state.name, cls: state.cls, classNo: state.classNo, division: state.division, title: s.title + " — " + s.subtitle,
     when, score, total: s.items.length, picks: state.picks.slice()
   };
   const all = load(); all.push(rec); save(all);
@@ -214,6 +226,7 @@ function finish() {
     name: state.name,
     cls: state.cls,
     class_no: state.classNo,
+    division: state.division,
     practice_id: s.id,
     practice_title: s.title + " — " + s.subtitle,
     score, total: s.items.length,
@@ -223,7 +236,7 @@ function finish() {
   downloadJson(payload);
   el(`
     <section class="card" id="report">
-      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
       <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
       <p>${Math.round(score / s.items.length * 100)}%</p>
       <p class="small" id="save-status">You can download or print your personal report below.</p>
@@ -293,7 +306,7 @@ function downloadReport(s, score, misses, weakLine, when) {
   .small { color: #526070; font-size: 0.92rem; }
 </style></head><body>
 <h1>Cellular organisation · personal report</h1>
-<p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)})</p>
+<p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)}</p>
 <p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
 <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
 <p>${misses.length === 0
@@ -302,13 +315,13 @@ function downloadReport(s, score, misses, weakLine, when) {
 ${missHtml}
 <p class="small">Personal report · HKDSE Biology · F.4 Cellular organisation</p>
 </body></html>`;
-  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + s.id)
+  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + s.id)
     .replace(/[^\w\-]+/g, "_");
   downloadFile("report_F4_cell_" + safe + ".html", html, "text/html;charset=utf-8");
 }
 
 function downloadJson(payload) {
-  const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + payload.practice_id)
+  const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + (payload.division || "") + "_" + payload.practice_id)
     .replace(/[^\w\-]+/g, "_");
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
