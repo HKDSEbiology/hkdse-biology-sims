@@ -287,11 +287,14 @@ function submit(){
       <p class="why">${esc(d.why)}</p>
     </div>`;
   });
-  html += `<p><button type="button" id="again">Try another exercise</button>
-    <button type="button" class="secondary" id="dl">Download result file</button></p>`;
+  html += `<p>
+    <button type="button" id="dl-report">Download my report</button>
+    <button type="button" id="again">Try another exercise</button>
+    <button type="button" class="secondary" id="dl">Download results for teacher</button></p>`;
   $("done").innerHTML = html;
   window.scrollTo(0,0);
   $("again").onclick = ()=>{ $("done").classList.add("hidden"); $("gate").classList.remove("hidden"); };
+  $("dl-report").onclick = ()=> downloadPhotoReport(res, pct);
   $("dl").onclick = ()=>{
     const blob = new Blob([JSON.stringify(res,null,2)], {type:"application/json"});
     const a = document.createElement("a");
@@ -299,6 +302,46 @@ function submit(){
     a.download = `photosynthesis_MC_${res.class}_${res.class_no}_${res.name.replace(/\s+/g,"_")}.json`;
     a.click();
   };
+}
+function downloadPhotoReport(res, pct){
+  const misses = [];
+  (res.detail || []).forEach((d, i) => { if (!d.ok) misses.push({ n: i + 1, ...d }); });
+  const missHtml = misses.length ? misses.map(d => {
+    const chosen = d.chosen ? d.chosen+". "+(d.opts[d.chosen]||"") : "no answer";
+    const key = d.correct+". "+(d.opts[d.correct]||"");
+    return `<div class="miss">
+      <p><strong>Question ${d.n}.</strong></p>
+      <p>${esc(d.q).replace(/\n/g,"<br>")}</p>
+      <p><strong>Your choice.</strong> ${esc(chosen)}</p>
+      <p><strong>Answer.</strong> ${esc(key)}</p>
+      <p>${esc(d.why)}</p>
+    </div>`;
+  }).join("") : "<p>Every item in this exercise was correct.</p>";
+  const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Personal report · ${esc(res.name)}</title>
+<style>
+  body { font: 16px/1.45 "Segoe UI", Calibri, sans-serif; max-width: 720px; margin: 24px auto; color: #14221b; }
+  h1 { font-size: 1.3rem; }
+  .score { font-size: 1.8rem; font-weight: 700; }
+  .ok { color: #1b6b3a; } .bad { color: #9b2c2c; }
+  .miss { border-top: 1px solid #d7cfc0; padding-top: 10px; margin-top: 10px; }
+  .small { color: #4b5d54; font-size: 0.92rem; }
+</style></head><body>
+<h1>Photosynthesis · personal report</h1>
+<p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)})</p>
+<p>${esc(res.paperName)}</p>
+<p class="score ${pct>=70?"ok":"bad"}">${res.right} / ${res.n} &nbsp; ${pct}%</p>
+<p>Unanswered: ${res.blank}</p>
+${missHtml}
+<p class="small">Personal report · HKDSE Biology · Photosynthesis</p>
+</body></html>`;
+  const safe = (res.name+"_"+res.class+"_"+res.class_no+"_"+res.part).replace(/[^\w\-]+/g,"_");
+  const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "report_photosynthesis_"+safe+".html";
+  a.click();
 }
 $("startBtn").onclick=start;
 $("submitBtn").onclick=submit;

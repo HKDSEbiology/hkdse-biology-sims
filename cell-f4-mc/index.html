@@ -109,7 +109,7 @@ function home() {
       ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
     </section>
     ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
-    <p class="small">When you finish, you will see a personal report and a results file will download for your teacher.</p>
+    <p class="small">When you finish, you can download or print your personal report.</p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
@@ -226,7 +226,7 @@ function finish() {
       <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(s.title)} · ${esc(s.subtitle)}</p>
       <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
       <p>${Math.round(score / s.items.length * 100)}%</p>
-      <p class="small" id="save-status">A results file has been downloaded for your teacher.</p>
+      <p class="small" id="save-status">You can download or print your personal report below.</p>
       <h2>Personal report</h2>
       <p>${misses.length === 0
         ? "Every item in this practice was correct."
@@ -240,21 +240,71 @@ function finish() {
           <p>${esc(m.note)}</p>
         </div>`).join("") || "<p>No incorrect answers in this practice.</p>"}
     </section>
-    <p class="noprint"><button class="ghost" id="print">Print report</button> <button class="primary" id="again">Back to practices</button></p>
+    <p class="noprint">
+      <button class="ghost" id="dl-report">Download my report</button>
+      <button class="ghost" id="print">Print report</button>
+      <button class="primary" id="again">Back to practices</button>
+    </p>
   `);
   app.querySelectorAll(".miss").forEach((box, i) => {
     const stem = box.querySelector(".stem");
     if (stem) stem.textContent = misses[i].stem;
   });
+  document.getElementById("dl-report").addEventListener("click", () => downloadReport(s, score, misses, weakLine, when));
   document.getElementById("print").addEventListener("click", () => window.print());
   document.getElementById("again").addEventListener("click", home);
   sendAttempt(payload).then(ok => {
     const box = document.getElementById("save-status");
     if (!box) return;
     box.textContent = ok
-      ? "Your answers have been recorded, and a results file has been downloaded."
-      : "A results file has been downloaded. Give it to your teacher if asked.";
+      ? "Your answers have been recorded. Download or print your personal report if you want a copy."
+      : "Download or print your personal report if you want a copy.";
   });
+}
+
+function downloadFile(filename, text, type) {
+  const blob = new Blob([text], { type: type || "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function downloadReport(s, score, misses, weakLine, when) {
+  const pct = Math.round(score / s.items.length * 100);
+  const missHtml = misses.length ? misses.map(m => `
+    <div class="miss">
+      <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
+      <p>${esc(m.stem).replace(/\n/g, "<br>")}</p>
+      <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
+      <p><strong>Answer.</strong> ${esc(m.correct)}</p>
+      <p>${esc(m.note)}</p>
+    </div>`).join("") : "<p>No incorrect answers in this practice.</p>";
+  const html = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Personal report · ${esc(state.name)}</title>
+<style>
+  body { font: 16px/1.45 "Segoe UI", "Noto Sans", sans-serif; max-width: 720px; margin: 24px auto; color: #1c2430; }
+  h1 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+  .score { font-size: 1.8rem; font-weight: 700; margin: 0.4rem 0; }
+  .ok { color: #1d6b3a; } .bad { color: #8c2f2f; }
+  .miss { border-top: 1px solid #d5dbe3; padding-top: 10px; margin-top: 10px; }
+  .small { color: #526070; font-size: 0.92rem; }
+</style></head><body>
+<h1>Cellular organisation · personal report</h1>
+<p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)})</p>
+<p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
+<p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
+<p>${misses.length === 0
+    ? "Every item in this practice was correct."
+    : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
+${missHtml}
+<p class="small">Personal report · HKDSE Biology · F.4 Cellular organisation</p>
+</body></html>`;
+  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + s.id)
+    .replace(/[^\w\-]+/g, "_");
+  downloadFile("report_F4_cell_" + safe + ".html", html, "text/html;charset=utf-8");
 }
 
 function downloadJson(payload) {
