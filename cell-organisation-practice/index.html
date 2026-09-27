@@ -57,6 +57,8 @@
 const BANK = JSON.parse(document.getElementById("bank").textContent);
 const app = document.getElementById("app");
 const KEY = "cell-org-practice-v1";
+const SUBMIT_TOKEN = "cell-org-2026";
+const SUBMIT_URL = "";
 
 function load() {
   try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
@@ -83,7 +85,8 @@ function home() {
     <section class="sessions">
       ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span class="sub">${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
     </section>
-    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table>${past}</table><p class="small">Results stay in this browser. They are not sent anywhere.</p></section>` : `<p class="small">Your result stays in this browser. It is not sent anywhere.</p>`}
+    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table>${past}</table></section>` : ""}
+    <p class="small">When you finish a practice, your name, class and answers are recorded for your teacher.</p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
@@ -139,7 +142,7 @@ function finish() {
   let score = 0;
   const misses = [];
   const byTopic = {};
-  s.items.forEach((it, idx) => {
+  const answers = s.items.map((it, idx) => {
     const pick = state.picks[idx];
     const right = pick === it.answer;
     if (right) score++;
@@ -154,20 +157,47 @@ function finish() {
         usual: pick === it.trap
       });
     }
+    return {
+      qn: it.n,
+      topic: it.topic,
+      chosen: pick,
+      correct: it.answer,
+      trap: it.trap,
+      option_A: it.options.A,
+      option_B: it.options.B,
+      option_C: it.options.C,
+      option_D: it.options.D,
+      stem: it.stem
+    };
   });
   const when = new Date().toLocaleString();
-  const rec = { name: state.name, cls: state.cls, title: s.title + " — " + s.subtitle, when, score, total: s.items.length };
+  const whenIso = new Date().toISOString();
+  const rec = {
+    name: state.name, cls: state.cls, title: s.title + " — " + s.subtitle,
+    when, score, total: s.items.length, picks: state.picks.slice()
+  };
   const all = load(); all.push(rec); save(all);
   const weak = Object.entries(byTopic)
     .map(([t, v]) => ({ t, lost: v.n - v.right, n: v.n, right: v.right }))
     .sort((a, b) => b.lost - a.lost || a.right / a.n - b.right / b.n);
   const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
     .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
+  const payload = {
+    token: SUBMIT_TOKEN,
+    attempt_id: (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2)),
+    when_iso: whenIso,
+    name: state.name,
+    cls: state.cls,
+    practice_id: s.id,
+    practice_title: s.title + " — " + s.subtitle,
+    score, total: s.items.length, answers
+  };
   el(`
     <section class="card" id="report">
       <p class="small">${esc(state.name)} · Class ${esc(state.cls)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
       <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
       <p>${Math.round(score / s.items.length * 100)}%</p>
+      <p class="small" id="save-status">Recording your answers…</p>
       <h2>Personal report</h2>
       <p>${misses.length === 0
         ? "Every item in this practice was correct. The next practice will show whether the same ideas hold when the question is asked in another way."
@@ -190,6 +220,25 @@ function finish() {
   });
   document.getElementById("print").addEventListener("click", () => window.print());
   document.getElementById("again").addEventListener("click", home);
+  sendAttempt(payload).then(ok => {
+    const box = document.getElementById("save-status");
+    if (!box) return;
+    box.textContent = ok
+      ? "Your answers have been recorded."
+      : "Your answers could not be recorded. Tell your teacher.";
+  });
+}
+
+function sendAttempt(payload) {
+  if (!SUBMIT_URL || SUBMIT_URL.indexOf("http") !== 0) {
+    return Promise.resolve(false);
+  }
+  return fetch(SUBMIT_URL, {
+    method: "POST",
+    redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(r => r.json()).then(d => !!(d && d.ok)).catch(() => false);
 }
 
 function esc(s) {
