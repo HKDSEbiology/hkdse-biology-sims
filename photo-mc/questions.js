@@ -147,7 +147,7 @@ opts:{A:"It can take place only in darkness.",B:"It can take place in the light 
 ans:"B",why:"‘Dark stage’ is a poor name: it does not require darkness. It needs products of the light stage and occurs in the stroma."},
 
 {i:34,id:"B1-02",part:"B1",q:"Oxygen gas produced in photosynthesis is released during",
-opts:{A:"the conversion of PGA to glucose.",B:"photolysis of water in the light-dependent stage.",C:"the combination of RuBP with carbon dioxide.",D:"hydrolysis of starch in the vacuole."},
+opts:{A:"the conversion of the first product of carbon fixation to glucose.",B:"photolysis of water in the light-dependent stage.",C:"the combination of carbon dioxide acceptor with carbon dioxide.",D:"hydrolysis of starch in the vacuole."},
 ans:"B",why:"O₂ is a product of splitting water on the thylakoid."},
 
 {i:35,id:"B1-03",part:"B1",q:"In a chloroplast, the light-dependent stage and the Calvin cycle take place respectively in the",
@@ -156,43 +156,44 @@ ans:"B",why:"Photochemical reactions on thylakoid membranes; CO₂ fixation in t
 svg:"chloro"},
 
 {i:36,id:"B1-04",part:"B1",q:"Products of the light-dependent reactions used in the Calvin cycle are",
-opts:{A:"glucose and oxygen.",B:"ATP and NADPH.",C:"RuBP and starch.",D:"NADP and ADP only."},
-ans:"B",why:"ATP and reduced NADP (NADPH) drive the reduction of GP/PGA and regeneration of RuBP."},
+opts:{A:"glucose and oxygen.",B:"ATP and NADPH.",C:"carbon dioxide acceptor and starch.",D:"NADP and ADP only."},
+ans:"B",why:"ATP and reduced NADP (NADPH) drive the reduction of the first product of carbon fixation and regeneration of carbon dioxide acceptor."},
 
 {i:37,id:"B1-05",part:"B1",q:"Chloroplasts are expected in",
 opts:{A:"a root hair cell.",B:"an onion bulb epidermal cell.",C:"a palisade mesophyll cell.",D:"a mature xylem vessel."},
 ans:"C",why:"Palisade cells are packed with chloroplasts. Root hairs, onion epidermis and xylem vessels are not photosynthetic."},
 
 {i:38,id:"B1-06",part:"B1",q:"In the Calvin cycle, carbon dioxide is first combined with",
-opts:{A:"glucose.",B:"ribulose bisphosphate (RuBP).",C:"starch.",D:"oxygen."},
-ans:"B",why:"RuBP is the CO₂ acceptor. The first stable product is GP (PGA)."},
+opts:{A:"glucose.",B:"carbon dioxide acceptor.",C:"starch.",D:"oxygen."},
+ans:"B",why:"The carbon dioxide acceptor combines with CO₂. The first stable product is the first product of carbon fixation."},
 
 {i:39,id:"B1-07",part:"B1",q:"¹⁴CO₂ is supplied to an illuminated alga for a few seconds. The first organic compound to become radioactive is usually",
-opts:{A:"starch.",B:"glucose.",C:"glycerate 3-phosphate (PGA / GP).",D:"cellulose in the cell wall."},
-ans:"C",why:"Classic Calvin work: the first labelled stable compound is GP, not glucose or starch."},
+opts:{A:"starch.",B:"glucose.",C:"the first product of carbon fixation.",D:"cellulose in the cell wall."},
+ans:"C",why:"Classic Calvin work: the first labelled stable compound is the first product of carbon fixation, not glucose or starch."},
 
-{i:40,id:"B1-08",part:"B1",q:"Conversion of PGA (GP) to triose phosphate (TP / GALP) is a",
+{i:40,id:"B1-08",part:"B1",q:"Conversion of the first product of carbon fixation to carbohydrate is a",
 opts:{A:"hydrolysis that needs only water.",B:"reduction that needs NADPH and ATP.",C:"photolysis that needs chlorophyll.",D:"transamination that needs nitrate."},
-ans:"B",why:"GP is reduced to TP using NADPH; ATP is also required."},
+ans:"B",why:"The first product of carbon fixation is reduced to carbohydrate using NADPH; ATP is also required.",
+svg:"calvin"},
 
-{i:41,id:"B1-09",part:"B1",q:"Most of the triose phosphate formed in the Calvin cycle is used to",
-opts:{A:"regenerate RuBP.",B:"form oxygen gas.",C:"photolyse water.",D:"open stomata."},
-ans:"A",why:"Only a fraction of TP becomes sugar; most rebuilds the CO₂ acceptor so the cycle continues."},
+{i:41,id:"B1-09",part:"B1",q:"Most of the carbohydrate formed in the Calvin cycle is used to",
+opts:{A:"regenerate carbon dioxide acceptor.",B:"form oxygen gas.",C:"photolyse water.",D:"open stomata."},
+ans:"A",why:"Only a fraction of the carbohydrate becomes sugar; most rebuilds the carbon dioxide acceptor so the cycle continues."},
 
 {i:42,id:"B1-10",part:"B1",q:"If CO₂ is suddenly removed from an illuminated plant, a short-term change is that",
-opts:{A:"PGA rises and RuBP falls.",B:"RuBP rises and PGA falls.",C:"both PGA and RuBP fall to zero instantly.",D:"oxygen production from water increases."},
-ans:"B",why:"RuBP is no longer carboxylated so it accumulates; PGA is no longer formed so it falls."},
+opts:{A:"the first product of carbon fixation rises and carbon dioxide acceptor falls.",B:"carbon dioxide acceptor rises and the first product of carbon fixation falls.",C:"both the first product of carbon fixation and the carbon dioxide acceptor fall to zero instantly.",D:"oxygen production from water increases."},
+ans:"B",why:"The carbon dioxide acceptor is no longer carboxylated so it accumulates; the first product of carbon fixation is no longer formed so it falls."},
 
 {i:43,id:"B1-11",part:"B1",q:"The light-dependent stage of photosynthesis includes",
-opts:{A:"fixation of carbon dioxide.",B:"photophosphorylation and reduction of NADP.",C:"oxidation of NADPH to make glucose.",D:"regeneration of RuBP in the stroma."},
+opts:{A:"fixation of carbon dioxide.",B:"photophosphorylation and reduction of NADP.",C:"oxidation of NADPH to make glucose.",D:"regeneration of carbon dioxide acceptor in the stroma."},
 ans:"B",why:"Light stage: electron flow, ATP, NADPH, O₂. CO₂ fixation is the Calvin cycle."},
 
 {i:44,id:"B1-12",part:"B1",q:"Which sequence is correct?",
-opts:{A:"Calvin cycle → photolysis → formation of ATP",B:"photolysis of water → formation of ATP and NADPH → reduction of PGA",C:"starch → photolysis → RuBP",D:"glucose → NADPH → photolysis"},
-ans:"B",why:"Light reactions first; their products then reduce GP in the stroma."},
+opts:{A:"Calvin cycle → photolysis → formation of ATP",B:"photolysis of water → formation of ATP and NADPH → reduction of the first product of carbon fixation",C:"starch → photolysis → carbon dioxide acceptor",D:"glucose → NADPH → photolysis"},
+ans:"B",why:"Light reactions first; their products then reduce the first product of carbon fixation in the stroma."},
 
 {i:45,id:"B1-13",part:"B1",q:"NADP, not NAD, is the usual hydrogen acceptor in the light-dependent stage. Reduced NADP is",
-opts:{A:"NADH.",B:"NADPH.",C:"ATP.",D:"RuBP."},
+opts:{A:"NADH.",B:"NADPH.",C:"ATP.",D:"carbon dioxide acceptor."},
 ans:"B",why:"Photosynthesis uses NADP⁺ / NADPH. NAD⁺ / NADH is typical of respiration."},
 
 {i:46,id:"B1-14",part:"B1",q:"A rise in temperature from 15 °C to 25 °C often increases the rate of the Calvin cycle more than the photochemical reactions because the Calvin cycle",
