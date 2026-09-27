@@ -15,7 +15,7 @@
  * Optional: run rebuildItemStats after a class to refresh the Item_stats sheet.
  */
 
-var TOKEN = "photo-mc-2026";
+var TOKEN = "photo-mc-32-2026";
 
 var ATTEMPT_HEADERS = [
   "attempt_id", "when_iso", "name", "class", "class_no", "division", "practice_id",
