@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Teacher desk · HKDSE Biology MC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg0:#e8eef4; --bg1:#f4f7fa; --panel:#fff; --line:#d0dae6;
+    --text:#1e2a36; --muted:#5a6b7c; --accent:#1f4e79; --ok:#1d6b3a;
+    --shadow: 0 8px 24px rgba(30, 42, 54, 0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(ellipse 70% 50% at 8% 0%, #d9e8f2, transparent 55%),
+      linear-gradient(180deg, var(--bg1), var(--bg0));
+    padding: 1.25rem 1rem 2.5rem;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header { margin-bottom: 1.2rem; }
+  header .kicker {
+    display: inline-block; margin: 0 0 0.6rem; padding: 0.35rem 0.8rem;
+    font: 700 0.7rem/1 "Source Sans 3", sans-serif;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent); background: #e3eef8;
+    border: 1px solid rgba(31, 78, 121, 0.22); border-radius: 999px;
+  }
+  header h1 {
+    font-family: Fraunces, Georgia, serif;
+    font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+    font-weight: 700; color: #16324a; letter-spacing: -0.03em;
+  }
+  header p { margin-top: 0.45rem; color: var(--muted); max-width: 40rem; }
+  h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; color: #16324a; margin: 0 0 0.6rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 1rem; padding: 1rem 1.05rem 1.05rem;
+    box-shadow: var(--shadow);
+  }
+  .topic { border-top: 3px solid var(--accent); }
+  .topic.soon { border-top-color: #b7c0cc; opacity: 0.88; }
+  .level {
+    font: 700 0.68rem/1 "Source Sans 3", sans-serif;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  }
+  .topic h3 { font-family: Fraunces, Georgia, serif; font-size: 1.22rem; margin: 0.4rem 0 0.35rem; }
+  .topic p { font-size: 0.88rem; color: var(--muted); line-height: 1.45; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.8rem; }
+  a.btn, button.btn {
+    display: inline-block; text-decoration: none; font: 650 0.85rem/1 "Source Sans 3", sans-serif;
+    padding: 0.5rem 0.75rem; border-radius: 8px; border: 0; cursor: pointer;
+  }
+  a.btn.primary, button.btn.primary { background: var(--accent); color: #fff; }
+  a.btn.ghost, button.btn.ghost { background: #fff; color: var(--text); border: 1px solid #b7c0cc; }
+  .muted { color: var(--muted); font-size: 0.88rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
+  th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #eef3f8; }
+  input[type=file] { font: inherit; margin: 0.4rem 0; }
+  .note {
+    margin-top: 1rem; padding: 0.75rem 0.9rem;
+    background: #fff8e8; border: 1px solid #e6d3a8; border-left: 4px solid #c9922a;
+    border-radius: 0.65rem; font-size: 0.85rem; color: #6a5a3a; line-height: 1.5;
+  }
+  footer { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">Teachers only</p>
+    <h1>MC topics and class statistics</h1>
+    <p>Open a student practice, then import the JSON files students download. Download a CSV of scores or A–D counts for any paper.</p>
+  </header>
+
+  <section class="grid" style="margin-bottom:1.2rem">
+    <article class="card topic">
+      <span class="level">F.4 · live</span>
+      <h3>Cellular organisation</h3>
+      <p>Two 32-item practices. Students enter name in English (ID card), class and class number. Personal report after submit.</p>
+      <div class="links">
+        <a class="btn primary" href="../cell-f4-mc/index.html">Student practice</a>
+        <a class="btn ghost" href="../cell-f4-mc/teacher.html">Item statistics</a>
+      </div>
+    </article>
+    <article class="card topic">
+      <span class="level">HKCEE / HKDSE · live</span>
+      <h3>Photosynthesis</h3>
+      <p>Four short exercises. Same name, class and class number fields. Download CSV from this paper’s teacher desk or from the importer below.</p>
+      <div class="links">
+        <a class="btn primary" href="../photo-mc/index.html">Student practice</a>
+        <a class="btn ghost" href="../photo-mc/index.html#teacher">Paper statistics</a>
+      </div>
+    </article>
+    <article class="card topic soon">
+      <span class="level">Next papers</span>
+      <h3>More MC topics</h3>
+      <p>Further HKDSE papers will be listed here as they are put on the web. Word copies stay on the Hollywood shared folder.</p>
+    </article>
+  </section>
+
+  <section class="card">
+    <h2>Import results and download statistics</h2>
+    <p class="muted">Drop the JSON files students downloaded. Data stay on this computer. You can mix Cellular organisation and Photosynthesis files.</p>
+    <p>
+      <input id="files" type="file" accept="application/json,.json" multiple>
+      <button class="btn ghost" id="clear" type="button">Clear imported set</button>
+      <button class="btn primary" id="csv-people" type="button">Download student CSV</button>
+      <button class="btn primary" id="csv-items" type="button">Download item CSV</button>
+    </p>
+    <p class="muted" id="status">No files imported yet.</p>
+    <div id="people"></div>
+    <div id="items" style="margin-top:1rem"></div>
+  </section>
+
+  <p class="note">
+    <strong>How students submit.</strong> After they finish, a JSON file downloads automatically.
+    Collect those files (e.g. from Google Classroom) and import them here or on the topic’s statistics page.
+    <strong>Student CSV</strong> has name, class, class number and score.
+    <strong>Item CSV</strong> has A/B/C/D counts for each question.
+  </p>
+
+  <footer>
+    <p><a href="../index.html">Student simulations hub</a></p>
+    <p>HKDSE Biology · Ms Lai Kam Fung</p>
+  </footer>
+</div>
+<script>
+const STORE = "hkdse-mc-teacher-master-v1";
+let attempts = [];
+try { attempts = JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) { attempts = []; }
+
+function save() { localStorage.setItem(STORE, JSON.stringify(attempts)); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+function csvCell(v) {
+  return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+}
+
+function normalize(obj) {
+  if (!obj || typeof obj !== "object") return null;
+  if (Array.isArray(obj.answers)) {
+    return {
+      attempt_id: obj.attempt_id || (obj.name + obj.when_iso + obj.practice_id),
+      paper: obj.paper || "Cellular organisation F.4 MC",
+      name: obj.name || "",
+      cls: obj.cls || obj.class || "",
+      class_no: obj.class_no || obj.classNo || "",
+      practice_id: obj.practice_id || "",
+      practice_title: obj.practice_title || obj.paper || "",
+      score: obj.score,
+      total: obj.total,
+      percent: obj.percent,
+      when_iso: obj.when_iso || obj.ts || "",
+      answers: obj.answers
+    };
+  }
+  if (Array.isArray(obj.detail)) {
+    return {
+      attempt_id: obj.attempt_id || (obj.name + (obj.ts || "") + (obj.part || "")),
+      paper: obj.paperName || obj.paper || "Photosynthesis MC",
+      name: obj.name || "",
+      cls: obj.class || obj.cls || "",
+      class_no: obj.class_no || obj.classNo || "",
+      practice_id: obj.part || "photo",
+      practice_title: obj.paperName || "Photosynthesis",
+      score: obj.right,
+      total: obj.n,
+      percent: obj.n ? Math.round(1000 * obj.right / obj.n) / 10 : 0,
+      when_iso: obj.ts || "",
+      answers: obj.detail.map((d, i) => ({
+        qn: d.id || (i + 1),
+        chosen: d.chosen,
+        correct: d.correct,
+        trap: "",
+        stem: d.q || "",
+        topic: d.part || ""
+      }))
+    };
+  }
+  return null;
+}
+
+function addAttempt(obj) {
+  const rec = normalize(obj);
+  if (!rec || !rec.name) return false;
+  if (attempts.some(a => a.attempt_id === rec.attempt_id)) return false;
+  attempts.push(rec);
+  return true;
+}
+
+function itemStats() {
+  const map = {};
+  attempts.forEach(a => {
+    (a.answers || []).forEach(ans => {
+      const key = String(a.paper) + "|" + String(a.practice_id) + "|" + String(ans.qn);
+      if (!map[key]) {
+        map[key] = {
+          paper: a.paper,
+          practice_id: a.practice_id,
+          qn: ans.qn,
+          stem: ans.stem || "",
+          correct: ans.correct,
+          n: 0, n_A: 0, n_B: 0, n_C: 0, n_D: 0, n_right: 0
+        };
+      }
+      const rec = map[key];
+      rec.n++;
+      const ch = ans.chosen;
+      if (ch === "A") rec.n_A++;
+      if (ch === "B") rec.n_B++;
+      if (ch === "C") rec.n_C++;
+      if (ch === "D") rec.n_D++;
+      if (ch && ch === ans.correct) rec.n_right++;
+    });
+  });
+  return Object.values(map).sort((x, y) =>
+    String(x.paper).localeCompare(String(y.paper)) ||
+    String(x.practice_id).localeCompare(String(y.practice_id)) ||
+    String(x.qn).localeCompare(String(y.qn), undefined, { numeric: true })
+  );
+}
+
+function render() {
+  document.getElementById("status").textContent = attempts.length
+    ? attempts.length + " student attempt(s) imported."
+    : "No files imported yet.";
+  const people = attempts.slice().sort((a, b) =>
+    String(a.paper).localeCompare(String(b.paper)) ||
+    (a.cls || "").localeCompare(b.cls || "") ||
+    String(a.class_no).localeCompare(String(b.class_no), undefined, { numeric: true }) ||
+    (a.name || "").localeCompare(b.name || "")
+  );
+  document.getElementById("people").innerHTML = people.length ? `
+    <h2>Individual performance</h2>
+    <table>
+      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Practice</th><th>Score</th><th>%</th></tr>
+      ${people.map(a => `
+        <tr>
+          <td>${esc(a.paper)}</td>
+          <td>${esc(a.name)}</td>
+          <td>${esc(a.cls)}</td>
+          <td>${esc(a.class_no)}</td>
+          <td>${esc(a.practice_title || a.practice_id)}</td>
+          <td>${a.score}/${a.total}</td>
+          <td>${a.percent != null ? a.percent : ""}</td>
+        </tr>`).join("")}
+    </table>` : "";
+
+  const stats = itemStats();
+  document.getElementById("items").innerHTML = stats.length ? `
+    <h2>Question statistics</h2>
+    <table>
+      <tr><th>Paper</th><th>Practice</th><th>Q</th><th>n</th><th>% correct</th><th>A</th><th>B</th><th>C</th><th>D</th><th>Key</th></tr>
+      ${stats.map(r => {
+        const pct = r.n ? Math.round(1000 * r.n_right / r.n) / 10 : 0;
+        return `<tr>
+          <td>${esc(r.paper)}</td>
+          <td>${esc(r.practice_id)}</td>
+          <td>${esc(r.qn)}</td>
+          <td>${r.n}</td>
+          <td>${pct}</td>
+          <td>${r.n_A}</td><td>${r.n_B}</td><td>${r.n_C}</td><td>${r.n_D}</td>
+          <td>${esc(r.correct)}</td>
+        </tr>`;
+      }).join("")}
+    </table>` : "";
+}
+
+document.getElementById("files").addEventListener("change", async ev => {
+  let added = 0;
+  for (const f of ev.target.files) {
+    try {
+      const obj = JSON.parse(await f.text());
+      if (addAttempt(obj)) added++;
+    } catch (err) {}
+  }
+  save();
+  render();
+  document.getElementById("status").textContent = "Added " + added + " new attempt(s). Total " + attempts.length + ".";
+  ev.target.value = "";
+});
+document.getElementById("clear").addEventListener("click", () => {
+  if (!confirm("Clear all imported attempts on this computer?")) return;
+  attempts = [];
+  save();
+  render();
+});
+document.getElementById("csv-people").addEventListener("click", () => {
+  const lines = ["paper,name_english,class,class_no,practice,score,total,percent,when"];
+  attempts.forEach(a => {
+    lines.push([
+      csvCell(a.paper), csvCell(a.name), csvCell(a.cls), csvCell(a.class_no),
+      csvCell(a.practice_title || a.practice_id), a.score, a.total, a.percent, csvCell(a.when_iso)
+    ].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "HKDSE_MC_student_scores.csv";
+  a.click();
+});
+document.getElementById("csv-items").addEventListener("click", () => {
+  const stats = itemStats();
+  const lines = ["paper,practice,q,n,pct_correct,A,B,C,D,key,stem"];
+  stats.forEach(r => {
+    const pct = r.n ? Math.round(1000 * r.n_right / r.n) / 10 : 0;
+    lines.push([
+      csvCell(r.paper), csvCell(r.practice_id), csvCell(r.qn), r.n, pct,
+      r.n_A, r.n_B, r.n_C, r.n_D, csvCell(r.correct), csvCell(r.stem)
+    ].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "HKDSE_MC_item_stats.csv";
+  a.click();
+});
+render();
+</script>
+</body>
+</html>

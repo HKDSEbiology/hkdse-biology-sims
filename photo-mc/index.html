@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Photosynthesis · HKDSE Biology Paper 1A</title>
+<style>
+:root { --ink:#14221b; --muted:#4b5d54; --paper:#f6f3ea; --card:#fffdf7; --line:#d7cfc0; --teal:#0f6b5c; --wrong:#9b2c2c; --ok:#1b6b3a; }
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.45 "Segoe UI", Calibri, sans-serif;background:var(--paper);color:var(--ink)}
+header{background:#16352d;color:#f3efe4;padding:1.1rem 1.4rem}
+header h1{margin:0;font-family:Georgia,serif;font-size:1.45rem}
+header p{margin:.35rem 0 0;opacity:.9;font-size:.95rem}
+.wrap{max-width:820px;margin:0 auto;padding:1rem 1.1rem 5rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;margin:0 0 1rem}
+label{display:block;font-size:.82rem;color:var(--muted);margin:.2rem 0}
+input,select,button,textarea{font:inherit}
+input,select{padding:.4rem .55rem;border:1px solid var(--line);border-radius:8px;width:100%}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(max-width:700px){.row{grid-template-columns:1fr}}
+.q{padding:.15rem 0}
+.q h3{margin:0 0 .4rem;font-size:1.02rem;white-space:pre-wrap}
+.pre{font-size:.9rem;color:var(--muted);margin:0 0 .45rem}
+.opts label.opt{display:flex;gap:.55rem;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:.4rem .5rem;margin:.3rem 0;cursor:pointer;background:#fff}
+.opts input{width:auto;margin-top:.2rem}
+.fig-svg{display:block;max-width:340px;width:100%;height:auto;margin:.35rem 0 .5rem;border:1px solid var(--line);border-radius:8px;background:#fff}
+.bar{position:sticky;bottom:0;background:#16352d;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:.7rem 1rem;z-index:5}
+.bar button,.card button{background:var(--teal);color:#fff;border:0;border-radius:8px;padding:.45rem .8rem;cursor:pointer}
+.bar button.secondary,.card button.secondary{background:#4a5c54}
+.mark.ok{color:var(--ok);font-weight:700}
+.mark.bad{color:var(--wrong);font-weight:700}
+.why{font-size:.92rem;color:var(--muted);margin:.25rem 0 .6rem}
+.hidden{display:none}
+.kpi{display:flex;gap:1.2rem;flex-wrap:wrap;margin:.6rem 0}
+.kpi b{display:block;font-size:1.45rem}
+.review{border:1px solid var(--line);border-radius:10px;padding:.7rem .8rem;margin:.55rem 0;background:#fff}
+.review.ok{border-left:5px solid var(--ok)}
+.review.bad{border-left:5px solid var(--wrong)}
+.teach-link{font-size:.8rem;color:var(--muted);background:none;border:0;cursor:pointer;text-decoration:underline;padding:0}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:8px;padding:.5rem}
+table.simple{border-collapse:collapse;font-size:.85rem;margin:.3rem 0;width:100%}
+table.simple td,table.simple th{border:1px solid var(--line);padding:.2rem .4rem;text-align:left}
+</style>
+</head>
+<body>
+<header>
+  <h1>HKDSE Biology</h1>
+  <p>Part A · Photosynthesis HKCEE &nbsp;·&nbsp; Part B · HKDSE style &nbsp;·&nbsp; Paper 1A multiple choice</p>
+</header>
+<div class="wrap">
+  <div class="card" id="gate">
+    <p>Enter your name in English (same as your ID card), class and class number, then choose a paper.</p>
+    <p><label for="name">Name in English (same as ID card name)</label>
+      <input id="name" autocomplete="name" placeholder="e.g. CHAN Tai Man" /></p>
+    <div class="row">
+      <div><label for="klass">Class</label><input id="klass" placeholder="e.g. 5E" /></div>
+      <div><label for="cno">Class number</label><input id="cno" inputmode="numeric" placeholder="e.g. 12" /></div>
+    </div>
+    <p><label>Paper</label>
+      <select id="part">
+        <option value="A1">Part A · Photosynthesis HKCEE · Exercise 1 (16 questions, about 30 min)</option>
+        <option value="A2">Part A · Photosynthesis HKCEE · Exercise 2 (16 questions, about 30 min)</option>
+        <option value="B1">Part B · HKDSE style · Exercise 3 (16 questions, about 30 min)</option>
+        <option value="B2">Part B · HKDSE style · Exercise 4 (16 questions, about 30 min)</option>
+      </select>
+    </p>
+    <p style="margin:.8rem 0 0"><button type="button" id="startBtn">Start</button></p>
+    <p style="margin:.7rem 0 0"><button type="button" class="teach-link" id="teachBtn">Teacher desk</button>
+      · <a class="teach-link" href="../teacher/index.html">All MC topics and statistics</a></p>
+  </div>
+  <div id="quiz"></div>
+  <div class="card hidden" id="done"></div>
+  <div class="card hidden" id="teacher">
+    <h2>Teacher desk</h2>
+    <p>Import students’ result files. Download a CSV, or use the <a href="../teacher/index.html">master teacher page</a> for all MC topics.</p>
+    <p><input type="file" id="files" accept=".json,.txt" multiple /></p>
+    <label>Or paste JSON</label>
+    <textarea id="paste"></textarea>
+    <p><button type="button" id="analyseBtn">Analyse</button>
+       <button type="button" class="secondary" id="exportCsv">Download CSV</button>
+       <button type="button" class="secondary" id="backGate">Back</button></p>
+    <div id="teachOut"></div>
+  </div>
+</div>
+<div class="bar hidden" id="bar"><span id="prog">0 / 0</span><span><button type="button" id="submitBtn">Submit</button></span></div>
+<script src="questions.js"></script>
+<script>
+const ALL = window.PHOTO_MC || [];
+const PART_NAME = {
+  A1: "Part A · Photosynthesis HKCEE · Exercise 1",
+  A2: "Part A · Photosynthesis HKCEE · Exercise 2",
+  B1: "Part B · HKDSE style · Exercise 3",
+  B2: "Part B · HKDSE style · Exercise 4"
+};
+const SVG = {
+starch: `<svg class="fig-svg" viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-label="Starch test">
+<rect x="8" y="38" width="70" height="55" rx="6" fill="#dbeafe" stroke="#1e3a5f"/>
+<ellipse cx="43" cy="95" rx="38" ry="8" fill="#94a3b8"/>
+<path d="M43 95 L43 118 L20 130 L66 130 Z" fill="#64748b"/>
+<text x="43" y="28" text-anchor="middle" font-size="10">1 boil in water</text>
+<text x="118" y="80" font-size="16">→</text>
+<rect x="140" y="30" width="50" height="70" rx="8" fill="#fef9c3" stroke="#a16207"/>
+<rect x="128" y="78" width="74" height="28" rx="4" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="165" y="22" text-anchor="middle" font-size="10">2 ethanol in water bath</text>
+<text x="218" y="80" font-size="16">→</text>
+<rect x="238" y="70" width="88" height="48" rx="4" fill="#f8fafc" stroke="#334155"/>
+<path d="M268 92 Q280 70 292 92" fill="#86efac" stroke="#166534"/>
+<text x="282" y="28" text-anchor="middle" font-size="10">3 iodine</text>
+<text x="282" y="42" text-anchor="middle" font-size="10">on white tile</text>
+</svg>`,
+koh: `<svg class="fig-svg" viewBox="0 0 340 150" xmlns="http://www.w3.org/2000/svg" aria-label="Leaf in flask with KOH">
+<rect x="200" y="70" width="70" height="55" rx="4" fill="#d6d3d1" stroke="#444"/>
+<rect x="210" y="40" width="8" height="40" fill="#4d7c0f"/>
+<ellipse cx="230" cy="38" rx="22" ry="14" fill="#65a30d"/>
+<ellipse cx="248" cy="32" rx="16" ry="10" fill="#4d7c0f"/>
+<text x="235" y="140" text-anchor="middle" font-size="10">leaf in air</text>
+<path d="M40 70 L110 70 L120 120 L30 120 Z" fill="#e0f2fe" stroke="#0f766e"/>
+<rect x="70" y="48" width="10" height="24" fill="#4d7c0f"/>
+<ellipse cx="85" cy="48" rx="18" ry="11" fill="#65a30d"/>
+<rect x="48" y="100" width="54" height="14" fill="#a7f3d0" stroke="#047857"/>
+<text x="75" y="111" text-anchor="middle" font-size="9">KOH</text>
+<text x="75" y="140" text-anchor="middle" font-size="10">leaf + KOH (no CO₂)</text>
+</svg>`,
+foil: `<svg class="fig-svg" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" aria-label="Partly covered leaf">
+<ellipse cx="140" cy="55" rx="90" ry="40" fill="#4d7c0f" stroke="#14532d"/>
+<rect x="95" y="28" width="70" height="54" fill="#cbd5e1" stroke="#475569"/>
+<text x="130" y="58" text-anchor="middle" font-size="10">foil</text>
+<text x="200" y="58" font-size="10" fill="#ecfccb">light</text>
+</svg>`,
+variegated: `<svg class="fig-svg" viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" aria-label="Variegated leaf starch result">
+<ellipse cx="90" cy="55" rx="55" ry="38" fill="#bbf7d0" stroke="#14532d"/>
+<ellipse cx="90" cy="55" rx="24" ry="16" fill="#fefce8" stroke="#a16207"/>
+<text x="90" y="100" text-anchor="middle" font-size="10">before iodine</text>
+<text x="140" y="55" font-size="14">→</text>
+<ellipse cx="200" cy="55" rx="55" ry="38" fill="#1e3a8a" stroke="#14532d"/>
+<ellipse cx="200" cy="55" rx="24" ry="16" fill="#fde68a" stroke="#a16207"/>
+<text x="200" y="100" text-anchor="middle" font-size="10">after iodine (dark = starch)</text>
+</svg>`,
+leaf: `<svg class="fig-svg" viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg" aria-label="Leaf transverse section">
+<rect x="20" y="18" width="240" height="6" fill="#eab308"/>
+<text x="270" y="24" font-size="11">1 cuticle</text>
+<rect x="20" y="24" width="240" height="16" fill="#fde68a"/>
+<text x="270" y="36" font-size="11">2 upper epidermis</text>
+<g fill="#16a34a">${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${28+i*28}" y="42" width="22" height="38" rx="3"/>`).join("")}</g>
+<text x="270" y="64" font-size="11">3 palisade</text>
+<g fill="#86efac">${[[40,88],[70,95],[100,86],[130,98],[160,90],[190,96],[55,108],[115,110],[175,108]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="16" ry="11"/>`).join("")}</g>
+<text x="270" y="100" font-size="11">4 spongy</text>
+<ellipse cx="70" cy="88" rx="28" ry="22" fill="#fecaca" stroke="#7f1d1d"/>
+<rect x="58" y="78" width="10" height="22" fill="#94a3b8"/>
+<text x="48" y="74" font-size="10">5</text>
+<rect x="74" y="80" width="10" height="18" fill="#fbbf24"/>
+<text x="86" y="76" font-size="10">6</text>
+<rect x="20" y="128" width="90" height="14" fill="#fde68a"/>
+<rect x="130" y="128" width="90" height="14" fill="#fde68a"/>
+<ellipse cx="175" cy="128" rx="8" ry="10" fill="#4d7c0f"/>
+<text x="270" y="132" font-size="11">7 stoma</text>
+</svg>`,
+spectrum: `<svg class="fig-svg" viewBox="0 0 340 130" xmlns="http://www.w3.org/2000/svg" aria-label="Absorption spectrum">
+<line x1="40" y1="100" x2="320" y2="100" stroke="#333"/>
+<line x1="40" y1="20" x2="40" y2="100" stroke="#333"/>
+<path d="M50 90 C70 20 90 25 110 88 C150 95 180 92 210 88 C250 18 280 22 310 92" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+<text x="80" y="118" font-size="10">blue</text>
+<text x="165" y="118" font-size="10">green</text>
+<text x="265" y="118" font-size="10">red</text>
+<text x="8" y="24" font-size="9">abs.</text>
+</svg>`,
+chloro: `<svg class="fig-svg" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg" aria-label="Chloroplast">
+<ellipse cx="140" cy="65" rx="110" ry="50" fill="#ecfccb" stroke="#3f6212" stroke-width="3"/>
+<ellipse cx="140" cy="65" rx="100" ry="40" fill="none" stroke="#65a30d"/>
+<g fill="#166534">${[[90,50],[90,62],[90,74],[150,48],[150,60],[150,72]].map(([x,y])=>`<rect x="${x}" y="${y}" width="36" height="8" rx="1"/>`).join("")}</g>
+<text x="108" y="44" font-size="10">grana</text>
+<text x="175" y="100" font-size="10">stroma</text>
+</svg>`,
+limit: `<svg class="fig-svg" viewBox="0 0 300 140" xmlns="http://www.w3.org/2000/svg" aria-label="Rate versus light">
+<line x1="40" y1="120" x2="280" y2="120" stroke="#333"/>
+<line x1="40" y1="20" x2="40" y2="120" stroke="#333"/>
+<path d="M40 110 C90 108 120 40 160 32 L270 32" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+<path d="M40 110 C90 108 130 70 170 62 L270 62" fill="none" stroke="#b45309" stroke-width="2"/>
+<text x="248" y="26" font-size="9">25 °C</text>
+<text x="248" y="56" font-size="9">15 °C</text>
+<text x="200" y="134" font-size="10">light intensity</text>
+<text x="4" y="16" font-size="9">rate</text>
+<circle cx="160" cy="32" r="3" fill="#0f766e"/>
+<text x="168" y="22" font-size="9">Z</text>
+</svg>`,
+day: `<svg class="fig-svg" viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" aria-label="Net CO2 over 24 hours">
+<line x1="30" y1="70" x2="300" y2="70" stroke="#999"/>
+<line x1="30" y1="20" x2="30" y2="125" stroke="#333"/>
+<line x1="30" y1="125" x2="300" y2="125" stroke="#333"/>
+<path d="M30 95 C70 95 90 70 110 70 C150 20 200 25 230 70 C250 70 270 95 300 95" fill="none" stroke="#0f766e" stroke-width="2.5"/>
+<text x="100" y="82" font-size="9">dawn</text>
+<text x="218" y="82" font-size="9">dusk</text>
+<text x="140" y="36" font-size="9">net CO₂ uptake</text>
+<text x="40" y="118" font-size="9">net release</text>
+<text x="250" y="138" font-size="10">time of day</text>
+</svg>`,
+elodea: `<svg class="fig-svg" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg" aria-label="Pondweed collecting gas">
+<rect x="40" y="40" width="140" height="85" fill="#e0f2fe" stroke="#0369a1"/>
+<rect x="55" y="70" width="50" height="45" fill="#4d7c0f"/>
+<path d="M80 70 L80 30 L120 30 L120 55" fill="none" stroke="#334155" stroke-width="3"/>
+<rect x="108" y="18" width="24" height="40" fill="#fff" stroke="#334155"/>
+<circle cx="95" cy="62" r="3" fill="#bae6fd"/>
+<circle cx="88" cy="50" r="2.5" fill="#bae6fd"/>
+<text x="120" y="135" text-anchor="middle" font-size="10">illuminated pondweed</text>
+</svg>`
+};
+const $ = id => document.getElementById(id);
+function esc(s){return String(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+let paper = [];
+function start(){
+  const name = $("name").value.trim();
+  const klass = $("klass").value.trim();
+  const cno = $("cno").value.trim();
+  if(!name || !klass || !cno){
+    alert("Enter your name in English (same as your ID card), class and class number first.");
+    return;
+  }
+  const part = $("part").value;
+  paper = ALL.filter(q => q.part===part);
+  $("gate").classList.add("hidden");
+  $("teacher").classList.add("hidden");
+  $("done").classList.add("hidden");
+  $("bar").classList.remove("hidden");
+  renderQuiz();
+  window.scrollTo(0,0);
+}
+function renderQuiz(){
+  const box = $("quiz");
+  box.innerHTML = "";
+  let lastPre = "";
+  paper.forEach((q,idx)=>{
+    const d = document.createElement("div");
+    d.className = "q card";
+    let h = "";
+    if(q.preamble && q.preamble!==lastPre){ h += `<p class="pre">${esc(q.preamble)}</p>`; lastPre=q.preamble; }
+    h += `<h3>${idx+1}. ${esc(q.q)}</h3>`;
+    if(q.svg && SVG[q.svg]) h += SVG[q.svg];
+    h += `<div class="opts">`;
+    "ABCD".split("").forEach(k=>{
+      if(!q.opts || q.opts[k]==null) return;
+      h += `<label class="opt"><input type="radio" name="a${q.id}" value="${k}" /><span><b>${k}.</b> ${esc(q.opts[k])}</span></label>`;
+    });
+    h += `</div>`;
+    d.innerHTML = h;
+    box.appendChild(d);
+  });
+  $("prog").textContent = "0 / "+paper.length+" answered";
+  box.onchange = ()=>{
+    const n = paper.filter(q => document.querySelector(`input[name=a${q.id}]:checked`)).length;
+    $("prog").textContent = n+" / "+paper.length+" answered";
+  };
+}
+function collect(){
+  const answers = {};
+  let right=0, blank=0;
+  const detail=[];
+  paper.forEach(q=>{
+    const el = document.querySelector(`input[name=a${q.id}]:checked`);
+    const ch = el ? el.value : "";
+    answers[q.id]=ch;
+    const ok = ch && ch===q.ans;
+    if(!ch) blank++;
+    else if(ok) right++;
+    detail.push({id:q.id, chosen:ch, correct:q.ans, ok:!!ok, q:q.q, opts:q.opts, why:q.why||"", part:q.part, svg:q.svg||""});
+  });
+  return {
+    name: $("name").value.trim()||"(no name)",
+    class: $("klass").value.trim()||"(no class)",
+    class_no: $("cno").value.trim()||"",
+    part: $("part").value,
+    paperName: PART_NAME[$("part").value],
+    ts: new Date().toISOString(),
+    n: paper.length, right, blank,
+    wrong: paper.length-right-blank,
+    answers, detail
+  };
+}
+function submit(){
+  const res = collect();
+  localStorage.setItem("photo_mc_last", JSON.stringify(res));
+  $("quiz").innerHTML = "";
+  $("bar").classList.add("hidden");
+  $("done").classList.remove("hidden");
+  const pct = Math.round(1000*res.right/res.n)/10;
+  let html = `<h2>Your results</h2>
+    <p>${esc(res.name)} · ${esc(res.class)} (${esc(res.class_no)}) · ${esc(res.paperName)}</p>
+    <div class="kpi">
+      <div><span>Score</span><b>${res.right} / ${res.n}</b></div>
+      <div><span>Percentage</span><b>${pct}%</b></div>
+      <div><span>Unanswered</span><b>${res.blank}</b></div>
+    </div>
+    <p>Check each item below. Green = correct. Red = your choice was not the key.</p>`;
+  res.detail.forEach((d,i)=>{
+    const chosen = d.chosen ? d.chosen+". "+(d.opts[d.chosen]||"") : "no answer";
+    const key = d.correct+". "+(d.opts[d.correct]||"");
+    html += `<div class="review ${d.ok?"ok":"bad"}">
+      <p><b>${i+1}.</b> ${esc(d.q)}</p>
+      ${d.svg && SVG[d.svg] ? SVG[d.svg] : ""}
+      <p>Your answer: ${esc(chosen)}</p>
+      <p>Key: ${esc(key)} <span class="mark ${d.ok?"ok":"bad"}">${d.ok?"Correct":"Incorrect"}</span></p>
+      <p class="why">${esc(d.why)}</p>
+    </div>`;
+  });
+  html += `<p><button type="button" id="again">Try another exercise</button>
+    <button type="button" class="secondary" id="dl">Download result file</button></p>`;
+  $("done").innerHTML = html;
+  window.scrollTo(0,0);
+  $("again").onclick = ()=>{ $("done").classList.add("hidden"); $("gate").classList.remove("hidden"); };
+  $("dl").onclick = ()=>{
+    const blob = new Blob([JSON.stringify(res,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `photosynthesis_MC_${res.class}_${res.class_no}_${res.name.replace(/\s+/g,"_")}.json`;
+    a.click();
+  };
+}
+function teacher(){
+  $("gate").classList.add("hidden");
+  $("teacher").classList.remove("hidden");
+}
+let lastRows = [];
+function analyse(){
+  const files = $("files").files;
+  const payloads = [];
+  const done = ()=> paint(payloads);
+  const text = $("paste").value.trim();
+  if(text){
+    try{
+      const t = JSON.parse(text);
+      (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x));
+    }catch(e){
+      text.split(/\n/).forEach(line=>{ try{ if(line.trim()) payloads.push(JSON.parse(line)); }catch(_){} });
+    }
+  }
+  if(!files.length){ done(); return; }
+  let n=0;
+  [...files].forEach(f=>{
+    const r = new FileReader();
+    r.onload = ()=>{ try{ const t=JSON.parse(r.result); (Array.isArray(t)?t:[t]).forEach(x=>payloads.push(x)); }catch(e){} n++; if(n===files.length) done(); };
+    r.readAsText(f);
+  });
+}
+function paint(payloads){
+  const by = {};
+  payloads.forEach(p=>{
+    (p.detail||[]).forEach(d=>{
+      const k = d.id;
+      if(!by[k]) by[k]={id:k,q:d.q,opts:d.opts||{},part:d.part,correct:d.correct,n:0,ok:0,counts:{A:0,B:0,C:0,D:0,blank:0}};
+      const s=by[k]; s.n++;
+      if(d.ok) s.ok++;
+      const ch=d.chosen||"blank";
+      if(s.counts[ch]==null) s.counts[ch]=0;
+      s.counts[ch]++;
+    });
+  });
+  const rows = Object.values(by).sort((a,b)=> (1-a.ok/Math.max(1,a.n)) - (1-b.ok/Math.max(1,b.n)));
+  lastRows = rows;
+  const hard = rows.filter(r=> r.n>=1 && (1-r.ok/r.n)>=0.4);
+  let h = `<div class="kpi"><div><span>Scripts</span><b>${payloads.length}</b></div><div><span>Items</span><b>${rows.length}</b></div><div><span>≥40% wrong</span><b>${hard.length}</b></div></div>`;
+  h += `<h3>Hard items (wrong rate ≥ 40%)</h3><table class="simple"><tr><th>ID</th><th>Wrong%</th><th>n</th><th>Key</th><th>Top distractor</th><th>Question</th></tr>`;
+  hard.forEach(r=>{
+    const wrong = Math.round(1000*(1-r.ok/r.n))/10;
+    let top="—", topn=-1;
+    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+" — "+(r.opts[k]||""); }});
+    h += `<tr><td>${esc(r.id)}</td><td>${wrong}</td><td>${r.n}</td><td>${esc(r.correct)}</td><td>${esc(top)}</td><td>${esc(r.q)}</td></tr>`;
+  });
+  h += `</table>`;
+  $("teachOut").innerHTML = h;
+}
+function exportCsv(){
+  const lines = ["id,paper,n,n_correct,pct_wrong,key,top_distractor,question"];
+  lastRows.forEach(r=>{
+    const pct = r.n? (1-r.ok/r.n):"";
+    let top=""; let topn=-1;
+    "ABCD".split("").forEach(k=>{ if(k!==r.correct && (r.counts[k]||0)>topn){ topn=r.counts[k]; top=k+": "+(r.opts[k]||"").replace(/"/g,'""'); }});
+    lines.push([r.id, PART_NAME[r.part]||r.part, r.n, r.ok, pct, r.correct, '"'+top+'"', '"'+(r.q||"").replace(/"/g,'""')+'"'].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], {type:"text/csv"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="photosynthesis_MC_item_analysis.csv"; a.click();
+}
+$("startBtn").onclick=start;
+$("submitBtn").onclick=submit;
+$("teachBtn").onclick=teacher;
+$("analyseBtn").onclick=analyse;
+$("exportCsv").onclick=exportCsv;
+$("backGate").onclick=()=>{ $("teacher").classList.add("hidden"); $("gate").classList.remove("hidden"); history.replaceState(null,"",location.pathname); };
+if (location.hash === "#teacher") teacher();
+</script>
+</body>
+</html>

@@ -15,7 +15,8 @@
   .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin:0 0 14px; }
   label { display:block; font-weight:650; margin:0 0 6px; }
   input[type=text] { width:100%; font:inherit; padding:10px 12px; border:1px solid #b7c0cc; border-radius:8px; }
-  .row { display:grid; grid-template-columns:1fr 140px; gap:12px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row-name { margin-bottom:12px; }
   button { font:inherit; cursor:pointer; }
   button.primary, button.ghost { border-radius:8px; padding:10px 14px; }
   button.primary { background:var(--accent); color:#fff; border:0; }
@@ -47,7 +48,7 @@
 <body>
 <header>
   <h1>Cellular organisation · F.4</h1>
-  <p>Two practices of 32 questions. Enter your name and class, then choose one practice.</p>
+  <p>Two practices of 32 questions. Enter your name in English (same as your ID card), class and class number, then choose one practice.</p>
 </header>
 <main id="app"></main>
 <script src="questions.js"></script>
@@ -64,7 +65,7 @@ function load() {
 }
 function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
-let state = { name:"", cls:"", session:null, i:0, picks:[] };
+let state = { name:"", cls:"", classNo:"", session:null, i:0, picks:[] };
 
 function el(html) { app.innerHTML = html; }
 function esc(s) {
@@ -89,15 +90,19 @@ function tableHtml(rows) {
 }
 
 function home() {
-  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls);
+  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo);
   const past = attempts.length ? attempts.slice().reverse().map(a =>
     `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td></tr>`
   ).join("") : "";
   el(`
     <section class="card">
+      <div class="row-name">
+        <label for="name">Name in English (same as ID card name)</label>
+        <input id="name" type="text" autocomplete="name" placeholder="e.g. CHAN Tai Man" value="${esc(state.name)}">
+      </div>
       <div class="row">
-        <div><label for="name">Name</label><input id="name" type="text" autocomplete="name" value="${esc(state.name)}"></div>
-        <div><label for="cls">Class</label><input id="cls" type="text" value="${esc(state.cls)}"></div>
+        <div><label for="cls">Class</label><input id="cls" type="text" placeholder="e.g. 4A" value="${esc(state.cls)}"></div>
+        <div><label for="cno">Class number</label><input id="cno" type="text" inputmode="numeric" placeholder="e.g. 12" value="${esc(state.classNo)}"></div>
       </div>
     </section>
     <section class="sessions">
@@ -105,19 +110,25 @@ function home() {
     </section>
     ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
     <p class="small">When you finish, you will see a personal report and a results file will download for your teacher.</p>
-    <p class="small noprint"><a href="teacher.html">Teachers: class statistics</a></p>
+    <p class="small noprint"><a href="../teacher/index.html">Teachers: MC topics and class statistics</a></p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
+  document.getElementById("cno").addEventListener("input", e => state.classNo = e.target.value.trim());
   app.querySelectorAll(".session").forEach(b => b.addEventListener("click", () => start(b.dataset.id)));
 }
 
 function start(id) {
   const nameEl = document.getElementById("name");
   const clsEl = document.getElementById("cls");
+  const cnoEl = document.getElementById("cno");
   if (nameEl) state.name = nameEl.value.trim();
   if (clsEl) state.cls = clsEl.value.trim();
-  if (!state.name || !state.cls) { alert("Enter your name and class first."); return; }
+  if (cnoEl) state.classNo = cnoEl.value.trim();
+  if (!state.name || !state.cls || !state.classNo) {
+    alert("Enter your name in English (same as your ID card), class and class number first.");
+    return;
+  }
   state.session = BANK.find(s => s.id === id);
   state.i = 0;
   state.picks = state.session.items.map(() => "");
@@ -129,7 +140,7 @@ function renderQ() {
   const it = s.items[state.i];
   const pct = Math.round(state.i / s.items.length * 100);
   el(`
-    <p class="small">${esc(state.name)} · ${esc(state.cls)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+    <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(s.title)} · ${esc(s.subtitle)}</p>
     <div class="bar"><span style="width:${pct}%"></span></div>
     <section class="card">
       <p class="small">Question ${state.i + 1} of ${s.items.length}</p>
@@ -187,7 +198,7 @@ function finish() {
   const when = new Date().toLocaleString();
   const whenIso = new Date().toISOString();
   const rec = {
-    name: state.name, cls: state.cls, title: s.title + " — " + s.subtitle,
+    name: state.name, cls: state.cls, classNo: state.classNo, title: s.title + " — " + s.subtitle,
     when, score, total: s.items.length, picks: state.picks.slice()
   };
   const all = load(); all.push(rec); save(all);
@@ -203,6 +214,7 @@ function finish() {
     when_iso: whenIso,
     name: state.name,
     cls: state.cls,
+    class_no: state.classNo,
     practice_id: s.id,
     practice_title: s.title + " — " + s.subtitle,
     score, total: s.items.length,
@@ -212,7 +224,7 @@ function finish() {
   downloadJson(payload);
   el(`
     <section class="card" id="report">
-      <p class="small">${esc(state.name)} · Class ${esc(state.cls)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
+      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(s.title)} · ${esc(s.subtitle)}</p>
       <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
       <p>${Math.round(score / s.items.length * 100)}%</p>
       <p class="small" id="save-status">A results file has been downloaded for your teacher.</p>
@@ -247,7 +259,7 @@ function finish() {
 }
 
 function downloadJson(payload) {
-  const safe = (payload.name + "_" + payload.cls + "_" + payload.practice_id)
+  const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + payload.practice_id)
     .replace(/[^\w\-]+/g, "_");
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");

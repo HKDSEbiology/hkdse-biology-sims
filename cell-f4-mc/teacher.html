@@ -38,7 +38,8 @@
     <p>
       <input id="files" type="file" accept="application/json,.json" multiple>
       <button id="clear" class="ghost" type="button">Clear imported set</button>
-      <button id="csv" type="button">Download CSV</button>
+      <button id="csv" type="button">Download item CSV</button>
+      <button id="peoplecsv" type="button">Download student CSV</button>
       <button id="ai" type="button">Copy for AI analysis</button>
     </p>
     <p class="small" id="status">No files imported yet.</p>
@@ -57,7 +58,7 @@
     <p class="small">Paste this into ChatGPT / Gemini / Claude to summarise the class and each student.</p>
     <textarea id="bundle" readonly></textarea>
   </section>
-  <p class="small"><a href="index.html">Back to the student practice</a></p>
+  <p class="small"><a href="../teacher/index.html">Teacher master page</a> · <a href="index.html">Back to the student practice</a></p>
 </main>
 <script>
 const STORE = "cell-f4-teacher-v1";
@@ -114,14 +115,19 @@ function render() {
   document.getElementById("status").textContent = attempts.length
     ? attempts.length + " student attempt(s) imported."
     : "No files imported yet.";
-  const people = attempts.slice().sort((a, b) => (a.cls || "").localeCompare(b.cls || "") || (a.name || "").localeCompare(b.name || ""));
+  const people = attempts.slice().sort((a, b) =>
+    (a.cls || "").localeCompare(b.cls || "") ||
+    String(a.class_no || a.classNo || "").localeCompare(String(b.class_no || b.classNo || ""), undefined, { numeric: true }) ||
+    (a.name || "").localeCompare(b.name || "")
+  );
   document.getElementById("people").innerHTML = people.length ? `
     <table>
-      <tr><th>Name</th><th>Class</th><th>Practice</th><th>Score</th><th>%</th><th>When</th><th>Answers</th></tr>
+      <tr><th>Name in English</th><th>Class</th><th>Class no.</th><th>Practice</th><th>Score</th><th>%</th><th>When</th><th>Answers</th></tr>
       ${people.map(a => `
         <tr>
           <td>${esc(a.name)}</td>
           <td>${esc(a.cls)}</td>
+          <td>${esc(a.class_no || a.classNo || "")}</td>
           <td>${esc(a.practice_title || a.practice_id)}</td>
           <td>${a.score}/${a.total}</td>
           <td>${a.percent != null ? a.percent : Math.round(100 * a.score / a.total)}</td>
@@ -160,7 +166,7 @@ function render() {
     paper: "Cellular organisation F.4 MC",
     n_attempts: attempts.length,
     individuals: people.map(a => ({
-      name: a.name, class: a.cls, practice: a.practice_title,
+      name: a.name, class: a.cls, class_no: a.class_no || a.classNo || "", practice: a.practice_title,
       score: a.score, total: a.total, percent: a.percent,
       when: a.when_iso,
       answers: (a.answers || []).map(x => ({ q: x.qn, chosen: x.chosen, correct: x.correct, right: x.chosen === x.correct }))
@@ -209,6 +215,23 @@ document.getElementById("csv").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = "F4_cell_item_stats.csv";
+  a.click();
+});
+document.getElementById("peoplecsv").addEventListener("click", () => {
+  const lines = ["name_english,class,class_no,practice,score,total,percent,when"];
+  attempts.forEach(a => {
+    const pct = a.percent != null ? a.percent : (a.total ? Math.round(1000 * a.score / a.total) / 10 : "");
+    const name = '"' + String(a.name || "").replace(/"/g, '""') + '"';
+    lines.push([
+      name, a.cls || "", a.class_no || a.classNo || "",
+      '"' + String(a.practice_title || a.practice_id || "").replace(/"/g, '""') + '"',
+      a.score, a.total, pct, a.when_iso || ""
+    ].join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "F4_cell_student_scores.csv";
   a.click();
 });
 document.getElementById("ai").addEventListener("click", () => {

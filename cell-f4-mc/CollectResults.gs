@@ -18,12 +18,12 @@
 var TOKEN = "cell-f4-2026";
 
 var ATTEMPT_HEADERS = [
-  "attempt_id", "when_iso", "name", "class", "practice_id",
+  "attempt_id", "when_iso", "name", "class", "class_no", "practice_id",
   "practice_title", "score", "total", "percent", "answers"
 ];
 
 var ANSWER_HEADERS = [
-  "attempt_id", "when_iso", "name", "class", "practice_id",
+  "attempt_id", "when_iso", "name", "class", "class_no", "practice_id",
   "practice_title", "qn", "topic", "chosen", "correct", "trap",
   "right", "chose_trap", "option_A", "option_B", "option_C", "option_D",
   "stem"
@@ -61,7 +61,7 @@ function doPost(e) {
     if (data.token !== TOKEN) {
       return jsonOut({ ok: false, error: "token" });
     }
-    if (!data.name || !data.cls || !data.practice_id || !data.answers) {
+    if (!data.name || !data.cls || !data.class_no || !data.practice_id || !data.answers) {
       return jsonOut({ ok: false, error: "fields" });
     }
     var ss = SpreadsheetApp.getActive();
@@ -75,7 +75,7 @@ function doPost(e) {
       return String(a.qn) + "=" + String(a.chosen);
     }).join(";");
     attempts.appendRow([
-      attemptId, when, String(data.name), String(data.cls),
+      attemptId, when, String(data.name), String(data.cls), String(data.class_no || ""),
       String(data.practice_id), String(data.practice_title || ""),
       score, total, total ? Math.round(1000 * score / total) / 10 : 0,
       compact
@@ -83,7 +83,7 @@ function doPost(e) {
     var rows = data.answers.map(function (a) {
       var right = a.chosen === a.correct;
       return [
-        attemptId, when, String(data.name), String(data.cls),
+        attemptId, when, String(data.name), String(data.cls), String(data.class_no || ""),
         String(data.practice_id), String(data.practice_title || ""),
         a.qn, a.topic || "", a.chosen || "", a.correct || "", a.trap || "",
         right, a.chosen === a.trap,
