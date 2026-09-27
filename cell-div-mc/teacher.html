@@ -165,7 +165,7 @@ function render() {
     </table>` : "<p>Item counts appear after you import attempts.</p>";
 
   const bundle = {
-    paper: "Cellular organisation F.4 MC",
+    paper: "Cell cycle and division MC",
     n_attempts: attempts.length,
     individuals: people.map(a => ({
       name: a.name, class: a.cls, class_no: a.class_no || a.classNo || "", division: a.division || "", practice: a.practice_title,
@@ -180,7 +180,7 @@ function render() {
       key: r.correct, distractor: r.trap, stem: r.stem
     }))
   };
-  const prompt = "You are analysing F.4 Biology cellular-organisation multiple-choice results. "
+  const prompt = "You are analysing F.4 Biology cell-cycle and division multiple-choice results. "
     + "1) Summarise each student's score and the questions they missed. "
     + "2) For each question, report how many chose A, B, C and D, and name the usual distractor. "
     + "3) List the five weakest items and the misconception they test.\n\n";
@@ -216,7 +216,7 @@ document.getElementById("csv").addEventListener("click", () => {
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "F4_cell_item_stats.csv";
+  a.download = "cell_div_item_stats.csv";
   a.click();
 });
 document.getElementById("peoplecsv").addEventListener("click", () => {
@@ -233,7 +233,7 @@ document.getElementById("peoplecsv").addEventListener("click", () => {
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "F4_cell_student_scores.csv";
+  a.download = "cell_div_student_scores.csv";
   a.click();
 });
 document.getElementById("ai").addEventListener("click", () => {
