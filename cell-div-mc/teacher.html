@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Photosynthesis · Teacher desk</title>
+<title>Cell cycle and division · Teacher desk</title>
 <style>
   :root { --ink:#1c2430; --line:#d5dbe3; --paper:#f4f6f8; --card:#fff; --accent:#1f4e79; --ok:#1d6b3a; --bad:#8c2f2f; }
   * { box-sizing: border-box; }
@@ -29,7 +29,7 @@
 </head>
 <body>
 <header>
-  <h1>Photosynthesis · Teacher desk</h1>
+  <h1>Cell cycle and division · Teacher desk</h1>
   <p>Import student result files. See each student, then A/B/C/D counts for every question.</p>
 </header>
 <main>
@@ -61,7 +61,7 @@
   <p class="small"><a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher master page</a> · <a href="index.html">Back to the student practice</a></p>
 </main>
 <script>
-const STORE = "photo-mc-32-teacher-v1";
+const STORE = "cell-div-teacher-v1";
 let attempts = [];
 try { attempts = JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) { attempts = []; }
 
@@ -165,7 +165,7 @@ function render() {
     </table>` : "<p>Item counts appear after you import attempts.</p>";
 
   const bundle = {
-    paper: "Photosynthesis MC",
+    paper: "Cellular organisation F.4 MC",
     n_attempts: attempts.length,
     individuals: people.map(a => ({
       name: a.name, class: a.cls, class_no: a.class_no || a.classNo || "", division: a.division || "", practice: a.practice_title,
@@ -180,7 +180,7 @@ function render() {
       key: r.correct, distractor: r.trap, stem: r.stem
     }))
   };
-  const prompt = "You are analysing HKDSE Biology photosynthesis multiple-choice results. "
+  const prompt = "You are analysing F.4 Biology cellular-organisation multiple-choice results. "
     + "1) Summarise each student's score and the questions they missed. "
     + "2) For each question, report how many chose A, B, C and D, and name the usual distractor. "
     + "3) List the five weakest items and the misconception they test.\n\n";
@@ -216,7 +216,7 @@ document.getElementById("csv").addEventListener("click", () => {
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "photosynthesis_item_stats.csv";
+  a.download = "F4_cell_item_stats.csv";
   a.click();
 });
 document.getElementById("peoplecsv").addEventListener("click", () => {
@@ -233,7 +233,7 @@ document.getElementById("peoplecsv").addEventListener("click", () => {
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "photosynthesis_student_scores.csv";
+  a.download = "F4_cell_student_scores.csv";
   a.click();
 });
 document.getElementById("ai").addEventListener("click", () => {

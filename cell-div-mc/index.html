@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Photosynthesis · MC</title>
+<title>Cell cycle and division</title>
 <style>
   :root { --ink:#1c2430; --line:#d5dbe3; --paper:#f6f7f9; --card:#fff; --accent:#1f4e79; --bad:#8c2f2f; --ok:#1d6b3a; }
   * { box-sizing: border-box; }
@@ -36,27 +36,27 @@
   .ok { color:var(--ok); } .bad { color:var(--bad); }
   .miss { border-top:1px solid var(--line); padding-top:10px; margin-top:10px; }
   .small { color:#526070; font-size:.92rem; }
-  .fig { max-width:100%; height:auto; border:1px solid var(--line); border-radius:8px; margin:.4rem 0; background:#fff; }
+  .fig { max-width:min(100%, 320px); height:auto; border:1px solid var(--line); border-radius:8px; margin:.35rem auto; background:#fff; display:block; }
   .fig-row { display:flex; gap:8px; flex-wrap:wrap; }
-  .fig-row img { max-width:48%; }
+  .fig-row { justify-content:center; } .fig-row img { max-width:22%; }
   table.grid { width:100%; border-collapse:collapse; margin:8px 0; font-size:.95rem; }
   table.grid td, table.grid th { border:1px solid var(--line); padding:4px 8px; }
-  @media (max-width:560px) { .row { grid-template-columns:1fr; } .fig-row img { max-width:100%; } }
+  @media (max-width:560px) { .row { grid-template-columns:1fr; } .fig-row img { max-width:46%; } }
   @media print { header, .noprint { display:none !important; } body { background:#fff; } .card { border:0; } }
 </style>
 </head>
 <body>
 <header>
-  <h1>Photosynthesis · MC</h1>
-  <p>Two practices of 16 average and difficult questions. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
+  <h1>Cell cycle and division</h1>
+  <p>One practice. Enter your name in English (same as your ID card), class, class number and biology division, then start.</p>
 </header>
 <main id="app"></main>
 <script src="questions.js"></script>
 <script>
-const BANK = window.PHOTO_BANK;
+const BANK = window.F4_BANK;
 const app = document.getElementById("app");
-const KEY = "photo-mc-32-v1";
-const SUBMIT_TOKEN = "photo-mc-32-2026";
+const KEY = "cell-div-mc-v1";
+const SUBMIT_TOKEN = "cell-div-2026";
 const SUBMIT_URL = "";
 
 function load() {
@@ -220,7 +220,7 @@ function finish() {
   const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
     .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
   const payload = {
-    paper: "Photosynthesis MC",
+    paper: "Cell cycle and division MC",
     token: SUBMIT_TOKEN,
     attempt_id: (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2)),
     when_iso: whenIso,
@@ -306,7 +306,7 @@ function downloadReport(s, score, misses, weakLine, when) {
   .miss { border-top: 1px solid #d5dbe3; padding-top: 10px; margin-top: 10px; }
   .small { color: #526070; font-size: 0.92rem; }
 </style></head><body>
-<h1>Photosynthesis · personal report</h1>
+<h1>Cellular organisation · personal report</h1>
 <p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)}</p>
 <p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
 <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
@@ -314,11 +314,11 @@ function downloadReport(s, score, misses, weakLine, when) {
     ? "Every item in this practice was correct."
     : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
 ${missHtml}
-<p class="small">Personal report · HKDSE Biology · Photosynthesis</p>
+<p class="small">Personal report · HKDSE Biology · Cell cycle and division</p>
 </body></html>`;
   const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + s.id)
     .replace(/[^\w\-]+/g, "_");
-  downloadFile("report_photosynthesis_" + safe + ".html", html, "text/html;charset=utf-8");
+  downloadFile("report_cell_div_" + safe + ".html", html, "text/html;charset=utf-8");
 }
 
 function downloadJson(payload) {
@@ -327,7 +327,7 @@ function downloadJson(payload) {
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "photosynthesis_" + safe + ".json";
+  a.download = "cell_div_" + safe + ".json";
   a.click();
   URL.revokeObjectURL(a.href);
 }
