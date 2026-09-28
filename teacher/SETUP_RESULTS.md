@@ -1,15 +1,16 @@
-# Live web results (not Google Classroom)
+# Live results on the teacher page
 
-Students only open the quiz in the browser. No files, no Classroom turn-in.
+You do **not** sign in to a Sheet to check the class. You open the teacher webpage; names and scores appear there.
 
-GitHub Pages cannot store marks, so **one Google Sheet in your Drive** holds them. The teacher desk reads that Sheet and refreshes every 20 seconds.
+That works like Gemini web apps: they also store answers in a small online database (Firebase), then the page displays them.
 
 ## Once
 
-1. [New Google Sheet](https://sheets.google.com/create) named `HKDSE MC results`.
-2. Extensions → Apps Script. Paste `CollectAllResults.gs`. Run `setup`.
-3. Deploy → Web app → Execute as Me → Anyone. Copy the `/exec` URL.
-4. Paste it on the teacher desk and click Save.
-5. Send the same URL here so student pages can post results automatically.
+1. [Firebase console](https://console.firebase.google.com/) → Add project `hkdse-mc` (skip Analytics).
+2. Build → Realtime Database → Create → **test mode**.
+3. Gear → Project settings → Your apps → Web → copy `firebaseConfig`.
+4. Paste that config in chat so it can be published.
 
-Until step 5, this page can still *read* the Sheet if you saved the URL, but students cannot *send* unless `submit-config.js` has the URL.
+After that, students only use the quiz. You only open:
+
+https://hkdsebiology.github.io/hkdse-biology-sims/teacher/

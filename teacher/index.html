@@ -93,32 +93,25 @@
   <header>
     <p class="kicker">Teachers only</p>
     <h1>MC topics and class statistics</h1>
-    <p>Students only open the web quiz — no Google Classroom, no files to collect. After a one-time Sheet link, this page lists who has submitted and auto-refreshes.</p>
+    <p>Open this page during a lesson. When live results are on, names and scores appear here by themselves — you do not sign in, and students only use the web quiz.</p>
   </header>
 
   <section class="card" id="live-setup" style="margin-bottom:1.2rem">
     <h2>Live class results</h2>
     <p class="muted" id="live-status">Checking connection…</p>
     <div class="toolbar">
-      <button class="btn primary" id="refresh" type="button">Refresh from Sheet</button>
-      <button class="btn ghost" id="copy-script" type="button">Copy Apps Script</button>
-      <a class="btn ghost" href="https://sheets.google.com/create" target="_blank" rel="noopener">New Google Sheet</a>
+      <button class="btn primary" id="refresh" type="button">Refresh</button>
     </div>
     <details id="setup-details">
-      <summary style="cursor:pointer;font-weight:650;color:#16324a">One-time setup (about 3 minutes)</summary>
+      <summary style="cursor:pointer;font-weight:650;color:#16324a">Turn on live results once (Firebase — same idea as Gemini web apps)</summary>
+      <p class="muted" style="margin:0.5rem 0">Gemini can show results because the app is tied to a small online database. This site is the same: the teacher page reads that database. You never open a spreadsheet to check the class.</p>
       <ol class="setup">
-        <li>Open <strong>New Google Sheet</strong> (signed in as your school Google account). Name it <code>HKDSE MC results</code>.</li>
-        <li>Extensions → Apps Script. Delete any stub code. Click <strong>Copy Apps Script</strong> above, paste, Save.</li>
-        <li>Select function <code>setup</code> → Run. Approve permissions.</li>
-        <li>Deploy → New deployment → Web app. Execute as <strong>Me</strong>, Who has access <strong>Anyone</strong>. Deploy and copy the <code>/exec</code> URL.</li>
-        <li>Paste the URL below and click Save so <em>this</em> page can read results. Paste the same URL in chat so student quizzes can send answers (no files, no Classroom).</li>
+        <li>Open <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a> (any Google account, once).</li>
+        <li>Add project → name it <code>hkdse-mc</code> → continue. Skip Google Analytics.</li>
+        <li>Build → <strong>Realtime Database</strong> → Create database → start in <strong>test mode</strong> → choose any region.</li>
+        <li>Project settings (gear) → Your apps → Web app <code>&lt;/&gt;</code> → register. Copy the <code>firebaseConfig</code> object.</li>
+        <li>Paste that config in chat. It will be put on the website. After that, just open this teacher page — no sign-in to check.</li>
       </ol>
-      <label for="results-url">Web app URL</label>
-      <div class="url-row">
-        <input id="results-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
-        <button class="btn primary" id="save-url" type="button">Save</button>
-      </div>
-      <p class="muted">Teacher read token is fixed in the script: <code>teacher-hkdse-2026</code></p>
     </details>
   </section>
 
@@ -179,9 +172,9 @@
   </section>
 
   <p class="note">
-    <strong>Not Google Classroom.</strong> Students only do the web quiz.
-    GitHub Pages cannot store marks itself, so one Google <em>Sheet</em> (your Drive, not Classroom) holds the results.
-    Paste the web-app URL below once, then tell me the same URL so student pages can send answers automatically.
+    <strong>Why not “just the page”?</strong> A website on GitHub has no memory of other people’s browsers.
+    Gemini web apps that show class results also use a hidden database (usually Firebase).
+    After that is linked once, you only open this page — you do not sign in to a Sheet.
   </p>
 
   <footer>
@@ -189,7 +182,10 @@
     <p>HKDSE Biology · Ms Lai Kam Fung</p>
   </footer>
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script src="../submit-config.js"></script>
+<script src="../results-store.js"></script>
 <script>
 const STORE = "hkdse-mc-teacher-master-v1";
 const URL_STORE = "hkdse-mc-results-url";
@@ -370,65 +366,65 @@ function render() {
     </table>` : "";
 }
 
+function applyLiveList(list, source) {
+  attempts = attempts.filter(a => a.source !== "sheet" && a.source !== "live");
+  (list || []).forEach(raw => {
+    raw.source = source;
+    addAttempt(raw, true);
+  });
+  save();
+  render();
+}
+
+function startLive() {
+  const status = document.getElementById("live-status");
+  if (window.HKDSEResults && window.HKDSEResults.ready()) {
+    status.innerHTML = '<div class="okbox"><strong>Live.</strong> This page updates by itself when a student submits. No sign-in.</div>';
+    window.HKDSEResults.listen(function (list) {
+      applyLiveList(list, "live");
+      status.innerHTML = '<div class="okbox"><strong>Live.</strong> ' +
+        list.length + " attempt(s). Updates appear here as soon as students finish.</div>";
+    });
+    return;
+  }
+  const url = resultsUrl();
+  if (url && url.indexOf("http") === 0) {
+    refreshFromSheet(true);
+    return;
+  }
+  status.innerHTML = '<div class="warnbox">Live results are not on yet. Open the steps below, create the free Firebase database once, then paste the config in chat. After that you only open this page — you do not sign in to check.</div>';
+  document.getElementById("setup-details").open = true;
+}
+
 async function refreshFromSheet(silent) {
   const url = resultsUrl();
   const status = document.getElementById("live-status");
-  if (!url || url.indexOf("http") !== 0) {
-    status.innerHTML = '<div class="warnbox">Not connected yet. Students can already do the web quiz, but this page cannot see them until you paste the Sheet web-app URL (setup below). This is a Google Sheet in your Drive — not Classroom.</div>';
-    document.getElementById("setup-details").open = true;
-    return false;
-  }
-  status.textContent = "Loading from Google Sheet…";
+  if (!url || url.indexOf("http") !== 0) return false;
   try {
     const endpoint = url + (url.indexOf("?") >= 0 ? "&" : "?") +
       "action=list&token=" + encodeURIComponent(TEACHER_TOKEN);
     const res = await fetch(endpoint, { cache: "no-store" });
     const data = await res.json();
     if (!data || !data.ok) throw new Error((data && data.error) || "bad response");
-    const list = Array.isArray(data.attempts) ? data.attempts : [];
-    attempts = attempts.filter(a => a.source !== "sheet");
-    let added = 0;
-    list.forEach(raw => {
-      raw.source = "sheet";
-      if (addAttempt(raw, true)) added++;
-    });
-    save();
-    render();
+    applyLiveList(data.attempts || [], "sheet");
     status.innerHTML = '<div class="okbox"><strong>Connected.</strong> ' +
-      list.length + " attempt(s) on the Sheet" +
-      (data.when_iso ? " · " + esc(String(data.when_iso).replace("T", " ").slice(0, 19)) : "") +
-      ". This page refreshes every 20 seconds.</div>";
-    startAutoRefresh();
+      (data.attempts || []).length + " attempt(s).</div>";
     return true;
   } catch (err) {
-    status.innerHTML = '<div class="warnbox">Could not load the Sheet (' + esc(err.message || err) +
-      "). Check the web app URL and that access is set to Anyone.</div>";
-    if (!silent) document.getElementById("setup-details").open = true;
+    if (!silent) {
+      status.innerHTML = '<div class="warnbox">Could not load results (' + esc(err.message || err) + ").</div>";
+    }
     return false;
   }
 }
 
-document.getElementById("results-url").value = resultsUrl();
-document.getElementById("save-url").addEventListener("click", () => {
-  const u = document.getElementById("results-url").value.trim();
-  localStorage.setItem(URL_STORE, u);
-  refreshFromSheet(false);
-});
-document.getElementById("refresh").addEventListener("click", () => refreshFromSheet(false));
-document.getElementById("copy-script").addEventListener("click", async () => {
-  try {
-    const res = await fetch("CollectAllResults.gs", { cache: "no-store" });
-    const text = await res.text();
-    await navigator.clipboard.writeText(text);
-    document.getElementById("live-status").innerHTML =
-      '<div class="okbox">Apps Script copied. Paste it into Extensions → Apps Script in your Google Sheet.</div>';
-  } catch (err) {
-    document.getElementById("live-status").innerHTML =
-      '<div class="warnbox">Could not copy automatically. Open <a href="CollectAllResults.gs">CollectAllResults.gs</a> and copy the text.</div>';
-  }
+document.getElementById("refresh").addEventListener("click", () => {
+  if (window.HKDSEResults && window.HKDSEResults.ready()) startLive();
+  else refreshFromSheet(false);
 });
 
-document.getElementById("files").addEventListener("change", async ev => {
+const filesEl = document.getElementById("files");
+if (filesEl) filesEl.addEventListener("change", async ev => {
   let added = 0;
   for (const f of ev.target.files) {
     try {
@@ -443,7 +439,7 @@ document.getElementById("files").addEventListener("change", async ev => {
   ev.target.value = "";
 });
 document.getElementById("clear").addEventListener("click", () => {
-  if (!confirm("Clear all results shown on this computer? (The Google Sheet itself is not deleted.)")) return;
+  if (!confirm("Clear what is shown on this screen? Stored class results are not deleted.")) return;
   attempts = [];
   save();
   render();
@@ -479,14 +475,8 @@ document.getElementById("csv-items").addEventListener("click", () => {
   a.click();
 });
 
-let autoTimer = 0;
-function startAutoRefresh() {
-  if (autoTimer) return;
-  autoTimer = setInterval(() => refreshFromSheet(true), 20000);
-}
-
 render();
-refreshFromSheet(true);
+startLive();
 </script>
 </body>
 </html>

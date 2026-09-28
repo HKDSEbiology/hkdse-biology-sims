@@ -51,7 +51,10 @@
   <p>Two practices of 16 average and difficult questions. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
 </header>
 <main id="app"></main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script src="../submit-config.js"></script>
+<script src="../results-store.js"></script>
 <script src="questions.js"></script>
 <script>
 const BANK = window.PHOTO_BANK;
@@ -235,7 +238,7 @@ function finish() {
     percent: Math.round(1000 * score / s.items.length) / 10,
     answers
   };
-  if (SUBMIT_URL) {
+  if (SUBMIT_URL || liveStoreOn()) {
     // Teacher sees this on the live results page. Do not dump a JSON file on the student.
   } else {
     downloadJson(payload);
@@ -277,7 +280,7 @@ function finish() {
     if (!box) return;
     if (ok) {
       box.textContent = "Your answers have been recorded for your teacher. Download or print your personal report if you want a copy.";
-    } else if (SUBMIT_URL) {
+    } else if (SUBMIT_URL || liveStoreOn()) {
       box.textContent = "Could not reach the class results sheet. A JSON file still downloaded — please give that file to your teacher.";
     } else {
       box.textContent = "A JSON file downloaded. Give that file to your teacher if asked. Download or print your personal report if you want a copy.";
@@ -341,16 +344,23 @@ function downloadJson(payload) {
   URL.revokeObjectURL(a.href);
 }
 
+function liveStoreOn() {
+  return !!(window.HKDSEResults && window.HKDSEResults.ready());
+}
+
 function sendAttempt(payload) {
-  if (!SUBMIT_URL || SUBMIT_URL.indexOf("http") !== 0) {
-    return Promise.resolve(false);
+  const jobs = [];
+  if (liveStoreOn()) jobs.push(window.HKDSEResults.pushAttempt(payload));
+  if (SUBMIT_URL && SUBMIT_URL.indexOf("http") === 0) {
+    jobs.push(fetch(SUBMIT_URL, {
+      method: "POST",
+      redirect: "follow",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    }).then(r => r.json()).then(d => !!(d && d.ok)).catch(() => false));
   }
-  return fetch(SUBMIT_URL, {
-    method: "POST",
-    redirect: "follow",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload)
-  }).then(r => r.json()).then(d => !!(d && d.ok)).catch(() => false);
+  if (!jobs.length) return Promise.resolve(false);
+  return Promise.all(jobs).then(xs => xs.some(Boolean));
 }
 
 home();

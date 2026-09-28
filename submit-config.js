@@ -1,11 +1,23 @@
 /**
- * Shared submit / results URLs for HKDSE MC practices.
+ * Live results for the teacher webpage (no Google Sheet, no Classroom).
  *
- * After you deploy CollectAllResults.gs as a Google Apps Script web app,
- * paste the /exec URL into BOTH fields below and push to GitHub Pages.
+ * After you create a free Firebase Realtime Database once, paste the config
+ * below and we republish. Then:
+ *   - students just finish the web quiz
+ *   - you open the teacher page — names and scores appear, no sign-in
  *
- * Leave empty until the web app is ready - students still get a JSON download.
+ * If HKDSE_FIREBASE.apiKey is empty, live submit is off.
  */
+window.HKDSE_FIREBASE = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+
 window.HKDSE_MC_SUBMIT_URL = "";
 window.HKDSE_MC_RESULTS_URL = "";
 window.HKDSE_MC_TEACHER_TOKEN = "teacher-hkdse-2026";
