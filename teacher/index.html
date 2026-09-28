@@ -103,15 +103,8 @@
       <button class="btn primary" id="refresh" type="button">Refresh</button>
     </div>
     <details id="setup-details">
-      <summary style="cursor:pointer;font-weight:650;color:#16324a">Turn on live results once (Firebase — same idea as Gemini web apps)</summary>
-      <p class="muted" style="margin:0.5rem 0">Gemini can show results because the app is tied to a small online database. This site is the same: the teacher page reads that database. You never open a spreadsheet to check the class.</p>
-      <ol class="setup">
-        <li>Open <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a> (any Google account, once).</li>
-        <li>Add project → name it <code>hkdse-mc</code> → continue. Skip Google Analytics.</li>
-        <li>Build → <strong>Realtime Database</strong> → Create database → start in <strong>test mode</strong> → choose any region.</li>
-        <li>Project settings (gear) → Your apps → Web app <code>&lt;/&gt;</code> → register. Copy the <code>firebaseConfig</code> object.</li>
-        <li>Paste that config in chat. It will be put on the website. After that, just open this teacher page — no sign-in to check.</li>
-      </ol>
+      <summary style="cursor:pointer;font-weight:650;color:#16324a">How live results work</summary>
+      <p class="muted" style="margin:0.5rem 0">Student answers are stored in the Firebase project <code>hkdse-mc</code>. This page reads that list. You do not sign in to check, and you do not open a spreadsheet.</p>
     </details>
   </section>
 
@@ -184,7 +177,7 @@
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script src="../submit-config.js"></script>
+<script src="../submit-config.js?v=live1"></script>
 <script src="../results-store.js"></script>
 <script>
 const STORE = "hkdse-mc-teacher-master-v1";

@@ -1,16 +1,23 @@
 # Live results on the teacher page
 
-You do **not** sign in to a Sheet to check the class. You open the teacher webpage; names and scores appear there.
+Firebase project `hkdse-mc` is linked. You do **not** sign in to a Sheet to check the class.
 
-That works like Gemini web apps: they also store answers in a small online database (Firebase), then the page displays them.
+Daily use:
 
-## Once
+- Students only finish the web quiz.
+- You only open https://hkdsebiology.github.io/hkdse-biology-sims/teacher/
 
-1. [Firebase console](https://console.firebase.google.com/) → Add project `hkdse-mc` (skip Analytics).
-2. Build → Realtime Database → Create → **test mode**.
-3. Gear → Project settings → Your apps → Web → copy `firebaseConfig`.
-4. Paste that config in chat so it can be published.
+Names and scores appear there by themselves.
 
-After that, students only use the quiz. You only open:
+If the database later asks you to update rules (test mode can expire), Realtime Database → Rules, set:
 
-https://hkdsebiology.github.io/hkdse-biology-sims/teacher/
+```
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+Then Publish.

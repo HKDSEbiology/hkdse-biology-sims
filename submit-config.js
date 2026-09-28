@@ -9,13 +9,13 @@
  * If HKDSE_FIREBASE.apiKey is empty, live submit is off.
  */
 window.HKDSE_FIREBASE = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyALNZm3sWsbmmu6SL84IGEH4tB0p2620rc",
+  authDomain: "hkdse-mc.firebaseapp.com",
+  databaseURL: "https://hkdse-mc-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hkdse-mc",
+  storageBucket: "hkdse-mc.firebasestorage.app",
+  messagingSenderId: "885635793954",
+  appId: "1:885635793954:web:ab80bb1f53eb848bfd367b"
 };
 
 window.HKDSE_MC_SUBMIT_URL = "";
