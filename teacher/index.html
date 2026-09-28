@@ -93,7 +93,7 @@
   <header>
     <p class="kicker">Teachers only</p>
     <h1>MC topics and class statistics</h1>
-    <p>Live results load from the class Google Sheet when it is connected. You can also import JSON files students download.</p>
+    <p>Students only open the web quiz — no Google Classroom, no files to collect. After a one-time Sheet link, this page lists who has submitted and auto-refreshes.</p>
   </header>
 
   <section class="card" id="live-setup" style="margin-bottom:1.2rem">
@@ -111,7 +111,7 @@
         <li>Extensions → Apps Script. Delete any stub code. Click <strong>Copy Apps Script</strong> above, paste, Save.</li>
         <li>Select function <code>setup</code> → Run. Approve permissions.</li>
         <li>Deploy → New deployment → Web app. Execute as <strong>Me</strong>, Who has access <strong>Anyone</strong>. Deploy and copy the <code>/exec</code> URL.</li>
-        <li>Paste the URL below and click Save. Then send the same URL to be put into <code>submit-config.js</code> and republished so students submit online.</li>
+        <li>Paste the URL below and click Save so <em>this</em> page can read results. Paste the same URL in chat so student quizzes can send answers (no files, no Classroom).</li>
       </ol>
       <label for="results-url">Web app URL</label>
       <div class="url-row">
@@ -126,7 +126,8 @@
     <article class="card topic">
       <span class="level">F.4 · live</span>
       <h3>Cellular organisation</h3>
-      <p>Two 32-item practices. Students enter name in English (ID card), class, class number and biology division. Personal report after submit.</p>
+      <p id="count-cell" class="muted">No submissions yet.</p>
+      <p>Two 32-item practices. Students enter name in English (ID card), class, class number and biology division.</p>
       <div class="links">
         <a class="btn primary" href="../cell-f4-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../cell-f4-mc/teacher.html">Item statistics</a>
@@ -135,7 +136,8 @@
     <article class="card topic">
       <span class="level">F.4 · 26 items · live</span>
       <h3>Cell cycle and division</h3>
-      <p>One 26-item practice. Import student JSON files to see each student and A/B/C/D counts for every question, the same way as Cellular organisation.</p>
+      <p id="count-div" class="muted">No submissions yet.</p>
+      <p>One 26-item practice. Same identity fields. Progress appears here when the Sheet is connected.</p>
       <div class="links">
         <a class="btn primary" href="../cell-div-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../cell-div-mc/teacher.html">Item statistics</a>
@@ -144,7 +146,8 @@
     <article class="card topic">
       <span class="level">32 items · live</span>
       <h3>Photosynthesis</h3>
-      <p>32 average and difficult items in two practices. Same identity fields as Cellular organisation. Personal report after submit.</p>
+      <p id="count-photo" class="muted">No submissions yet.</p>
+      <p>32 average and difficult items in two practices. Same identity fields.</p>
       <div class="links">
         <a class="btn primary" href="../photo-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../photo-mc/teacher.html">Paper statistics</a>
@@ -158,22 +161,27 @@
   </section>
 
   <section class="card">
-    <h2>Class results</h2>
-    <p class="muted">Sheet results merge with any JSON files you import. Data shown here stay in this browser until you clear them.</p>
+    <h2>Who has submitted</h2>
+    <p class="muted">Leave this tab open during a lesson. It refreshes every 20 seconds once the Sheet is connected.</p>
     <div class="toolbar">
-      <input id="files" type="file" accept="application/json,.json" multiple>
-      <button class="btn ghost" id="clear" type="button">Clear imported set</button>
       <button class="btn primary" id="csv-people" type="button">Download student CSV</button>
       <button class="btn primary" id="csv-items" type="button">Download item CSV</button>
+      <button class="btn ghost" id="clear" type="button">Clear this screen</button>
     </div>
     <p class="muted" id="status">No results yet.</p>
     <div id="people"></div>
     <div id="items" style="margin-top:1rem"></div>
+    <details style="margin-top:1rem">
+      <summary style="cursor:pointer;color:var(--muted);font-size:0.88rem">Backup: import a JSON file (not needed for web students)</summary>
+      <p class="muted" style="margin-top:0.4rem">Only if a student could not reach the Sheet. Ordinary web submit does not use this.</p>
+      <input id="files" type="file" accept="application/json,.json" multiple>
+    </details>
   </section>
 
   <p class="note">
-    <strong>While the Sheet URL is empty</strong>, students still get a JSON download on submit — collect those if needed.
-    After the web app URL is in <code>submit-config.js</code> and republished, every submit is stored in the Sheet and this page can refresh automatically.
+    <strong>Not Google Classroom.</strong> Students only do the web quiz.
+    GitHub Pages cannot store marks itself, so one Google <em>Sheet</em> (your Drive, not Classroom) holds the results.
+    Paste the web-app URL below once, then tell me the same URL so student pages can send answers automatically.
   </p>
 
   <footer>
@@ -329,6 +337,19 @@ function render() {
         </tr>`).join("")}
     </table>` : "";
 
+  function paperCount(needle) {
+    const rows = attempts.filter(a => String(a.paper || "").toLowerCase().indexOf(needle) >= 0);
+    const people = new Set(rows.map(a => (a.name + "|" + a.cls + "|" + a.class_no).toLowerCase()));
+    if (!rows.length) return "No submissions yet.";
+    return people.size + " student(s), " + rows.length + " attempt(s).";
+  }
+  const elCell = document.getElementById("count-cell");
+  const elDiv = document.getElementById("count-div");
+  const elPhoto = document.getElementById("count-photo");
+  if (elCell) elCell.textContent = paperCount("cellular");
+  if (elDiv) elDiv.textContent = paperCount("cell cycle");
+  if (elPhoto) elPhoto.textContent = paperCount("photosynthesis");
+
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
     <h2>Question statistics</h2>
@@ -353,7 +374,7 @@ async function refreshFromSheet(silent) {
   const url = resultsUrl();
   const status = document.getElementById("live-status");
   if (!url || url.indexOf("http") !== 0) {
-    status.innerHTML = '<div class="warnbox">No Sheet web app URL yet. Open the setup steps below, deploy once, then Save the URL. Until then, import JSON files.</div>';
+    status.innerHTML = '<div class="warnbox">Not connected yet. Students can already do the web quiz, but this page cannot see them until you paste the Sheet web-app URL (setup below). This is a Google Sheet in your Drive — not Classroom.</div>';
     document.getElementById("setup-details").open = true;
     return false;
   }
@@ -375,8 +396,9 @@ async function refreshFromSheet(silent) {
     render();
     status.innerHTML = '<div class="okbox"><strong>Connected.</strong> ' +
       list.length + " attempt(s) on the Sheet" +
-      (data.when_iso ? " · refreshed " + esc(String(data.when_iso).replace("T", " ").slice(0, 19)) : "") +
-      ". Click Refresh after a class.</div>";
+      (data.when_iso ? " · " + esc(String(data.when_iso).replace("T", " ").slice(0, 19)) : "") +
+      ". This page refreshes every 20 seconds.</div>";
+    startAutoRefresh();
     return true;
   } catch (err) {
     status.innerHTML = '<div class="warnbox">Could not load the Sheet (' + esc(err.message || err) +
@@ -456,6 +478,12 @@ document.getElementById("csv-items").addEventListener("click", () => {
   a.download = "HKDSE_MC_item_stats.csv";
   a.click();
 });
+
+let autoTimer = 0;
+function startAutoRefresh() {
+  if (autoTimer) return;
+  autoTimer = setInterval(() => refreshFromSheet(true), 20000);
+}
 
 render();
 refreshFromSheet(true);

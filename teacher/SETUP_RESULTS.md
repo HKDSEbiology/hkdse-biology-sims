@@ -1,30 +1,15 @@
-# One-time setup: live student results
+# Live web results (not Google Classroom)
 
-Use **one** Google Sheet for Cellular organisation, Cell cycle & division, and Photosynthesis.
+Students only open the quiz in the browser. No files, no Classroom turn-in.
 
-## Steps
+GitHub Pages cannot store marks, so **one Google Sheet in your Drive** holds them. The teacher desk reads that Sheet and refreshes every 20 seconds.
 
-1. Open [sheets.google.com/create](https://sheets.google.com/create) (school Google account).
-2. Name the file `HKDSE MC results`.
-3. **Extensions → Apps Script**. Delete any stub.
-4. Paste the contents of [`teacher/CollectAllResults.gs`](teacher/CollectAllResults.gs) (or use **Copy Apps Script** on the teacher desk).
-5. Save. Run function `setup`. Approve permissions.
-6. **Deploy → New deployment → Web app**
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-7. Copy the URL ending in `/exec`.
-8. On [Teacher desk](https://hkdsebiology.github.io/hkdse-biology-sims/teacher/), paste the URL and click **Save** (works immediately for *reading* results).
-9. Put the **same URL** into `submit-config.js`:
+## Once
 
-```js
-window.HKDSE_MC_SUBMIT_URL = "https://script.google.com/macros/s/XXXX/exec";
-window.HKDSE_MC_RESULTS_URL = "https://script.google.com/macros/s/XXXX/exec";
-```
+1. [New Google Sheet](https://sheets.google.com/create) named `HKDSE MC results`.
+2. Extensions → Apps Script. Paste `CollectAllResults.gs`. Run `setup`.
+3. Deploy → Web app → Execute as Me → Anyone. Copy the `/exec` URL.
+4. Paste it on the teacher desk and click Save.
+5. Send the same URL here so student pages can post results automatically.
 
-10. Push to GitHub Pages so students submit online.
-
-## After that
-
-- Open the teacher desk → **Refresh from Sheet**.
-- Topic teacher pages also have **Refresh from Sheet**.
-- The Sheet tabs `Attempts`, `Answers`, and `Item_stats` hold the raw data (run `rebuildItemStats` in Apps Script after a class if you want the stats tab updated).
+Until step 5, this page can still *read* the Sheet if you saved the URL, but students cannot *send* unless `submit-config.js` has the URL.

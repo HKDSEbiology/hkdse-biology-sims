@@ -235,7 +235,11 @@ function finish() {
     percent: Math.round(1000 * score / s.items.length) / 10,
     answers
   };
-  downloadJson(payload);
+  if (SUBMIT_URL) {
+    // Teacher sees this on the live results page. Do not dump a JSON file on the student.
+  } else {
+    downloadJson(payload);
+  }
   el(`
     <section class="card" id="report">
       <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
