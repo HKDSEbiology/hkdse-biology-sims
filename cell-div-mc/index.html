@@ -51,13 +51,14 @@
   <p>One practice. Enter your name in English (same as your ID card), class, class number and biology division, then start.</p>
 </header>
 <main id="app"></main>
+<script src="../submit-config.js"></script>
 <script src="questions.js"></script>
 <script>
 const BANK = window.F4_BANK;
 const app = document.getElementById("app");
 const KEY = "cell-div-mc-v1";
 const SUBMIT_TOKEN = "cell-div-2026";
-const SUBMIT_URL = "";
+const SUBMIT_URL = (window.HKDSE_MC_SUBMIT_URL || "").trim();
 
 function load() {
   try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
@@ -270,9 +271,13 @@ function finish() {
   sendAttempt(payload).then(ok => {
     const box = document.getElementById("save-status");
     if (!box) return;
-    box.textContent = ok
-      ? "Your answers have been recorded. Download or print your personal report if you want a copy."
-      : "Download or print your personal report if you want a copy.";
+    if (ok) {
+      box.textContent = "Your answers have been recorded for your teacher. Download or print your personal report if you want a copy.";
+    } else if (SUBMIT_URL) {
+      box.textContent = "Could not reach the class results sheet. A JSON file still downloaded — please give that file to your teacher.";
+    } else {
+      box.textContent = "A JSON file downloaded. Give that file to your teacher if asked. Download or print your personal report if you want a copy.";
+    }
   });
 }
 

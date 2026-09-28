@@ -38,7 +38,7 @@
     font-size: clamp(1.8rem, 4.5vw, 2.5rem);
     font-weight: 700; color: #16324a; letter-spacing: -0.03em;
   }
-  header p { margin-top: 0.45rem; color: var(--muted); max-width: 40rem; }
+  header p { margin-top: 0.45rem; color: var(--muted); max-width: 42rem; }
   h2 { font-family: Fraunces, Georgia, serif; font-size: 1.2rem; color: #16324a; margin: 0 0 0.6rem; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
   .card {
@@ -65,13 +65,27 @@
   table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.5rem; }
   th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
   th { background: #eef3f8; }
-  input[type=file] { font: inherit; margin: 0.4rem 0; }
+  input[type=file], input[type=url], input[type=text] { font: inherit; margin: 0.4rem 0; width: 100%; max-width: 100%; padding: 0.45rem 0.55rem; border: 1px solid #b7c0cc; border-radius: 8px; }
+  .url-row { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: center; }
   .note {
     margin-top: 1rem; padding: 0.75rem 0.9rem;
     background: #fff8e8; border: 1px solid #e6d3a8; border-left: 4px solid #c9922a;
     border-radius: 0.65rem; font-size: 0.85rem; color: #6a5a3a; line-height: 1.5;
   }
+  .okbox {
+    margin-top: 0.75rem; padding: 0.75rem 0.9rem;
+    background: #eaf6ee; border: 1px solid #b7dcc4; border-left: 4px solid var(--ok);
+    border-radius: 0.65rem; font-size: 0.88rem; color: #1d4a2c; line-height: 1.5;
+  }
+  .warnbox {
+    margin-top: 0.75rem; padding: 0.75rem 0.9rem;
+    background: #fdeeee; border: 1px solid #e8b4b4; border-left: 4px solid #a33;
+    border-radius: 0.65rem; font-size: 0.88rem; color: #6a3030; line-height: 1.5;
+  }
+  ol.setup { margin: 0.4rem 0 0.6rem 1.2rem; color: var(--muted); font-size: 0.9rem; line-height: 1.55; }
   footer { text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  code { font-size: 0.85em; background: #eef3f8; padding: 0.1em 0.35em; border-radius: 4px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 0.45rem; margin: 0.5rem 0; align-items: center; }
 </style>
 </head>
 <body>
@@ -79,8 +93,34 @@
   <header>
     <p class="kicker">Teachers only</p>
     <h1>MC topics and class statistics</h1>
-    <p>Open a student practice, then import the JSON files students download. Download a CSV of scores or A–D counts for any paper.</p>
+    <p>Live results load from the class Google Sheet when it is connected. You can also import JSON files students download.</p>
   </header>
+
+  <section class="card" id="live-setup" style="margin-bottom:1.2rem">
+    <h2>Live class results</h2>
+    <p class="muted" id="live-status">Checking connection…</p>
+    <div class="toolbar">
+      <button class="btn primary" id="refresh" type="button">Refresh from Sheet</button>
+      <button class="btn ghost" id="copy-script" type="button">Copy Apps Script</button>
+      <a class="btn ghost" href="https://sheets.google.com/create" target="_blank" rel="noopener">New Google Sheet</a>
+    </div>
+    <details id="setup-details">
+      <summary style="cursor:pointer;font-weight:650;color:#16324a">One-time setup (about 3 minutes)</summary>
+      <ol class="setup">
+        <li>Open <strong>New Google Sheet</strong> (signed in as your school Google account). Name it <code>HKDSE MC results</code>.</li>
+        <li>Extensions → Apps Script. Delete any stub code. Click <strong>Copy Apps Script</strong> above, paste, Save.</li>
+        <li>Select function <code>setup</code> → Run. Approve permissions.</li>
+        <li>Deploy → New deployment → Web app. Execute as <strong>Me</strong>, Who has access <strong>Anyone</strong>. Deploy and copy the <code>/exec</code> URL.</li>
+        <li>Paste the URL below and click Save. Then send the same URL to be put into <code>submit-config.js</code> and republished so students submit online.</li>
+      </ol>
+      <label for="results-url">Web app URL</label>
+      <div class="url-row">
+        <input id="results-url" type="url" placeholder="https://script.google.com/macros/s/…/exec">
+        <button class="btn primary" id="save-url" type="button">Save</button>
+      </div>
+      <p class="muted">Teacher read token is fixed in the script: <code>teacher-hkdse-2026</code></p>
+    </details>
+  </section>
 
   <section class="grid" style="margin-bottom:1.2rem">
     <article class="card topic">
@@ -118,24 +158,22 @@
   </section>
 
   <section class="card">
-    <h2>Import results and download statistics</h2>
-    <p class="muted">Drop the JSON files students downloaded. Data stay on this computer. You can mix Cellular organisation, Cell cycle and division, and Photosynthesis files.</p>
-    <p>
+    <h2>Class results</h2>
+    <p class="muted">Sheet results merge with any JSON files you import. Data shown here stay in this browser until you clear them.</p>
+    <div class="toolbar">
       <input id="files" type="file" accept="application/json,.json" multiple>
       <button class="btn ghost" id="clear" type="button">Clear imported set</button>
       <button class="btn primary" id="csv-people" type="button">Download student CSV</button>
       <button class="btn primary" id="csv-items" type="button">Download item CSV</button>
-    </p>
-    <p class="muted" id="status">No files imported yet.</p>
+    </div>
+    <p class="muted" id="status">No results yet.</p>
     <div id="people"></div>
     <div id="items" style="margin-top:1rem"></div>
   </section>
 
   <p class="note">
-    <strong>How students submit.</strong> After they finish, a JSON file downloads automatically.
-    Collect those files (e.g. from Google Classroom) and import them here or on the topic’s statistics page.
-    <strong>Student CSV</strong> has name, class, class number and score.
-    <strong>Item CSV</strong> has A/B/C/D counts for each question.
+    <strong>While the Sheet URL is empty</strong>, students still get a JSON download on submit — collect those if needed.
+    After the web app URL is in <code>submit-config.js</code> and republished, every submit is stored in the Sheet and this page can refresh automatically.
   </p>
 
   <footer>
@@ -143,8 +181,11 @@
     <p>HKDSE Biology · Ms Lai Kam Fung</p>
   </footer>
 </div>
+<script src="../submit-config.js"></script>
 <script>
 const STORE = "hkdse-mc-teacher-master-v1";
+const URL_STORE = "hkdse-mc-results-url";
+const TEACHER_TOKEN = (window.HKDSE_MC_TEACHER_TOKEN || "teacher-hkdse-2026").trim();
 let attempts = [];
 try { attempts = JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) { attempts = []; }
 
@@ -156,6 +197,12 @@ function esc(s) {
 }
 function csvCell(v) {
   return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
+}
+
+function resultsUrl() {
+  const fromConfig = (window.HKDSE_MC_RESULTS_URL || window.HKDSE_MC_SUBMIT_URL || "").trim();
+  if (fromConfig.indexOf("http") === 0) return fromConfig;
+  return (localStorage.getItem(URL_STORE) || "").trim();
 }
 
 function normalize(obj) {
@@ -174,7 +221,8 @@ function normalize(obj) {
       total: obj.total,
       percent: obj.percent,
       when_iso: obj.when_iso || obj.ts || "",
-      answers: obj.answers
+      answers: obj.answers,
+      source: obj.source || "import"
     };
   }
   if (Array.isArray(obj.detail)) {
@@ -198,16 +246,21 @@ function normalize(obj) {
         trap: "",
         stem: d.q || "",
         topic: d.part || ""
-      }))
+      })),
+      source: obj.source || "import"
     };
   }
   return null;
 }
 
-function addAttempt(obj) {
+function addAttempt(obj, replaceSame) {
   const rec = normalize(obj);
   if (!rec || !rec.name) return false;
-  if (attempts.some(a => a.attempt_id === rec.attempt_id)) return false;
+  const idx = attempts.findIndex(a => a.attempt_id === rec.attempt_id);
+  if (idx >= 0) {
+    if (replaceSame) attempts[idx] = rec;
+    return replaceSame;
+  }
   attempts.push(rec);
   return true;
 }
@@ -245,9 +298,12 @@ function itemStats() {
 }
 
 function render() {
+  const sheetN = attempts.filter(a => a.source === "sheet").length;
+  const importN = attempts.length - sheetN;
   document.getElementById("status").textContent = attempts.length
-    ? attempts.length + " student attempt(s) imported."
-    : "No files imported yet.";
+    ? attempts.length + " student attempt(s)" +
+      (sheetN ? " (" + sheetN + " from Sheet" + (importN ? ", " + importN + " imported" : "") + ")" : "") + "."
+    : "No results yet.";
   const people = attempts.slice().sort((a, b) =>
     String(a.paper).localeCompare(String(b.paper)) ||
     (a.division || "").localeCompare(b.division || "") ||
@@ -258,7 +314,7 @@ function render() {
   document.getElementById("people").innerHTML = people.length ? `
     <h2>Individual performance</h2>
     <table>
-      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Score</th><th>%</th></tr>
+      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Score</th><th>%</th><th>When</th></tr>
       ${people.map(a => `
         <tr>
           <td>${esc(a.paper)}</td>
@@ -269,6 +325,7 @@ function render() {
           <td>${esc(a.practice_title || a.practice_id)}</td>
           <td>${a.score}/${a.total}</td>
           <td>${a.percent != null ? a.percent : ""}</td>
+          <td>${esc((a.when_iso || "").replace("T", " ").slice(0, 19))}</td>
         </tr>`).join("")}
     </table>` : "";
 
@@ -292,12 +349,70 @@ function render() {
     </table>` : "";
 }
 
+async function refreshFromSheet(silent) {
+  const url = resultsUrl();
+  const status = document.getElementById("live-status");
+  if (!url || url.indexOf("http") !== 0) {
+    status.innerHTML = '<div class="warnbox">No Sheet web app URL yet. Open the setup steps below, deploy once, then Save the URL. Until then, import JSON files.</div>';
+    document.getElementById("setup-details").open = true;
+    return false;
+  }
+  status.textContent = "Loading from Google Sheet…";
+  try {
+    const endpoint = url + (url.indexOf("?") >= 0 ? "&" : "?") +
+      "action=list&token=" + encodeURIComponent(TEACHER_TOKEN);
+    const res = await fetch(endpoint, { cache: "no-store" });
+    const data = await res.json();
+    if (!data || !data.ok) throw new Error((data && data.error) || "bad response");
+    const list = Array.isArray(data.attempts) ? data.attempts : [];
+    attempts = attempts.filter(a => a.source !== "sheet");
+    let added = 0;
+    list.forEach(raw => {
+      raw.source = "sheet";
+      if (addAttempt(raw, true)) added++;
+    });
+    save();
+    render();
+    status.innerHTML = '<div class="okbox"><strong>Connected.</strong> ' +
+      list.length + " attempt(s) on the Sheet" +
+      (data.when_iso ? " · refreshed " + esc(String(data.when_iso).replace("T", " ").slice(0, 19)) : "") +
+      ". Click Refresh after a class.</div>";
+    return true;
+  } catch (err) {
+    status.innerHTML = '<div class="warnbox">Could not load the Sheet (' + esc(err.message || err) +
+      "). Check the web app URL and that access is set to Anyone.</div>";
+    if (!silent) document.getElementById("setup-details").open = true;
+    return false;
+  }
+}
+
+document.getElementById("results-url").value = resultsUrl();
+document.getElementById("save-url").addEventListener("click", () => {
+  const u = document.getElementById("results-url").value.trim();
+  localStorage.setItem(URL_STORE, u);
+  refreshFromSheet(false);
+});
+document.getElementById("refresh").addEventListener("click", () => refreshFromSheet(false));
+document.getElementById("copy-script").addEventListener("click", async () => {
+  try {
+    const res = await fetch("CollectAllResults.gs", { cache: "no-store" });
+    const text = await res.text();
+    await navigator.clipboard.writeText(text);
+    document.getElementById("live-status").innerHTML =
+      '<div class="okbox">Apps Script copied. Paste it into Extensions → Apps Script in your Google Sheet.</div>';
+  } catch (err) {
+    document.getElementById("live-status").innerHTML =
+      '<div class="warnbox">Could not copy automatically. Open <a href="CollectAllResults.gs">CollectAllResults.gs</a> and copy the text.</div>';
+  }
+});
+
 document.getElementById("files").addEventListener("change", async ev => {
   let added = 0;
   for (const f of ev.target.files) {
     try {
       const obj = JSON.parse(await f.text());
-      if (addAttempt(obj)) added++;
+      obj.source = "import";
+      if (addAttempt(obj, false)) added++;
     } catch (err) {}
   }
   save();
@@ -306,17 +421,17 @@ document.getElementById("files").addEventListener("change", async ev => {
   ev.target.value = "";
 });
 document.getElementById("clear").addEventListener("click", () => {
-  if (!confirm("Clear all imported attempts on this computer?")) return;
+  if (!confirm("Clear all results shown on this computer? (The Google Sheet itself is not deleted.)")) return;
   attempts = [];
   save();
   render();
 });
 document.getElementById("csv-people").addEventListener("click", () => {
-  const lines = ["paper,name_english,class,class_no,division,practice,score,total,percent,when"];
+  const lines = ["paper,name_english,class,class_no,division,practice,score,total,percent,when,source"];
   attempts.forEach(a => {
     lines.push([
       csvCell(a.paper), csvCell(a.name), csvCell(a.cls), csvCell(a.class_no), csvCell(a.division || ""),
-      csvCell(a.practice_title || a.practice_id), a.score, a.total, a.percent, csvCell(a.when_iso)
+      csvCell(a.practice_title || a.practice_id), a.score, a.total, a.percent, csvCell(a.when_iso), csvCell(a.source || "")
     ].join(","));
   });
   const blob = new Blob([lines.join("\n")], { type: "text/csv" });
@@ -341,7 +456,9 @@ document.getElementById("csv-items").addEventListener("click", () => {
   a.download = "HKDSE_MC_item_stats.csv";
   a.click();
 });
+
 render();
+refreshFromSheet(true);
 </script>
 </body>
 </html>

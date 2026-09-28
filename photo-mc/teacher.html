@@ -34,8 +34,9 @@
 </header>
 <main>
   <section class="card">
-    <p>Students download a JSON file when they submit. Import those files here. Data stay on this computer unless you export them.</p>
+    <p>Results load from the class Google Sheet when connected. You can still import JSON files. See each student, then A/B/C/D counts for every question.</p>
     <p>
+      <button id="refresh" type="button">Refresh from Sheet</button>
       <input id="files" type="file" accept="application/json,.json" multiple>
       <button id="clear" class="ghost" type="button">Clear imported set</button>
       <button id="csv" type="button">Download item CSV</button>
@@ -60,8 +61,11 @@
   </section>
   <p class="small"><a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher master page</a> · <a href="index.html">Back to the student practice</a></p>
 </main>
+<script src="../submit-config.js"></script>
 <script>
 const STORE = "photo-mc-32-teacher-v1";
+const PAPER_FILTER = "Photosynthesis";
+const TEACHER_TOKEN = (window.HKDSE_MC_TEACHER_TOKEN || "teacher-hkdse-2026").trim();
 let attempts = [];
 try { attempts = JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) { attempts = []; }
 
@@ -72,13 +76,54 @@ function esc(s) {
   }[c]));
 }
 
-function addAttempt(obj) {
+function resultsUrl() {
+  const fromConfig = (window.HKDSE_MC_RESULTS_URL || window.HKDSE_MC_SUBMIT_URL || "").trim();
+  if (fromConfig.indexOf("http") === 0) return fromConfig;
+  return (localStorage.getItem("hkdse-mc-results-url") || "").trim();
+}
+
+function addAttempt(obj, replaceSame) {
   if (!obj || !obj.answers || !obj.name) return false;
   const id = obj.attempt_id || (obj.name + obj.when_iso + obj.practice_id);
-  if (attempts.some(a => a.attempt_id === id)) return false;
+  const idx = attempts.findIndex(a => a.attempt_id === id);
   obj.attempt_id = id;
+  if (idx >= 0) {
+    if (replaceSame) attempts[idx] = obj;
+    return replaceSame;
+  }
   attempts.push(obj);
   return true;
+}
+
+async function refreshFromSheet() {
+  const url = resultsUrl();
+  if (!url || url.indexOf("http") !== 0) {
+    document.getElementById("status").textContent =
+      "No Sheet URL yet. Set it on the teacher master page, or import JSON files here.";
+    return;
+  }
+  document.getElementById("status").textContent = "Loading from Google Sheet…";
+  try {
+    const endpoint = url + (url.indexOf("?") >= 0 ? "&" : "?") +
+      "action=list&token=" + encodeURIComponent(TEACHER_TOKEN) +
+      "&paper=" + encodeURIComponent(PAPER_FILTER);
+    const data = await (await fetch(endpoint, { cache: "no-store" })).json();
+    if (!data || !data.ok) throw new Error((data && data.error) || "bad response");
+    attempts = attempts.filter(a => a.source !== "sheet");
+    (data.attempts || []).forEach(raw => {
+      raw.source = "sheet";
+      addAttempt(raw, true);
+    });
+    save();
+    render();
+    document.getElementById("status").textContent =
+      (data.attempts || []).length + " attempt(s) from Sheet" +
+      (attempts.length > (data.attempts || []).length
+        ? " (+" + (attempts.length - (data.attempts || []).length) + " imported)"
+        : "") + ".";
+  } catch (err) {
+    document.getElementById("status").textContent = "Could not load Sheet: " + (err.message || err);
+  }
 }
 
 function itemStats() {
@@ -241,7 +286,9 @@ document.getElementById("ai").addEventListener("click", () => {
   box.select();
   navigator.clipboard.writeText(box.value);
 });
+document.getElementById("refresh").addEventListener("click", () => refreshFromSheet());
 render();
+refreshFromSheet();
 </script>
 </body>
 </html>
