@@ -93,18 +93,36 @@
   <header>
     <p class="kicker">Teachers only</p>
     <h1>MC topics and class statistics</h1>
-    <p>Open this page during a lesson. When live results are on, names and scores appear here by themselves — you do not sign in, and students only use the web quiz.</p>
+    <p>Leave this page open in the lesson. Names appear as soon as a student starts. Scores appear when they submit. No sign-in.</p>
   </header>
 
   <section class="card" id="live-setup" style="margin-bottom:1.2rem">
-    <h2>Live class results</h2>
+    <h2>Class now</h2>
     <p class="muted" id="live-status">Checking connection…</p>
     <div class="toolbar">
       <button class="btn primary" id="refresh" type="button">Refresh</button>
+      <button class="btn primary" id="csv-people" type="button">Download student CSV</button>
+      <button class="btn primary" id="csv-items" type="button">Download item CSV</button>
+      <button class="btn ghost" id="clear" type="button">Clear this screen</button>
     </div>
-    <details id="setup-details">
-      <summary style="cursor:pointer;font-weight:650;color:#16324a">How live results work</summary>
-      <p class="muted" style="margin:0.5rem 0">Student answers are stored in the Firebase project <code>hkdse-mc</code>. This page reads that list. You do not sign in to check, and you do not open a spreadsheet.</p>
+    <p class="muted" id="status">No results yet.</p>
+    <div id="people"></div>
+    <div id="items" style="margin-top:1rem"></div>
+    <details id="setup-details" style="margin-top:0.8rem">
+      <summary style="cursor:pointer;font-weight:650;color:#16324a">If the table stays empty</summary>
+      <p class="muted" style="margin:0.5rem 0">Students must use the <strong>web quiz</strong> (not the Word paper). Their name is sent when they start the practice, not only at the end.</p>
+      <p class="muted">If it still stays empty, open Firebase → Realtime Database → <strong>Rules</strong> and Publish:</p>
+      <pre style="background:#eef3f8;padding:0.6rem;border-radius:8px;overflow:auto;font-size:0.8rem">{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}</pre>
+    </details>
+    <details style="margin-top:0.6rem">
+      <summary style="cursor:pointer;color:var(--muted);font-size:0.88rem">Backup: import a JSON file</summary>
+      <p class="muted" style="margin-top:0.4rem">Only if a student could not send to the class list.</p>
+      <input id="files" type="file" accept="application/json,.json" multiple>
     </details>
   </section>
 
@@ -123,7 +141,7 @@
       <span class="level">F.4 · 26 items · live</span>
       <h3>Cell cycle and division</h3>
       <p id="count-div" class="muted">No submissions yet.</p>
-      <p>One 26-item practice. Same identity fields. Progress appears here when the Sheet is connected.</p>
+      <p>One 26-item practice. Same identity fields.</p>
       <div class="links">
         <a class="btn primary" href="../cell-div-mc/index.html">Student practice</a>
         <a class="btn ghost" href="../cell-div-mc/teacher.html">Item statistics</a>
@@ -146,39 +164,13 @@
     </article>
   </section>
 
-  <section class="card">
-    <h2>Who has submitted</h2>
-    <p class="muted">Leave this tab open during a lesson. It refreshes every 20 seconds once the Sheet is connected.</p>
-    <div class="toolbar">
-      <button class="btn primary" id="csv-people" type="button">Download student CSV</button>
-      <button class="btn primary" id="csv-items" type="button">Download item CSV</button>
-      <button class="btn ghost" id="clear" type="button">Clear this screen</button>
-    </div>
-    <p class="muted" id="status">No results yet.</p>
-    <div id="people"></div>
-    <div id="items" style="margin-top:1rem"></div>
-    <details style="margin-top:1rem">
-      <summary style="cursor:pointer;color:var(--muted);font-size:0.88rem">Backup: import a JSON file (not needed for web students)</summary>
-      <p class="muted" style="margin-top:0.4rem">Only if a student could not reach the Sheet. Ordinary web submit does not use this.</p>
-      <input id="files" type="file" accept="application/json,.json" multiple>
-    </details>
-  </section>
-
-  <p class="note">
-    <strong>Why not “just the page”?</strong> A website on GitHub has no memory of other people’s browsers.
-    Gemini web apps that show class results also use a hidden database (usually Firebase).
-    After that is linked once, you only open this page — you do not sign in to a Sheet.
-  </p>
-
   <footer>
     <p><a href="../index.html">Student simulations hub</a></p>
     <p>HKDSE Biology · Ms Lai Kam Fung</p>
   </footer>
 </div>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script src="../submit-config.js?v=live1"></script>
-<script src="../results-store.js"></script>
+<script src="../submit-config.js?v=live2"></script>
+<script src="../results-store.js?v=live2"></script>
 <script>
 const STORE = "hkdse-mc-teacher-master-v1";
 const URL_STORE = "hkdse-mc-results-url";
@@ -217,6 +209,8 @@ function normalize(obj) {
       score: obj.score,
       total: obj.total,
       percent: obj.percent,
+      status: obj.status || ((obj.answers || []).length ? "done" : "doing"),
+      progress: obj.progress || 0,
       when_iso: obj.when_iso || obj.ts || "",
       answers: obj.answers,
       source: obj.source || "import"
@@ -295,12 +289,11 @@ function itemStats() {
 }
 
 function render() {
-  const sheetN = attempts.filter(a => a.source === "sheet").length;
-  const importN = attempts.length - sheetN;
+  const doneN = attempts.filter(a => a.status !== "doing").length;
+  const doingN = attempts.length - doneN;
   document.getElementById("status").textContent = attempts.length
-    ? attempts.length + " student attempt(s)" +
-      (sheetN ? " (" + sheetN + " from Sheet" + (importN ? ", " + importN + " imported" : "") + ")" : "") + "."
-    : "No results yet.";
+    ? attempts.length + " student(s) — " + doingN + " still doing, " + doneN + " finished."
+    : "Waiting for students to start the web quiz.";
   const people = attempts.slice().sort((a, b) =>
     String(a.paper).localeCompare(String(b.paper)) ||
     (a.division || "").localeCompare(b.division || "") ||
@@ -309,10 +302,14 @@ function render() {
     (a.name || "").localeCompare(b.name || "")
   );
   document.getElementById("people").innerHTML = people.length ? `
-    <h2>Individual performance</h2>
     <table>
-      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Score</th><th>%</th><th>When</th></tr>
-      ${people.map(a => `
+      <tr><th>Paper</th><th>Name in English</th><th>Class</th><th>Class no.</th><th>Division</th><th>Practice</th><th>Now</th><th>Score</th><th>%</th><th>When</th></tr>
+      ${people.map(a => {
+        const doing = a.status === "doing";
+        const now = doing ? ("Doing " + (a.progress || 0) + "/" + (a.total || "?")) : "Done";
+        const score = doing || a.score === "" || a.score == null ? "—" : (a.score + "/" + a.total);
+        const pct = doing || a.percent === "" || a.percent == null ? "—" : a.percent;
+        return `
         <tr>
           <td>${esc(a.paper)}</td>
           <td>${esc(a.name)}</td>
@@ -320,11 +317,13 @@ function render() {
           <td>${esc(a.class_no)}</td>
           <td>${esc(a.division || "")}</td>
           <td>${esc(a.practice_title || a.practice_id)}</td>
-          <td>${a.score}/${a.total}</td>
-          <td>${a.percent != null ? a.percent : ""}</td>
+          <td>${esc(now)}</td>
+          <td>${esc(score)}</td>
+          <td>${esc(pct)}</td>
           <td>${esc((a.when_iso || "").replace("T", " ").slice(0, 19))}</td>
-        </tr>`).join("")}
-    </table>` : "";
+        </tr>`;
+      }).join("")}
+    </table>` : "<p class=\"muted\">No names yet. When a student enters their name and starts a practice, they appear here within a few seconds.</p>";
 
   function paperCount(needle) {
     const rows = attempts.filter(a => String(a.paper || "").toLowerCase().indexOf(needle) >= 0);
@@ -369,14 +368,22 @@ function applyLiveList(list, source) {
   render();
 }
 
+let stopLive = null;
 function startLive() {
   const status = document.getElementById("live-status");
   if (window.HKDSEResults && window.HKDSEResults.ready()) {
-    status.innerHTML = '<div class="okbox"><strong>Live.</strong> This page updates by itself when a student submits. No sign-in.</div>';
-    window.HKDSEResults.listen(function (list) {
+    if (stopLive) stopLive();
+    status.innerHTML = '<div class="okbox"><strong>Live.</strong> This table refreshes by itself. No sign-in.</div>';
+    stopLive = window.HKDSEResults.listen(function (list) {
       applyLiveList(list, "live");
+      const n = (list || []).length;
       status.innerHTML = '<div class="okbox"><strong>Live.</strong> ' +
-        list.length + " attempt(s). Updates appear here as soon as students finish.</div>";
+        (n ? n + " row(s). Names appear when a student starts." : "Waiting — a name appears as soon as a student starts a practice.") +
+        "</div>";
+    }, function (err) {
+      status.innerHTML = '<div class="warnbox">Could not read the class list. Open Firebase → Realtime Database → Rules and allow read and write, then Refresh. (' +
+        esc(err && err.message ? err.message : err) + ")</div>";
+      document.getElementById("setup-details").open = true;
     });
     return;
   }
@@ -385,7 +392,7 @@ function startLive() {
     refreshFromSheet(true);
     return;
   }
-  status.innerHTML = '<div class="warnbox">Live results are not on yet. Open the steps below, create the free Firebase database once, then paste the config in chat. After that you only open this page — you do not sign in to check.</div>';
+  status.innerHTML = '<div class="warnbox">Live results are not connected.</div>';
   document.getElementById("setup-details").open = true;
 }
 

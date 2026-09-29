@@ -30,13 +30,13 @@
 <body>
 <header>
   <h1>Cellular organisation · F.4 · Teacher desk</h1>
-  <p>Import student result files. See each student, then A/B/C/D counts for every question.</p>
+  <p>Names and scores appear here while students use the web quiz. No sign-in.</p>
 </header>
 <main>
   <section class="card">
-    <p>Results load from the class Google Sheet when connected. You can still import JSON files. See each student, then A/B/C/D counts for every question.</p>
+    <p>Leave this page open. The table updates by itself.</p>
     <p>
-      <button id="refresh" type="button">Refresh from Sheet</button>
+      <button id="refresh" type="button">Refresh</button>
       <input id="files" type="file" accept="application/json,.json" multiple>
       <button id="clear" class="ghost" type="button">Clear imported set</button>
       <button id="csv" type="button">Download item CSV</button>
@@ -61,7 +61,8 @@
   </section>
   <p class="small"><a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher master page</a> · <a href="index.html">Back to the student practice</a></p>
 </main>
-<script src="../submit-config.js"></script>
+<script src="../submit-config.js?v=live2"></script>
+<script src="../results-store.js?v=live2"></script>
 <script>
 const STORE = "cell-f4-teacher-v1";
 const PAPER_FILTER = "Cellular organisation";
@@ -83,7 +84,8 @@ function resultsUrl() {
 }
 
 function addAttempt(obj, replaceSame) {
-  if (!obj || !obj.answers || !obj.name) return false;
+  if (!obj || !obj.name) return false;
+  if (!Array.isArray(obj.answers)) obj.answers = [];
   const id = obj.attempt_id || (obj.name + obj.when_iso + obj.practice_id);
   const idx = attempts.findIndex(a => a.attempt_id === id);
   obj.attempt_id = id;
@@ -286,9 +288,27 @@ document.getElementById("ai").addEventListener("click", () => {
   box.select();
   navigator.clipboard.writeText(box.value);
 });
-document.getElementById("refresh").addEventListener("click", () => refreshFromSheet());
+document.getElementById("refresh").addEventListener("click", () => startLive());
+function startLive() {
+  if (!(window.HKDSEResults && window.HKDSEResults.ready())) {
+    document.getElementById("status").textContent = "Live list not connected.";
+    return;
+  }
+  window.HKDSEResults.listen(function (list) {
+    const live = (list || []).filter(a => String(a.paper || "").indexOf(PAPER_FILTER) >= 0);
+    attempts = attempts.filter(a => a.source === "import");
+    live.forEach(raw => { raw.source = "live"; addAttempt(raw, true); });
+    save();
+    render();
+    document.getElementById("status").textContent = live.length
+      ? live.length + " student(s) on this paper."
+      : "Waiting for students to start this web quiz.";
+  }, function (err) {
+    document.getElementById("status").textContent = "Could not load live results: " + (err.message || err);
+  });
+}
 render();
-refreshFromSheet();
+startLive();
 </script>
 </body>
 </html>

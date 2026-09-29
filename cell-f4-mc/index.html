@@ -51,16 +51,15 @@
   <p>Two practices of 32 questions. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
 </header>
 <main id="app"></main>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-<script src="../submit-config.js?v=live1"></script>
-<script src="../results-store.js"></script>
+<script src="../submit-config.js?v=live2"></script>
+<script src="../results-store.js?v=live2"></script>
 <script src="questions.js"></script>
 <script>
 const BANK = window.F4_BANK;
 const app = document.getElementById("app");
 const KEY = "cell-f4-mc-v1";
 const SUBMIT_TOKEN = "cell-f4-2026";
+const PAPER = "Cellular organisation F.4 MC";
 const SUBMIT_URL = (window.HKDSE_MC_SUBMIT_URL || "").trim();
 
 function load() {
@@ -69,7 +68,7 @@ function load() {
 }
 function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
-let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[] };
+let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[], attemptId:"" };
 
 function el(html) { app.innerHTML = html; }
 function esc(s) {
@@ -148,6 +147,8 @@ function start(id) {
   state.session = BANK.find(s => s.id === id);
   state.i = 0;
   state.picks = state.session.items.map(() => "");
+  state.attemptId = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2));
+  pingLive("doing", 0);
   renderQ();
 }
 
@@ -182,7 +183,7 @@ function renderQ() {
   document.getElementById("next").addEventListener("click", () => {
     if (!state.picks[state.i]) { alert("Choose an answer."); return; }
     if (state.i === s.items.length - 1) finish();
-    else { state.i++; renderQ(); }
+    else { state.i++; pingLive("doing", state.i); renderQ(); }
   });
 }
 
@@ -224,9 +225,9 @@ function finish() {
   const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
     .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
   const payload = {
-    paper: "Cellular organisation F.4 MC",
+    paper: PAPER,
     token: SUBMIT_TOKEN,
-    attempt_id: (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2)),
+    attempt_id: state.attemptId || ((crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2))),
     when_iso: whenIso,
     name: state.name,
     cls: state.cls,
@@ -236,6 +237,8 @@ function finish() {
     practice_title: s.title + " — " + s.subtitle,
     score, total: s.items.length,
     percent: Math.round(1000 * score / s.items.length) / 10,
+    status: "done",
+    progress: s.items.length,
     answers
   };
   if (SUBMIT_URL || liveStoreOn()) {
@@ -346,6 +349,29 @@ function downloadJson(payload) {
 
 function liveStoreOn() {
   return !!(window.HKDSEResults && window.HKDSEResults.ready());
+}
+
+function pingLive(status, progress) {
+  if (!liveStoreOn() || !state.session || !state.attemptId) return;
+  const s = state.session;
+  sendAttempt({
+    paper: PAPER,
+    token: SUBMIT_TOKEN,
+    attempt_id: state.attemptId,
+    when_iso: new Date().toISOString(),
+    name: state.name,
+    cls: state.cls,
+    class_no: state.classNo,
+    division: state.division,
+    practice_id: s.id,
+    practice_title: s.title + " — " + s.subtitle,
+    score: "",
+    total: s.items.length,
+    percent: "",
+    status: status,
+    progress: progress,
+    answers: []
+  });
 }
 
 function sendAttempt(payload) {

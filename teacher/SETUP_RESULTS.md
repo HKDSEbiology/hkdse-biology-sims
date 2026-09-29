@@ -1,15 +1,12 @@
 # Live results on the teacher page
 
-Firebase project `hkdse-mc` is linked. You do **not** sign in to a Sheet to check the class.
+Open only this page during a lesson (no Google Sheet, no sign-in):
 
-Daily use:
+https://hkdsebiology.github.io/hkdse-biology-sims/teacher/
 
-- Students only finish the web quiz.
-- You only open https://hkdsebiology.github.io/hkdse-biology-sims/teacher/
+Names appear when a student **starts** the web quiz. Scores appear when they **submit**.
 
-Names and scores appear there by themselves.
-
-If the database later asks you to update rules (test mode can expire), Realtime Database → Rules, set:
+If the table stays empty, students must use the web quiz (not the Word paper). Then check Realtime Database → Rules and Publish:
 
 ```
 {
@@ -19,5 +16,3 @@ If the database later asks you to update rules (test mode can expire), Realtime 
   }
 }
 ```
-
-Then Publish.
