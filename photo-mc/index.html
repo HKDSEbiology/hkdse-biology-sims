@@ -31,6 +31,9 @@
   .opts { display:grid; gap:8px; }
   .choice { text-align:left; width:100%; border:1px solid #c5ced8; background:#fff; border-radius:10px; padding:10px 12px; }
   .choice.on { border-color:var(--accent); background:#eef4fa; }
+  .choice.ok { border-color:var(--ok); background:#eaf6ee; }
+  .choice.bad { border-color:var(--bad); background:#fdeeee; }
+  .choice.locked { cursor:default; }
   .nav { display:flex; justify-content:space-between; gap:8px; margin-top:14px; }
   .score { font-size:1.8rem; font-weight:700; margin:0; }
   .ok { color:var(--ok); } .bad { color:var(--bad); }
@@ -60,6 +63,9 @@ const app = document.getElementById("app");
 const KEY = "photo-mc-32-v1";
 const SUBMIT_TOKEN = "photo-mc-32-2026";
 const PAPER = "Photosynthesis MC";
+const REPORT_HEAD = "Photosynthesis · personal report";
+const REPORT_FOOT = "Personal report · HKDSE Biology · Photosynthesis";
+const REPORT_FILE = "report_photosynthesis_";
 const SUBMIT_URL = (window.HKDSE_MC_SUBMIT_URL || "").trim();
 
 function load() {
@@ -68,7 +74,7 @@ function load() {
 }
 function save(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
 
-let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[], attemptId:"" };
+let state = { name:"", cls:"", classNo:"", division:"", session:null, i:0, picks:[], attemptId:"", review:false, lastResult:null };
 
 function el(html) { app.innerHTML = html; }
 function esc(s) {
@@ -94,9 +100,10 @@ function tableHtml(rows) {
 
 function home() {
   const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo && a.division === state.division);
-  const past = attempts.length ? attempts.slice().reverse().map(a =>
-    `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td></tr>`
-  ).join("") : "";
+  const past = attempts.length ? `<tr><th>When</th><th>Practice</th><th>Score</th><th class="noprint"></th></tr>` + attempts.slice().reverse().map((a, revI) => {
+    const idx = attempts.length - 1 - revI;
+    return `<tr><td>${esc(a.when)}</td><td>${esc(a.title)}</td><td>${a.score}/${a.total}</td><td class="noprint">${a.picks && a.picks.length ? `<button class="ghost review-past" data-i="${idx}">Review</button>` : ""}</td></tr>`;
+  }).join("") : "";
   el(`
     <section class="card">
       <div class="row-name">
@@ -121,14 +128,15 @@ function home() {
     <section class="sessions">
       ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
     </section>
-    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table></section>` : ""}
-    <p class="small">When you finish, you can download or print your personal report. <a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher desk</a></p>
+    ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table><p class="small">Review opens the paper with your answers locked. Same device only.</p></section>` : ""}
+    <p class="small">When you finish, you can review every question, then download or print your personal report. <a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher desk</a></p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
   document.getElementById("cno").addEventListener("input", e => state.classNo = e.target.value.trim());
   document.getElementById("bdiv").addEventListener("change", e => state.division = e.target.value.trim());
   app.querySelectorAll(".session").forEach(b => b.addEventListener("click", () => start(b.dataset.id)));
+  app.querySelectorAll(".review-past").forEach(b => b.addEventListener("click", () => openPast(Number(b.dataset.i))));
 }
 
 function start(id) {
@@ -148,6 +156,8 @@ function start(id) {
   state.i = 0;
   state.picks = state.session.items.map(() => "");
   state.attemptId = (crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2));
+  state.review = false;
+  state.lastResult = null;
   pingLive("doing", 0);
   renderQ();
 }
@@ -155,39 +165,95 @@ function start(id) {
 function renderQ() {
   const s = state.session;
   const it = s.items[state.i];
-  const pct = Math.round(state.i / s.items.length * 100);
+  const review = state.review;
+  const pick = state.picks[state.i];
+  const pct = Math.round((state.i + (review ? 1 : 0)) / s.items.length * 100);
+  const mark = review
+    ? (pick === it.answer
+      ? `<p class="small ok">Correct. You chose ${pick}.</p>`
+      : `<p class="small bad">You chose ${pick || "—"}. The answer is ${it.answer}.</p>`)
+    : "";
+  const opts = ["A","B","C","D"].map(k => {
+    let cls = "choice";
+    if (pick === k) cls += " on";
+    if (review) {
+      cls += " locked";
+      if (k === it.answer) cls += " ok";
+      if (pick && k === pick && pick !== it.answer) cls += " bad";
+    }
+    return `<button class="${cls}" data-k="${k}"><strong>${k}.</strong> ${esc(it.options[k])}</button>`;
+  }).join("");
+  const nextLabel = review
+    ? (state.i === s.items.length - 1 ? "Back to report" : "Next")
+    : (state.i === s.items.length - 1 ? "Submit" : "Next");
   el(`
     <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
     <div class="bar"><span style="width:${pct}%"></span></div>
     <section class="card">
-      <p class="small">Question ${state.i + 1} of ${s.items.length}</p>
+      <p class="small">${review ? "Review · " : ""}Question ${state.i + 1} of ${s.items.length}</p>
       ${it.directions ? `<p class="small">${esc(it.directions)}</p>` : ""}
       ${tableHtml(it.table)}
       <p class="stem"></p>
       ${figsHtml(it)}
-      <div class="opts">
-        ${["A","B","C","D"].map(k => `<button class="choice ${state.picks[state.i]===k?"on":""}" data-k="${k}"><strong>${k}.</strong> ${esc(it.options[k])}</button>`).join("")}
-      </div>
+      ${mark}
+      <div class="opts">${opts}</div>
       <div class="nav">
         <button class="ghost" id="back" ${state.i===0?"disabled":""}>Back</button>
-        <button class="primary" id="next">${state.i === s.items.length - 1 ? "Submit" : "Next"}</button>
+        <button class="primary" id="next">${nextLabel}</button>
       </div>
     </section>
   `);
   app.querySelector(".stem").textContent = it.stem;
-  app.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
-    state.picks[state.i] = b.dataset.k;
-    renderQ();
-  }));
+  if (!review) {
+    app.querySelectorAll(".choice").forEach(b => b.addEventListener("click", () => {
+      state.picks[state.i] = b.dataset.k;
+      renderQ();
+    }));
+  }
   document.getElementById("back").addEventListener("click", () => { state.i--; renderQ(); });
   document.getElementById("next").addEventListener("click", () => {
+    if (review) {
+      if (state.i === s.items.length - 1) showReport();
+      else { state.i++; renderQ(); }
+      return;
+    }
     if (!state.picks[state.i]) { alert("Choose an answer."); return; }
     if (state.i === s.items.length - 1) finish();
     else { state.i++; pingLive("doing", state.i); renderQ(); }
   });
 }
 
-function finish() {
+function workRows(s) {
+  return s.items.map((it, idx) => {
+    const pick = state.picks[idx];
+    const right = pick === it.answer;
+    return {
+      it, pick, right,
+      chosenText: it.options[pick] || "",
+      correctText: it.options[it.answer] || "",
+      note: right ? "" : (pick === it.trap ? (it.why || it.fix || "") : (it.fix || it.why || ""))
+    };
+  });
+}
+
+function itemBlockHtml(r) {
+  const opts = ["A","B","C","D"].map(k =>
+    `<p style="margin:0.2rem 0">${k === r.pick || k === r.it.answer ? "<strong>" : ""}${k}. ${esc(r.it.options[k])}${k === r.pick || k === r.it.answer ? "</strong>" : ""}</p>`
+  ).join("");
+  return `
+    <div class="miss">
+      <p><strong>Question ${r.it.n}.</strong> <span class="${r.right ? "ok" : "bad"}">${r.right ? "Correct" : "Incorrect"}.</span>
+      You chose ${esc(r.pick || "—")}. The answer is ${esc(r.it.answer)}.</p>
+      ${r.it.directions ? `<p class="small">${esc(r.it.directions)}</p>` : ""}
+      ${tableHtml(r.it.table)}
+      <p class="stem">${esc(r.it.stem).replace(/\n/g, "<br>")}</p>
+      ${figsHtml(r.it)}
+      ${opts}
+      ${r.right ? "" : `<p><strong>Your choice.</strong> ${esc(r.chosenText)}</p><p><strong>Answer.</strong> ${esc(r.correctText)}</p><p>${esc(r.note)}</p>`}
+    </div>`;
+}
+
+function buildResult() {
   const s = state.session;
   let score = 0;
   const misses = [];
@@ -212,81 +278,114 @@ function finish() {
       stem: it.stem, right
     };
   });
-  const when = new Date().toLocaleString();
-  const whenIso = new Date().toISOString();
-  const rec = {
-    name: state.name, cls: state.cls, classNo: state.classNo, division: state.division, title: s.title + " — " + s.subtitle,
-    when, score, total: s.items.length, picks: state.picks.slice()
-  };
-  const all = load(); all.push(rec); save(all);
   const weak = Object.entries(byTopic)
     .map(([t, v]) => ({ t, lost: v.n - v.right, n: v.n, right: v.right }))
     .sort((a, b) => b.lost - a.lost);
   const weakLine = weak.filter(w => w.lost > 0).slice(0, 3)
     .map(w => `${w.t} (${w.right}/${w.n})`).join("; ");
+  const when = (state.lastResult && state.lastResult.when) || new Date().toLocaleString();
+  const keyLine = s.items.map((it, i) => (it.n || (i + 1)) + (state.picks[i] || "—")).join("  ");
+  return { s, score, misses, weakLine, when, answers, rows: workRows(s), keyLine };
+}
+
+function sessionFromRec(rec) {
+  if (rec.sessionId) return BANK.find(s => s.id === rec.sessionId) || null;
+  const title = rec.title || "";
+  return BANK.find(s => title.indexOf(s.title) >= 0) || null;
+}
+
+function openPast(idx) {
+  const attempts = load().filter(a => a.name === state.name && a.cls === state.cls && a.classNo === state.classNo && a.division === state.division);
+  const rec = attempts[idx];
+  if (!rec || !rec.picks || !rec.picks.length) {
+    alert("That attempt cannot be opened on this device.");
+    return;
+  }
+  const s = sessionFromRec(rec);
+  if (!s || rec.picks.length !== s.items.length) {
+    alert("That attempt cannot be opened on this device.");
+    return;
+  }
+  state.session = s;
+  state.picks = rec.picks.slice();
+  state.review = true;
+  state.i = 0;
+  state.lastResult = { when: rec.when, fromPast: true };
+  renderQ();
+}
+
+function showReport() {
+  const r = buildResult();
+  state.lastResult = r;
+  state.review = false;
+  const work = r.rows.map(itemBlockHtml).join("");
+  el(`
+    <section class="card" id="report">
+      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(r.s.title)} · ${esc(r.s.subtitle)}</p>
+      <p class="score ${r.score >= r.s.items.length * 0.7 ? "ok" : "bad"}">${r.score} / ${r.s.items.length}</p>
+      <p>${Math.round(r.score / r.s.items.length * 100)}%</p>
+      <p class="small" id="save-status">You can review the paper, or download or print this report.</p>
+      <h2>Personal report</h2>
+      <p>${r.misses.length === 0
+        ? "Every item in this practice was correct."
+        : "Marks were lost mainly in: <strong>" + esc(r.weakLine || "mixed items") + "</strong>."}</p>
+      <p class="small"><strong>Your answers.</strong> ${esc(r.keyLine)}</p>
+      ${work}
+    </section>
+    <p class="noprint">
+      <button class="primary" id="review-paper">Review my answers</button>
+      <button class="ghost" id="dl-report">Download my report</button>
+      <button class="ghost" id="print">Print report</button>
+      <button class="ghost" id="again">Back to practices</button>
+    </p>
+  `);
+  document.getElementById("review-paper").addEventListener("click", () => {
+    state.review = true;
+    state.i = 0;
+    renderQ();
+  });
+  document.getElementById("dl-report").addEventListener("click", () => downloadReport(r));
+  document.getElementById("print").addEventListener("click", () => window.print());
+  document.getElementById("again").addEventListener("click", home);
+}
+
+function finish() {
+  const r = buildResult();
+  state.lastResult = r;
+  const rec = {
+    name: state.name, cls: state.cls, classNo: state.classNo, division: state.division,
+    title: r.s.title + " — " + r.s.subtitle, sessionId: r.s.id,
+    when: r.when, score: r.score, total: r.s.items.length, picks: state.picks.slice()
+  };
+  const all = load(); all.push(rec); save(all);
   const payload = {
     paper: PAPER,
     token: SUBMIT_TOKEN,
     attempt_id: state.attemptId || ((crypto.randomUUID && crypto.randomUUID()) || (Date.now() + "-" + Math.random().toString(16).slice(2))),
-    when_iso: whenIso,
+    when_iso: new Date().toISOString(),
     name: state.name,
     cls: state.cls,
     class_no: state.classNo,
     division: state.division,
-    practice_id: s.id,
-    practice_title: s.title + " — " + s.subtitle,
-    score, total: s.items.length,
-    percent: Math.round(1000 * score / s.items.length) / 10,
+    practice_id: r.s.id,
+    practice_title: r.s.title + " — " + r.s.subtitle,
+    score: r.score, total: r.s.items.length,
+    percent: Math.round(1000 * r.score / r.s.items.length) / 10,
     status: "done",
-    progress: s.items.length,
-    answers
+    progress: r.s.items.length,
+    answers: r.answers
   };
-  if (SUBMIT_URL || liveStoreOn()) {
-    // Teacher sees this on the live results page. Do not dump a JSON file on the student.
-  } else {
-    downloadJson(payload);
-  }
-  el(`
-    <section class="card" id="report">
-      <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
-      <p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length}</p>
-      <p>${Math.round(score / s.items.length * 100)}%</p>
-      <p class="small" id="save-status">You can download or print your personal report below.</p>
-      <h2>Personal report</h2>
-      <p>${misses.length === 0
-        ? "Every item in this practice was correct."
-        : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
-      ${misses.map(m => `
-        <div class="miss">
-          <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
-          <p class="stem"></p>
-          <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
-          <p><strong>Answer.</strong> ${esc(m.correct)}</p>
-          <p>${esc(m.note)}</p>
-        </div>`).join("") || "<p>No incorrect answers in this practice.</p>"}
-    </section>
-    <p class="noprint">
-      <button class="ghost" id="dl-report">Download my report</button>
-      <button class="ghost" id="print">Print report</button>
-      <button class="primary" id="again">Back to practices</button>
-    </p>
-  `);
-  app.querySelectorAll(".miss").forEach((box, i) => {
-    const stem = box.querySelector(".stem");
-    if (stem) stem.textContent = misses[i].stem;
-  });
-  document.getElementById("dl-report").addEventListener("click", () => downloadReport(s, score, misses, weakLine, when));
-  document.getElementById("print").addEventListener("click", () => window.print());
-  document.getElementById("again").addEventListener("click", home);
+  if (!(SUBMIT_URL || liveStoreOn())) downloadJson(payload);
+  showReport();
   sendAttempt(payload).then(ok => {
     const box = document.getElementById("save-status");
     if (!box) return;
     if (ok) {
-      box.textContent = "Your answers have been recorded for your teacher. Download or print your personal report if you want a copy.";
+      box.textContent = "Your answers have been recorded for your teacher. Review the paper below, or download or print your report.";
     } else if (SUBMIT_URL || liveStoreOn()) {
-      box.textContent = "Could not reach the class results sheet. A JSON file still downloaded — please give that file to your teacher.";
+      box.textContent = "Could not reach the class list. You can still review and download your report.";
     } else {
-      box.textContent = "A JSON file downloaded. Give that file to your teacher if asked. Download or print your personal report if you want a copy.";
+      box.textContent = "A JSON file downloaded. Give that file to your teacher if asked. You can still review and download your report.";
     }
   });
 }
@@ -300,16 +399,9 @@ function downloadFile(filename, text, type) {
   URL.revokeObjectURL(a.href);
 }
 
-function downloadReport(s, score, misses, weakLine, when) {
-  const pct = Math.round(score / s.items.length * 100);
-  const missHtml = misses.length ? misses.map(m => `
-    <div class="miss">
-      <p><strong>Question ${m.n}.</strong> You chose ${m.pick}. The answer is ${m.answer}.</p>
-      <p>${esc(m.stem).replace(/\n/g, "<br>")}</p>
-      <p><strong>Your choice.</strong> ${esc(m.chosen)}</p>
-      <p><strong>Answer.</strong> ${esc(m.correct)}</p>
-      <p>${esc(m.note)}</p>
-    </div>`).join("") : "<p>No incorrect answers in this practice.</p>";
+function downloadReport(r) {
+  const pct = Math.round(r.score / r.s.items.length * 100);
+  const work = r.rows.map(itemBlockHtml).join("");
   const html = `<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <title>Personal report · ${esc(state.name)}</title>
@@ -320,22 +412,23 @@ function downloadReport(s, score, misses, weakLine, when) {
   .ok { color: #1d6b3a; } .bad { color: #8c2f2f; }
   .miss { border-top: 1px solid #d5dbe3; padding-top: 10px; margin-top: 10px; }
   .small { color: #526070; font-size: 0.92rem; }
+  .fig { max-width: 100%; height: auto; }
 </style></head><body>
-<h1>Photosynthesis · personal report</h1>
+<h1>${esc(REPORT_HEAD)}</h1>
 <p>${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)}</p>
-<p>${esc(s.title)} — ${esc(s.subtitle)} · ${esc(when)}</p>
-<p class="score ${score >= s.items.length * 0.7 ? "ok" : "bad"}">${score} / ${s.items.length} &nbsp; ${pct}%</p>
-<p>${misses.length === 0
+<p>${esc(r.s.title)} — ${esc(r.s.subtitle)} · ${esc(r.when)}</p>
+<p class="score ${r.score >= r.s.items.length * 0.7 ? "ok" : "bad"}">${r.score} / ${r.s.items.length} &nbsp; ${pct}%</p>
+<p>${r.misses.length === 0
     ? "Every item in this practice was correct."
-    : "Marks were lost mainly in: <strong>" + esc(weakLine || "mixed items") + "</strong>."}</p>
-${missHtml}
-<p class="small">Personal report · HKDSE Biology · Photosynthesis</p>
+    : "Marks were lost mainly in: <strong>" + esc(r.weakLine || "mixed items") + "</strong>."}</p>
+<p class="small"><strong>Your answers.</strong> ${esc(r.keyLine)}</p>
+${work}
+<p class="small">${esc(REPORT_FOOT)}</p>
 </body></html>`;
-  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + s.id)
+  const safe = (state.name + "_" + state.cls + "_" + state.classNo + "_" + state.division + "_" + r.s.id)
     .replace(/[^\w\-]+/g, "_");
-  downloadFile("report_photosynthesis_" + safe + ".html", html, "text/html;charset=utf-8");
+  downloadFile(REPORT_FILE + safe + ".html", html, "text/html;charset=utf-8");
 }
-
 function downloadJson(payload) {
   const safe = (payload.name + "_" + payload.cls + "_" + payload.class_no + "_" + (payload.division || "") + "_" + payload.practice_id)
     .replace(/[^\w\-]+/g, "_");
