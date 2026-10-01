@@ -129,7 +129,7 @@ function home() {
       ${BANK.map(s => `<button class="session" data-id="${s.id}"><strong>${esc(s.title)}</strong><span>${esc(s.subtitle)}</span><span class="small">${s.items.length} questions</span></button>`).join("")}
     </section>
     ${past ? `<section class="card"><h2>Your saved results on this device</h2><table class="grid">${past}</table><p class="small">Review opens the paper with your answers locked. Same device only.</p></section>` : ""}
-    <p class="small">When you finish, you can review every question, then download or print your personal report. <a href="https://hkdsebiology.github.io/hkdse-biology-sims/teacher/">Teacher desk</a></p>
+    <p class="small">When you finish, you can review every question, then download or print your personal report.</p>
   `);
   document.getElementById("name").addEventListener("input", e => state.name = e.target.value.trim());
   document.getElementById("cls").addEventListener("input", e => state.cls = e.target.value.trim());
