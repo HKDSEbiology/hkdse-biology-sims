@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 AI Vision 智辨百草 · 學生溫習筆記</title>
+<style>
+:root {
+  --navy: #1F3A5F;
+  --gold: #C4A35A;
+  --paper: #F7F4EE;
+  --ink: #243044;
+  --muted: #5C6B7A;
+  --card: #ffffff;
+  --line: #E4DDD0;
+  --ok: #2F6F4E;
+  --warn: #9A4A2A;
+  --sec: #3D5A80;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+}
+header {
+  background: var(--navy);
+  color: #fff;
+  padding: 22px 18px 16px;
+}
+header h1 { margin: 0 0 6px; font-size: 1.35rem; font-weight: 700; }
+header p { margin: 0; color: #d9d3c7; font-size: 0.92rem; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 16px 14px 80px; }
+nav.tabs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  position: sticky; top: 0; z-index: 20;
+  background: var(--paper); padding: 10px 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+nav.tabs button {
+  border: 1px solid var(--line); background: #fff; color: var(--navy);
+  padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+}
+nav.tabs button.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+.panel { display: none; }
+.panel.active { display: block; }
+h2 { color: var(--navy); font-size: 1.2rem; margin: 18px 0 10px; }
+h3 { color: var(--navy); font-size: 1.02rem; margin: 14px 0 8px; }
+.card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; margin: 10px 0;
+}
+.grid { display: grid; gap: 12px; }
+.grid.two { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.grid.herbs { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; margin-right: 4px; }
+.badge.p { background: #E8F0E9; color: var(--ok); }
+.badge.s { background: #EEF2F8; color: var(--sec); }
+.badge.cat { background: #F3EBD6; color: #7A5A1E; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; align-items: center; }
+input[type="search"], select {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; min-width: 180px;
+}
+.herb-card { cursor: pointer; overflow: hidden; padding: 0; }
+.herb-card img { width: 100%; height: 170px; object-fit: cover; display: block; background: #eee; }
+.herb-card .meta { padding: 10px 12px 12px; }
+.herb-card h3 { margin: 0 0 4px; }
+.muted { color: var(--muted); font-size: 0.9rem; }
+ol.steps, ul { padding-left: 1.2rem; }
+ol.steps li { margin: 6px 0; }
+.warn { background: #F8EFE8; border-color: #E7C8B6; }
+.ok { background: #EEF6F0; border-color: #C9E0D1; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: #EEF2F8; color: var(--navy); }
+dialog { border: 0; border-radius: 14px; padding: 0; max-width: 820px; width: 94%; }
+dialog::backdrop { background: rgba(20,30,45,.55); }
+.dlg { padding: 16px; }
+.dlg img { width: 100%; max-height: 280px; object-fit: contain; background: #f3f3f3; border-radius: 8px; }
+.kv { display: grid; grid-template-columns: 72px 1fr; gap: 4px 10px; font-size: 0.92rem; }
+.kv b { color: var(--navy); }
+.flash { min-height: 280px; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; }
+.flash img { max-height: 220px; max-width: 100%; object-fit: contain; }
+.quiz-opt { display: block; width: 100%; text-align: left; margin: 6px 0; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 1rem; }
+.quiz-opt.right { background: #E8F0E9; border-color: var(--ok); }
+.quiz-opt.wrong { background: #F8EFE8; border-color: var(--warn); }
+.progress { font-weight: 700; color: var(--navy); }
+footer { color: var(--muted); font-size: 0.82rem; margin-top: 24px; }
+a { color: #245B9A; }
+button.act { background: var(--gold); color: var(--navy); border: 0; font-weight: 700; padding: 9px 14px; border-radius: 8px; cursor: pointer; }
+button.ghost { background: #fff; }
+.look { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.look img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+@media (max-width: 640px) {
+  .look { grid-template-columns: 1fr; }
+  header h1 { font-size: 1.15rem; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>2026 AI Vision 智辨百草挑戰賽 · 學生溫習筆記</h1>
+  <p>聖士提反女子中學生物科 · 附件清單 + 浸大中藥材圖像數據庫（比賽指定參考）</p>
+</header>
+<div class="wrap">
+<nav class="tabs" id="tabs">
+  <button class="active" data-tab="home">怎樣備戰</button>
+  <button data-tab="train">訓練 AI Cam</button>
+  <button data-tab="herbs">藥材卡</button>
+  <button data-tab="mix">易混對照</button>
+  <button data-tab="flash">閃卡</button>
+  <button data-tab="quiz">小測</button>
+  <button data-tab="table">總表</button>
+</nav>
+
+<section id="home" class="panel active">
+  <div class="card warn">
+    <b>安全：</b>請勿品嚐任何藥材或校園植物。性味、功效只背課本／浸大資料，不要用舌頭核對。
+    練習時勿攀爬、勿觸摸有白色汁液的植物、勿拍攝面孔。
+  </div>
+  <div class="grid two">
+    <div class="card">
+      <h3>兩回合怎麼比</h3>
+      <ol class="steps">
+        <li><b>第一回合 · 智辨：</b>用你們自己訓練的 AI 鏡頭 + 單板電腦（本校：Makeblock AI Cam + CyberPi），辨識放在<b>白色圓碟</b>上的乾藥材。螢幕顯示<b>正確中文名</b>即算成功。每認對一種，得到一張資源牌。</li>
+        <li><b>第二回合 · 百草：</b>用手上的牌玩問答／功能牌。答錯會被抽走牌；牌用盡即淘汰。題目來自浸大中藥庫。</li>
+      </ol>
+      <p class="muted">中學組比賽：2026年11月21日，香港仔工業學校。每校最多 3 隊，每隊 1–2 人。</p>
+    </div>
+    <div class="card">
+      <h3>要背什麼</h3>
+      <p><span class="badge p">小學 5 項</span>名稱 · 類別 · 來源 · 性狀 · 性味</p>
+      <p><span class="badge s">中學再加 3 項</span>產地 · 品質 · 功效</p>
+      <p>權威答案只跟這一個網站（每張藥材卡都有連結）：<br>
+      <a href="https://sys01.lib.hkbu.edu.hk/cmed/mmid/" target="_blank" rel="noopener">浸會大學 中藥材圖像數據庫</a></p>
+      <p class="muted">中學組 39 種；小學組 24 種是其中較易認的子集。本校參加中學組，請 39 種都練。</p>
+    </div>
+  </div>
+  <div class="card ok">
+    <h3>未來七週建議（由今天起）</h3>
+    <ol class="steps">
+      <li><b>第 1 週：</b>打開本頁「藥材卡」，先用官方白碟照片認外形。同時向老師預約 AI Cam。</li>
+      <li><b>第 2–3 週：</b>每種藥拍約 15–20 張（白碟、不同角度／距離／光線）。先練<b>易混組</b>（根類、花類、種子類）。</li>
+      <li><b>第 4 週：</b>mTraining 訓練模型 → 產生 QR Code → 導入 AI Cam。CyberPi 顯示中文名。</li>
+      <li><b>第 5–6 週：</b>用真藥材測試。認錯的藥再加拍、重訓。同時用「閃卡／小測」背浸大欄位。</li>
+      <li><b>比賽前一週：</b>只改最弱的幾類。備份模型。檢查電池、鏡頭對焦、中文名有沒有寫錯字。</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>本校已有的器材（不用自行購買鏡頭）</h3>
+    <ul>
+      <li>Makeblock AI Cam 2.0 + CyberPi</li>
+      <li>mTraining：<a href="https://mtraining.mblock.cc/" target="_blank" rel="noopener">mtraining.mblock.cc</a></li>
+      <li>拍攝：Olympus TG-7、iPad、電腦（照片可以手機拍，訓練請用電腦）</li>
+      <li>藥材：以老師提供的乾藥材／大會圖片集為準。校園活體植物只作平時練習，賽日是乾品白碟。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="train" class="panel">
+  <h2>訓練 AI Cam 流程</h2>
+  <div class="card">
+    <h3>階段一：收集照片</h3>
+    <p>大會建議每種方法大約 10 張，合共約 20 張；要高準確率可以再多幾張。</p>
+    <ul>
+      <li><b>方法 A · 實拍（必須）：</b>把藥材放在<b>白色圓碟</b>（比賽當日就是這樣）。改變角度、遠近、燈光，但背景保持白紙／白碟。</li>
+      <li><b>方法 B · 官方圖：</b>本頁「藥材卡」的白碟圖與膠袋圖，就是大會圖片集。可以截圖加入訓練，讓模型見過「標準樣」。不要胡亂從購物網站抓顏色差很遠的圖。</li>
+    </ul>
+    <p class="muted">類別名稱請用<b>正確中文名</b>（例如「苦杏仁 / 北杏」請與老師確認標籤寫法，螢幕顯示必須與評判核對的名稱一致）。</p>
+  </div>
+  <div class="card">
+    <h3>階段二：mTraining → QR Code → AI Cam</h3>
+    <ol class="steps">
+      <li>用電腦開啟 mTraining，登入學校帳號。</li>
+      <li>新建項目：選擇<b>圖像檢測／圖像分類</b>（跟課堂示範；不要選錯成語音）。</li>
+      <li>每種藥材一個數據集／類別，上傳該類全部照片。</li>
+      <li>開始訓練，不要關閉分頁。</li>
+      <li>訓練完成後產生 QR Code，用 AI Cam 掃描導入模型。</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>階段三：CyberPi 顯示中文名</h3>
+    <p>鏡頭認出藥材後，把名稱傳到 CyberPi。比賽<b>不必出聲</b>，螢幕顯示正確中文名即可。語音是加分示範，不是評分必須。</p>
+    <p>程式通常只需幾塊積木：鏡頭辨識 → 讀取標籤 → 顯示文字。</p>
+  </div>
+  <div class="card warn">
+    <h3>提高準確率的拍攝守則</h3>
+    <ul>
+      <li>背景永遠偏白，避免花桌、手、校服入鏡。</li>
+      <li>每類都要有「填滿碟子」和「稍遠一點」的照片，因為賽日份量約填滿 4–6 寸紙碟。</li>
+      <li>細小藥材（丁香、花椒、女貞子、小茴香）一定要特寫，否則模型會看成雜訊。</li>
+      <li>切片（雞血藤、山楂）要拍到切面花紋，不要只拍一堆側面。</li>
+      <li>同一種藥如果有「段、片、粉」不同炮製，盡量都拍；賽日以大會提供的形態為準。</li>
+      <li>訓練後用<b>沒有進過訓練集</b>的新照片測試。認錯就加該種的照片，不要無限加不相干的網圖。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="herbs" class="panel">
+  <h2>39 種藥材卡</h2>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜尋名稱／拼音／類別／性味">
+    <select id="flt">
+      <option value="all">全部 39 種（中學組）</option>
+      <option value="primary">只看小學組 24 種</option>
+      <option value="extra">只看中學加碼 15 種</option>
+    </select>
+    <span class="progress" id="count"></span>
+  </div>
+  <div class="grid herbs" id="herbGrid"></div>
+</section>
+
+<section id="mix" class="panel">
+  <h2>鏡頭最容易認錯的組合</h2>
+  <p class="muted">第一回合輸分，多半不是「沒見過」，而是兩種外形接近。請刻意拍對照組、分開訓練、再用真碟測試。</p>
+  <div id="mixList"></div>
+</section>
+
+<section id="flash" class="panel">
+  <h2>閃卡</h2>
+  <div class="toolbar">
+    <select id="flashMode">
+      <option value="photo">看圖猜名（第一回合）</option>
+      <option value="xingwei">看性味猜名</option>
+      <option value="leibie">看類別 + 性狀猜名</option>
+      <option value="gongxiao">看功效猜名（中學第二回合）</option>
+    </select>
+    <select id="flashSet">
+      <option value="all">39 種</option>
+      <option value="primary">小學 24 種</option>
+    </select>
+    <button class="act" id="flashNext">下一張</button>
+    <span class="progress" id="flashProg"></span>
+  </div>
+  <div class="card flash" id="flashCard" title="點擊翻面"></div>
+  <p class="muted">點卡片翻面。建議每天 10 分鐘：先圖→名，再性味／功效→名（簡介會說過第二回合也會「倒轉問」）。</p>
+</section>
+
+<section id="quiz" class="panel">
+  <h2>小測 10 題</h2>
+  <div class="toolbar">
+    <select id="quizSet">
+      <option value="all">中學組範圍</option>
+      <option value="primary">小學組範圍</option>
+    </select>
+    <button class="act" id="quizStart">開始／重做</button>
+    <span class="progress" id="quizScore"></span>
+  </div>
+  <div id="quizBox" class="card">按「開始」抽取 10 題。題型包括認圖、性味、類別、來源、功效。</div>
+</section>
+
+<section id="table" class="panel">
+  <h2>總表（列印或對答案用）</h2>
+  <p class="muted">功效與性味以浸大數據庫為準。此表方便速記，詳細性狀請看藥材卡。</p>
+  <div style="overflow:auto">
+    <table id="bigTable"></table>
+  </div>
+</section>
+
+<footer>
+  資料來源：大會《中草藥圖片集》及香港浸會大學圖書館「中藥材圖像數據庫」（比賽指定權威）。
+  本頁只供本校學生備賽溫習，不是醫療建議，請勿自行配藥或服用。
+  官方頁：<a href="https://www.dtsl.asia/pages/ai-vision-competition">dtsl.asia/pages/ai-vision-competition</a>
+</footer>
+</div>
+
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+
+<script>
+const HERBS = [{"名稱": "白茅根", "拼音": "Baimaogen", "英文": "Lalang Grass Rhizome", "拉丁": "Imperatae Rhizoma", "類別": "根及根莖類", "來源": "禾本科植物白茅Imperata cylindrica (Linn.) P. Beauv.的乾燥根莖。", "產地": "主產河南、遼寧、河北、山西、山東、陝西、新疆等北方地區。", "性狀": "根莖長圓柱形，有時分枝，長短不一，長30~60cm，直徑2~4mm。表面黃白色或淡黃色，有光澤，具縱皺紋，環節明顯，節上殘留灰棕色鱗葉及細根，節間長1~3cm。體輕，質韌，折斷面纖維性，黃白色，多具放射狀裂隙，有時中心可見一小孔。氣微，味微甜。", "品質": "以條粗、色白、味甜者為佳。", "性味": "甘、寒。", "功效": "涼血，止血，清熱，利尿。治熱病煩渴，吐血，衄血，肺熱喘急，胃熱噦逆，淋病，小便不利，水腫，黃疸。", "name": "白茅根", "page": 3, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E7%99%BD%E8%8C%85%E6%A0%B9&extension=all&pid=B00024", "images": ["01_白茅根_0.jpg", "01_白茅根_1.jpg"], "index": 1, "primary": true, "tip": "白色圓碟上像切段禾草：淺黃、有節、中空感。勿與北沙參混淆——白茅根更黃、更分段。", "dish": "01_白茅根_0.jpg", "bag": "01_白茅根_1.jpg"}, {"名稱": "巴戟天", "拼音": "Bajitian", "英文": "Medicinal Morinda Root", "拉丁": "Morindae Officinalis Radix", "類別": "根及根莖類", "來源": "茜草科植物巴戟天Morinda officinalis How.的乾燥根。", "產地": "主產廣東、廣西、福建、海南等地。", "性狀": "根扁圓柱形式圓柱形，略彎曲，長度不等，直徑1~2cm，表面灰黃色或灰黃棕色，有的微帶紫色，具縱皺及深陷的橫紋，有的呈縊縮狀或皮部橫向斷離而露出木部，形如雞腸。質堅韌，折斷面不平，皮部厚5~7mm，淡紫色，木部直徑2~4mm。氣微，味苦，略澀。", "品質": "以條肥壯、連珠狀、肉厚、色紫者為佳。", "性味": "辛、甘，溫。", "功效": "補腎助陽；強筋壯骨；祛風除濕。用於腎虛陽痿；遺精早洩；少腹冷痛；小便不禁；宮冷不孕；風寒濕痹；腰膝酸軟；風濕肢氣。", "name": "巴戟天", "page": 4, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%B7%B4%E6%88%9F%E5%A4%A9&extension=all&pid=B00033", "images": ["02_巴戟天_0.jpg", "02_巴戟天_1.jpg"], "index": 2, "primary": true, "tip": "像「雞腸」：一段段縊縮，外皮灰黃，斷面皮部可帶淡紫。這是最特別的根。", "dish": "02_巴戟天_0.jpg", "bag": "02_巴戟天_1.jpg"}, {"名稱": "北沙參", "拼音": "Beishashen", "英文": "Coastal Glehnia Root", "拉丁": "Glehniae Radix", "類別": "根及根莖類", "來源": "傘形科植物珊瑚菜Glehnia littoralis Fr. Schmidt ex Miq.的乾燥根。", "產地": "主產于山東、江蘇、河北、遼寧等地。", "性狀": "長圓柱形，偶有分枝。表面淡黃白色，偶有外皮殘存，全體有細縱皺紋及縱溝，並有棕黃色點狀細根痕。頂端常留有棕黃色根莖殘基，上端稍細，中部略粗，下部漸細。質脆，易折斷，斷面皮部淺黃白色，木部黃色。氣特異，味微甘。", "品質": "以枝條細長、圓柱形、均勻、質堅、外皮色白者為佳。", "性味": "甘，微苦，微寒。", "功效": "養陰清肺，益胃生津。用於肺熱燥咳、勞嗽痰血、熱病津傷口渴。", "name": "北沙參", "page": 5, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%8C%97%E6%B2%99%E5%8F%83&extension=all&pid=B00004", "images": ["03_北沙參_0.jpg", "03_北沙參_1.jpg"], "index": 3, "primary": true, "tip": "細長圓柱、表面偏白、較直較光滑。比白茅根少節、比當歸更白更幼。", "dish": "03_北沙參_0.jpg", "bag": "03_北沙參_1.jpg"}, {"名稱": "當歸", "拼音": "Danggui", "英文": "Chinese Angelica", "拉丁": "Angelicae Sinensis Radix", "類別": "根及根莖類", "來源": "傘形科植物當歸Angelica sinensis (Oliv.) Diels 的乾燥根。", "產地": "主產甘肅、雲南、青海等地。", "性狀": "全歸長略呈圓柱形，下部有支根3~5條或更多，長15~25cm。外皮細密，表面黃棕色至棕褐色，具縱皺紋及橫長皮孔。根頭 (歸頭) 直徑1.5~4cm，具環紋，上端圓鈍，有紫色或黃綠色的莖及葉鞘的殘基；主根 (歸身) 表面凹凸不平；支根 (歸尾) 直徑0.3~1cm，上粗下細，多扭，有少數鬚根痕。質柔韌，斷面黃白色或淡黃棕色，皮部厚，有裂隙及多數棕色點狀分泌腔，木部色較淡，形成層環黃棕色。木質部色較淡；根莖部分斷面中心通常有髓和空腔。", "品質": "以主根粗長、油潤、外皮黃棕色、肉質飽滿、香氣濃者為佳。", "性味": "甘、辛，溫。", "功效": "補血活血，調經止痛，潤腸通便。用於血虛萎黃、眩暈心悸、月經不調、經閉痛經、虛寒腹痛、腸燥便秘、風濕痹痛、跌撲損傷、癰疽瘡瘍。", "name": "當歸", "page": 6, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E7%95%B6%E6%AD%B8&extension=all&pid=B00049", "images": ["04_當歸_0.jpg", "04_當歸_1.jpg"], "index": 4, "primary": true, "tip": "黃棕色、多分枝（歸頭／歸身／歸尾）、看起來油潤、皺紋多。香氣是提示，鏡頭只看顏色與分枝。", "dish": "04_當歸_0.jpg", "bag": "04_當歸_1.jpg"}, {"名稱": "桔梗", "拼音": "Jiegeng", "英文": "Balloonflower Root", "拉丁": "Platycodonis Radix", "類別": "根及根莖類", "來源": "桔梗科植物桔梗Platycodon grandiflorum (Jacq.) A. DC.的乾燥根。", "產地": "主產華北、東北等地。", "性狀": "根長圓形或長紡錘形，稍扭曲，下部偶有分支，長6~20cm，直徑1~2cm。表面淡黃白色或淡黃棕色 (未去栓皮者)，皺縮，有扭轉的縱溝及橫長的皮孔斑痕，上部有橫紋；頂端蘆頭 (根莖) 長0.5~4cm，有半月形凹陷的莖痕，呈盤節狀。質堅實，橫斷面淡黃色，角質樣，形成層環棕色，皮部有稀少放射狀裂隙，木部較緊密。氣微，味微甜後苦。飲片性狀：桔梗為不規則圓形厚片，表面白色或淡黃白色，有一淺棕色環，周邊呈淡黃白色，有皺紋。無臭，味微甜後苦。蜜桔梗，形如桔梗生片，表面淡黃色至淡棕黃色，滋潤，微具蜜糖香氣。味甜而後苦。", "品質": "以條肥大、體堅實、色白者為佳。", "性味": "苦、辛，平。", "功效": "宣肺、祛痰、利咽、排膿、利五臟、補氣血、補五勞、養氣。主治咳嗽痰多、咽喉腫痛、肺癰吐膿、胸滿脅痛、痢疾腹痛、口舌生瘡、目赤腫痛、小便癃閉。", "name": "桔梗", "page": 7, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%A1%94%E6%A2%97&extension=all&pid=B00076", "images": ["05_桔梗_0.jpg", "05_桔梗_1.jpg"], "index": 5, "primary": true, "tip": "多已去皮，短粗、潔白或淡黃、有橫紋。像「白色蘿蔔段」，不要當成北沙參。", "dish": "05_桔梗_0.jpg", "bag": "05_桔梗_1.jpg"}, {"名稱": "麥冬", "拼音": "Maidong", "英文": "Dwarf Lilyturf Root Tuber", "拉丁": "Ophiopogonis Radix", "類別": "根及根莖類", "來源": "百合科植物麥冬Ophiopogon japonicus (Thunb.) Ker-Gawl.的乾燥塊根。", "產地": "主產四川、浙江。", "性狀": "浙麥冬塊根紡錘形，長1.5~3.5cm，中部直徑3~7mm。表面土黃色或黃白色，有較深的不規則細縱紋，有時一端有細小中柱外露。質韌，斷面類白色，中央有細小圓形中柱，新鮮時可抽出。氣微香，味微甘、澀，嚼之微有粘性。川麥冬塊根較短小，表面乳白色。質較堅硬，香氣小，味淡，少粘性。", "品質": "以飽滿、皮細、糖性足、木心細、內外淡黃白色不泛油者為佳。", "性味": "甘、微苦，涼。", "功效": "滋陰生津、潤肺止咳、清心除煩。主治熱病傷津、心煩、口渴、咽乾肺熱、咳嗽、肺結核。", "name": "麥冬", "page": 8, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%BA%A5%E5%86%AC&extension=all&pid=B00084", "images": ["06_麥冬_0.jpg", "06_麥冬_1.jpg"], "index": 6, "primary": true, "tip": "紡錘形、兩端尖、半透明、像小橄欖。體積細，要靠近鏡頭。", "dish": "06_麥冬_0.jpg", "bag": "06_麥冬_1.jpg"}, {"名稱": "浙貝母", "拼音": "Zhebeimu", "英文": "Chekiang Fritillary Bulb", "拉丁": "Fritillariae Thunbergii Bulbus", "類別": "根及根莖類", "來源": "百合科植物浙貝母Fritillaria thunbergii Miq.的乾燥鱗莖。", "產地": "主產浙江、江蘇、安徽、湖南等地。", "性狀": "元寶貝為鱗莖外層的單瓣鱗片。一面凸出，一面凹入，呈元寶狀，瓣長約1.7~4cm，厚7~17mm。表面白色，或帶淡黃色，被有白色粉末，質硬而脆，易折斷，斷面不齊，白色或淡黃色，富粉性。氣微，味苦。珠貝為完整的鱗莖，呈扁圓球形，高1~1.7cm，直徑2~3.5cm。表面白色，外層兩枚鱗葉肥厚，略似腎臟形，中央為2~3枚皺縮的小鱗葉及殘莖，內表面墾淡黃白色。質地、氣味同元寶貝。", "品質": "均以鱗葉肥厚、表面及斷面白色、粉性足者為佳。", "性味": "苦，寒。", "功效": "清熱化痰，散結解毒。治風熱咳嗽，肺癰喉痹，瘰鬁，瘡瘍腫毒。", "name": "浙貝母", "page": 9, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%B5%99%E8%B2%9D%E6%AF%8D&extension=all&pid=B00124", "images": ["07_浙貝母_0.jpg", "07_浙貝母_1.jpg"], "index": 7, "primary": false, "tip": "中學加碼。白色鱗莖、粉質、略呈心臟形或腎形。勿與百合厚鱗片混淆。", "dish": "07_浙貝母_0.jpg", "bag": "07_浙貝母_1.jpg"}, {"名稱": "鉤藤", "拼音": "Gouteng", "英文": "Sharpleaf Uncaria Stem with Hools", "拉丁": "Uncariae Ramulus cum Uncis", "類別": "藤木類", "來源": "茜草科植物鉤藤Uncaria rhynchophylla (Miq.) Jacks.的乾燥帶鉤莖枝。", "產地": "主產於廣東、廣西、湖南、湖北等地。", "性狀": "莖枝圓柱形或類方柱形，直徑2~6mm。表面紅棕色至紫棕色或棕褐色，上有細縱紋，無毛。莖上具略突起的環節，對生兩個向下彎曲的鉤或僅一側有鉤，鉤長1~2cm，形如船鋪，先端漸尖，基部稍圓。鉤基部的枝上可見葉柄脫落後凹點及環狀的托葉痕。體輕，質硬。橫截面外層棕紅色，髓部淡棕色或淡黃色。氣微，味淡。", "品質": "以莖細、帶雙鉤、鉤結實、光滑、紫紅色者為佳。", "性味": "甘，涼。", "功效": "清熱平肝；熄風止痙。小兒驚風；夜啼；熱盛動風；子癇；肝陽眩暈；肝火頭脹痛。", "name": "鉤藤", "page": 10, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%89%A4%E8%97%A4&extension=all&pid=B00133", "images": ["08_鉤藤_0.jpg", "08_鉤藤_1.jpg"], "index": 8, "primary": false, "tip": "中學加碼。帶彎鉤的莖枝——鏡頭看到「鉤」幾乎就可以鎖定。", "dish": "08_鉤藤_0.jpg", "bag": "08_鉤藤_1.jpg"}, {"名稱": "雞血藤", "拼音": "Jixueteng", "英文": "Suberect Spatholobus Stem", "拉丁": "Spatholobi Caulis", "類別": "藤木類", "來源": "豆科植物密花豆Spatholobus suberectus Dunn的乾燥藤莖。", "產地": "主產于雲南、廣西、廣東等地。", "性狀": "該品為橢圓形、長矩圓形或不規則的斜切片，厚0.3~1cm。栓皮灰棕色，有的可見灰白色斑，栓皮脫落處現紅棕色。切面木部紅棕色或棕色，導管孔多數；韌皮部有樹脂狀分泌物呈紅棕色至黑棕色，與木部相間排列呈3~8個偏心性半圓形環；骨部偏向一側。質堅硬。氣微，味澀。", "品質": "以樹脂分泌物多者為佳。", "性味": "苦、甘，溫。", "功效": "補血，活血，通絡。用於月經不調，血虛萎黃，麻木癱瘓，風濕痹痛。", "name": "雞血藤", "page": 11, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%9B%9E%E8%A1%80%E8%97%A4&extension=all&pid=B00141", "images": ["09_雞血藤_0.jpg", "09_雞血藤_1.jpg"], "index": 9, "primary": true, "tip": "多為切片：木質環紋，皮部可呈暗紅，像「雞血」圈。不要只訓練整條藤。", "dish": "09_雞血藤_0.jpg", "bag": "09_雞血藤_1.jpg"}, {"名稱": "杜仲", "拼音": "Duzhong", "英文": "Eucommia Bark", "拉丁": "Eucommiae Cortex", "類別": "皮類", "來源": "杜仲科植物杜仲Eucommia ulmoides Oliv.的乾燥樹皮。", "產地": "主產貴州、四川、陝西、湖北等地。", "性狀": "乾燥樹皮，為平坦的板片狀或卷片狀，大小厚薄不一，一般厚約3~10mm，長約40~100cm。外表面灰棕色，粗糙，有不規則縱裂槽紋及斜方形橫裂皮孔，有時可見淡灰色地衣斑。但商品多已削去部分糙皮，故外表面淡棕色，較平滑。內表面光滑，暗紫色。質脆易折斷，斷面有銀白色絲狀物相連，細密，略有伸縮性。氣微，味稍苦，嚼之有膠狀殘餘物。", "品質": "以皮厚而大，糙皮刮淨，外面黃棕色，內面黑褐色而光，折斷時白絲多者為佳。", "性味": "甘，溫。", "功效": "補肝腎，強筋骨，安胎。治腰脊酸疼，足膝痿弱，小便余瀝，陰下濕癢，胎漏欲墮，胎動不安，高血壓。", "name": "杜仲", "page": 12, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%9D%9C%E4%BB%B2&extension=all&pid=B00344", "images": ["10_杜仲_0.jpg", "10_杜仲_1.jpg", "10_杜仲_2.jpg"], "index": 10, "primary": false, "tip": "中學加碼。扁平樹皮。課本寫折斷有白絲，鏡頭則看灰棕皮面與較平的板塊。", "dish": "10_杜仲_0.jpg", "bag": "10_杜仲_1.jpg"}, {"名稱": "肉桂", "拼音": "Rougui", "英文": "Cassia Bark", "拉丁": "Cinnamomi Cortex", "類別": "皮類", "來源": "樟科植物肉桂Cinnamomum cassia Presl的乾燥樹皮。", "產地": "主產廣東、廣西、福建、海南等地。", "性狀": "企邊桂：呈長片狀槽狀形，左右兩邊向內捲曲，卷邊呈半筒形，槽的中心略凸起，外皮下凹，長43cm左右，寬4~6cm，外皮棕灰白色或棕褐色，兩端各有5mm削去栓皮的斜面呈棕色。全體有不規則的橫生皮孔和多數微突起的小瘤點。偶有略突起的橫紋及灰綠色花紋 (苔蘚類植物著生後留下的痕跡，俗稱彩皮) 。內表面暗紅棕色或棕色，光潔，用指甲刮劃時可見深棕色油紋。氣芳香濃烈，味甜辣。板桂：呈板片狀，兩邊稍向內彎曲，長43cm，寬13~15cm，厚0.6cm，外皮粗糙，灰褐色；內皮暗紫色，斷面油層棕褐色，外層棕紅色，一般油少渣多，香氣及甜辣味較淡。油桂：呈半邊竹筒狀槽形，兩端略呈斜面，長43cm，外表呈灰棕色或棕褐色，常有灰綠色花斑 (彩皮)，內表皮暗棕色，質硬而脆，斷面內層油層集中分明，稍有光澤，黑色或棕褐色，外層紫紅色，氣味濃烈，味甜辛。桂通：呈雙圓筒形或圓筒形，長35cm，厚0.1~0.3cm，外表灰棕色，有細皺紋及小裂，皮孔橢圓形，偶有凸起橫紋及灰色花紋。內表皮暗棕色。質硬而脆，斷面紫紅色或棕紅色，氣香，味甜辣。又名“桂皮”、“桂爾通”。桂心：形態與桂通相同，只是外表的栓皮層已被刮除乾淨，內外皮均呈棕黃色。桂碎：大小不規則片塊狀或短捲筒狀，外皮灰棕色，斷面和內皮呈棕色或棕褐色，氣香，味甜辣。", "品質": "以完整不碎、皮厚體重、外表面具細皺紋，油性大、香氣濃者為佳。", "性味": "辛、甘，大熱。", "功效": "補火助陽，引火歸源，散寒止痛，活血通經。暖脾胃，除積冷，通血脈。治命門火衰，肢冷脈微，亡陽虛脫，腹痛泄瀉，寒疝奔豚，腰膝冷痛，經閉症瘕，陰疽，流注，及虛陽浮越，上熱下寒。", "name": "肉桂", "page": 13, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%82%89%E6%A1%82&extension=all&pid=B00351", "images": ["11_肉桂_0.jpg", "11_肉桂_1.jpg"], "index": 11, "primary": true, "tip": "捲筒或槽狀樹皮，內面紅棕。顏色比杜仲更深更紅。", "dish": "11_肉桂_0.jpg", "bag": "11_肉桂_1.jpg"}, {"名稱": "百合", "拼音": "Baihe", "英文": "Greenish lily BulbLiy Bulb", "拉丁": "Lilii Bulbus", "類別": "葉類", "來源": "百合科植物卷丹Lilium lancifolium Thunb.、百合Lilium brownii F. E. Brown var. viridulum Baker 或細葉百合Lilium pumilum DC. 的乾燥肉質鱗葉。", "產地": "主產于四川、雲南、貴州、湖南、湖北、陝西等地區。", "性狀": "卷丹：鱗葉長2~3.5cm，寬1.5~3cm，厚1~3cm，表面乳白色或淡黃棕色，有縱直的脈紋3~8條，質硬而脆；折斷，斷面平坦，角質樣。無臭，味微苦。百合：鱗葉呈長橢圓形，頂端尖，基部較寬，微波狀，向內捲曲，長1.5~3cm，寬0.5~1cm，厚約4mm，有脈3~5條，有的不明顯。表面白色或淡黃色，光滑半透明，質硬而脆，易折斷，斷面平坦，角質樣，無臭，味苦。細葉百合：鱗葉長約5.5cm，寬約2.5cm，厚至3.5mm，色較暗，脈紋不太明顯。", "品質": "以瓣勻肉厚、色黃白、質堅、筋少者為佳。", "性味": "甘，寒。", "功效": "養陰潤肺，清心安神。用於陰虛久咳，痰中帶血，虛煩驚悸，失眠多夢，精神恍惚。", "name": "百合", "page": 14, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E7%99%BE%E5%90%88&extension=all&pid=B00340", "images": ["12_百合_0.jpg", "12_百合_1.jpg"], "index": 12, "primary": true, "tip": "厚白鱗片、層疊、乾燥後微黃。比浙貝母大片、更「花瓣狀」。", "dish": "12_百合_0.jpg", "bag": "12_百合_1.jpg"}, {"名稱": "枇杷葉", "拼音": "Pipaye", "英文": "Loquat Leaf", "拉丁": "Eriobotryae Folium", "類別": "葉類", "來源": "薔薇科植物枇杷Eriobotrya japonica (Thunb.) Lindl.的乾燥葉。", "產地": "主產于長江以南各地區。", "性狀": "葉片長橢圓形，長12~30cm，寬4~9cm。上表面淡棕綠色、黃綠色或紅棕色，有光澤。下表面灰綠色或棕黃色，密佈灰棕色絨毛。葉脈呈羽毛狀兩側斜生，中間主脈呈棕黃或棕紅色，顯著突起。葉先端漸尖，周邊有疏鋸齒。葉柄極短，被黃棕色或棕黑色絨毛。葉厚革質，質脆易碎。微有清香氣，味微苦。", "品質": "以完整、葉厚、色綠者佳。", "性味": "苦，微寒。", "功效": "清肺止咳，降逆止嘔。 肺熱咳嗽，氣逆喘急，胃熱嘔吐，噦逆。", "name": "枇杷葉", "page": 15, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%9E%87%E6%9D%B7%E8%91%89&extension=all&pid=B00333", "images": ["13_枇杷葉_0.jpg", "13_枇杷葉_1.jpg"], "index": 13, "primary": false, "tip": "中學加碼。大片革質葉，背面常有鏽色絨毛。葉類藥材中最大、最易認。", "dish": "13_枇杷葉_0.jpg", "bag": "13_枇杷葉_1.jpg"}, {"名稱": "丁香", "拼音": "Dingxiang", "英文": "Clove", "拉丁": "Caryophylli Flos", "類別": "花類", "來源": "桃金娘科植物丁香Eugenia caryophyllata Thunb.的乾燥花蕾。", "產地": "主產於坦桑尼亞的桑吉巴島以及馬來西亞、印尼等地。我國海南、廣東有栽培。", "性狀": "乾燥的花蕾略呈短棒狀，長1.5~2cm，紅棕色至暗棕色；下部為圓柱狀略扁的萼管，長1~1.3cm，寬約5mm，厚約3mm，基部漸狹小，表面粗糙，刻之有油滲出，萼管上端有4片三角形肥厚的萼；上部近圓球形，徑約6mm，具花瓣4片，互相抱合。將花蕾剖開，可見多數雄蕊，花絲向中心彎曲，中央有一粗壯直立的花柱，質堅實而重，入水即沉；斷面有油性，用指甲劃之可見油質滲出；氣強烈芳香，味辛。", "品質": "以個大、粗壯、鮮紫棕色、香氣強烈、油多者為佳。", "性味": "甘，溫。", "功效": "暖胃，溫腎。治胃寒痛脹、呃逆、吐瀉、痹痛、疝痛、口臭、牙痛。", "name": "丁香", "page": 16, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E4%B8%81%E9%A6%99&extension=all&pid=B00299", "images": ["14_丁香_0.jpg", "14_丁香_1.jpg"], "index": 14, "primary": true, "tip": "釘狀花蕾，像小鐵釘。極細，要特寫、多角度。", "dish": "14_丁香_0.jpg", "bag": "14_丁香_1.jpg"}, {"名稱": "夏枯草", "拼音": "Xiakucao", "英文": "Common Selfheal Spike", "拉丁": "Prunellae Spica", "類別": "花類", "來源": "唇形科植物夏枯草Prunella vulgaris L.的乾燥果穗。", "產地": "主產於江蘇、安徽、河南等地。", "性狀": "該品呈棒狀，略扁，長1.5~8cm，直徑0.8~1.5cm，淡棕色至棕紅色。全穗由數輪至10數輪宿萼與苞片組成，每輪有對生苞片2 片，呈扇形，先端尖尾狀，脈紋明顯，外表面有白毛。每一苞片內有花3 朵，花冠多已脫落，宿萼二唇形，內有小堅果4枚，卵圓形，棕色，尖端有白色突起。體輕質脆，微有清香氣，味淡。", "品質": "以色紫褐、穗大者為佳。", "性味": "辛、苦，寒。", "功效": "清火明目，散結消腫。治目赤腫痛、頭痛、瘰鬁、癭瘤、乳癰腫痛。", "name": "夏枯草", "page": 17, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%A4%8F%E6%9E%AF%E8%8D%89&extension=all&pid=B00313", "images": ["15_夏枯草_0.jpg", "15_夏枯草_1.jpg"], "index": 15, "primary": true, "tip": "褐色穗狀果穗，像小麥穗但較短較褐。勿與菊花的頭狀花序混淆。", "dish": "15_夏枯草_0.jpg", "bag": "15_夏枯草_1.jpg"}, {"名稱": "菊花", "拼音": "Juhua", "英文": "Florists Dendranthema", "拉丁": "Chrysanthemi Flos", "類別": "花類", "來源": "菊科植物菊Chrysanthemum morifolium Ramat.的乾燥頭狀花序。按產地和加工方法不同分為“杭菊”、“亳菊”、“貢菊”、“滁菊”。", "產地": "主產於浙江、安徽等地。", "性狀": "杭菊：花序扁球形、不規則球形或稍壓扁，直徑多1.5~4cm。總苞由3~4層苞片組成，週邊為數層舌狀花，類白色或黃色，中央為管狀花。氣清香，味甘、微苦。亳菊：呈倒圓錐形或圓筒形，有時稍壓扁呈扇狀，直徑1.5~3cm。離散。舌狀花位於週邊，雌性，類白色或淡黃白色，勁直，上舉。散生金黃色腺點。管狀花多數，兩性，位於中央，常為舌狀花所隱藏，黃色，頂端5齒裂。體輕，質柔潤。氣清香，味甘，微苦。貢菊：舌狀花白色或類白色，總苞碟狀；總苞片4~5層，三角狀卵形，綠色，蒂綠，花心小，均勻不散朵，質柔軟，氣芳香，味甘微苦。滁菊：呈不規則球形或扁球形，直徑1.5~2.5cm，舌狀花類白色，不規則扭曲，內卷，邊緣皺縮，有時可見淡褐色的腺點，管狀花大多隱藏。是菊花中花瓣最為緊密的一種。", "品質": "以花朵完整、顏色鮮豔、清香者為佳。", "性味": "苦，微寒。", "功效": "清熱解毒，平肝明目；疏風散熱。", "name": "菊花", "page": 18, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%8F%8A%E8%8A%B1&extension=all&pid=B00306", "images": ["16_菊花_0.jpg", "16_菊花_1.jpg"], "index": 16, "primary": true, "tip": "頭狀花序，黃或白，花瓣放射。比賽常見乾花，不是新鮮花。", "dish": "16_菊花_0.jpg", "bag": "16_菊花_1.jpg"}, {"名稱": "白扁豆", "拼音": "Baibiandou", "英文": "White Hyacinth Bean", "拉丁": "Lablab Semen Album", "類別": "果實及種子類", "來源": "豆科植物白扁豆Dolichos lablab L.的乾燥成熟種子。", "產地": "主產於安徽、陝西、湖南、河南等地。", "性狀": "種子扁橢圓形或扁卵圓形，長0.8~1.3cm，寬6~9mm，厚約7mm。表面淡黃白色或淡黃色，平滑，稍有光澤，有的可見棕褐色斑點，一側邊緣有隆起的白色半月形種阜。長7~10mm，剝去後可見凹陷的種臍，緊接種阜的一端有珠孔，另端有種脊。質堅硬，種皮薄而脆，子葉2片，肥厚，黃白色。氣微，味淡，嚼之有豆腥氣。", "品質": "以粒大、飽滿、色白者為佳。", "性味": "甘，微溫。", "功效": "補脾和中，化濕消暑。用於脾胃虛弱、食欲不振、大便溏瀉、白帶過多、暑濕吐瀉、胸悶腹脹。", "name": "白扁豆", "page": 19, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E7%99%BD%E6%89%81%E8%B1%86&extension=all&pid=B00152", "images": ["17_白扁豆_0.jpg", "17_白扁豆_1.jpg"], "index": 17, "primary": false, "tip": "中學加碼。扁平白豆，腎形。勿與薏苡仁（較圓有溝）混淆。", "dish": "17_白扁豆_0.jpg", "bag": "17_白扁豆_1.jpg"}, {"名稱": "草果", "拼音": "Caoguo", "英文": "Tsaoko Amomum Fruit", "拉丁": "Tsaoko Fructus", "類別": "果實及種子類", "來源": "薑科植物草果Amomum tsao-ko Crevost et Lemaire的乾燥成熟果實。", "產地": "主產於貴州、廣西、雲南等地。", "性狀": "果實橢圓形，長2~4.5cm，直徑1~2.5cm，表面棕色或紅棕色，具3鈍棱及明顯的縱溝及棱線，先端有圓形突起的柱基，基部有果柄或果柄痕，果皮堅韌，內分3室，每室含種子7~24粒，種子集結成團。種子多面形，直徑5~7mm，黃棕色或紅棕色，具灰白色膜質假種皮，中央有凹陷合點，較狹端腹面有圓窩狀種臍，種脊凹陷成1縱溝。氣芳香，味辛、辣。", "品質": "以個大、飽滿、色紅棕、氣味濃行為佳。", "性味": "辛，溫。", "功效": "燥濕除寒，祛痰截瘧，消食化食。主治瘧疾，痰飲痞滿，脘腹冷痛，反胃，嘔吐，瀉痢，食積。", "name": "草果", "page": 20, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%8D%89%E6%9E%9C&extension=all&pid=B00161", "images": ["18_草果_0.jpg", "18_草果_1.jpg"], "index": 18, "primary": true, "tip": "大顆卵圓蒴果，有鈍稜，表面棕褐。比花椒大很多。", "dish": "18_草果_0.jpg", "bag": "18_草果_1.jpg"}, {"名稱": "佛手", "拼音": "Foshou", "英文": "Finger Citron Fruit", "拉丁": "Citri Sarcodactylis Fructus", "類別": "果實及種子類", "來源": "芸香科植物佛手Citrus medica L. var. sarcodactylis Swingle.的乾燥果實。", "產地": "主產兩廣、川渝地區。", "性狀": "該品為類橢圓形或卵圓形的薄片，常皺縮或捲曲。長6~10cm，寬3~7cm，厚0.2~0.4cm。頂端稍寬，常有3~5個手指狀的裂瓣，基部略窄，有的可見果梗痕。外皮黃綠色或橙黃色，有皺紋及油點。果肉淺黃白色，散有凹凸不平的線狀或點狀維管束。質硬而脆，受潮後柔韌。氣香，味微甜後苦。", "品質": "以片大而薄、黃皮白肉 (廣佛手) 或綠皮白肉 (川佛手) 、氣香甜者為佳。", "性味": "辛、苦、酸，溫。", "功效": "舒肝理氣，和胃止痛。用於肝胃氣滯，胸脅脹痛，胃脘痞滿，食少嘔吐。", "name": "佛手", "page": 21, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E4%BD%9B%E6%89%8B&extension=all&pid=B00176", "images": ["19_佛手_0.jpg", "19_佛手_1.jpg"], "index": 19, "primary": false, "tip": "中學加碼。柑橘類，像「手指」的乾片或塊，黃白，有香氣外形。", "dish": "19_佛手_0.jpg", "bag": "19_佛手_1.jpg"}, {"名稱": "枸杞子", "拼音": "Gouqizi", "英文": "Babury Wolfberry Fruit", "拉丁": "Lycii Fructus", "類別": "果實及種子類", "來源": "茄科植物寧夏枸杞Lycium barbarum L. 的乾燥成熟果實。", "產地": "主產于甘肅、寧夏、新疆、內蒙古、青海等地。", "性狀": "呈類紡錘形或橢圓形，表面紅色或暗紅色，項端有小突起狀的花柱痕，基部有白色的果梗痕。果皮柔韌，皺縮；果肉肉質，柔潤。種子20~50粒，類腎形。扁而翹，表面淺黃色或棕黃色。氣微，味甜。", "品質": "以粒大，色澤鮮亮者為佳。", "性味": "甘，平。", "功效": "滋補肝腎，益精明目。", "name": "枸杞子", "page": 22, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%9E%B8%E6%9D%9E%E5%AD%90&extension=all&pid=B00227", "images": ["20_枸杞子_0.jpg", "20_枸杞子_1.jpg"], "index": 20, "primary": true, "tip": "細長紅果，乾燥後皺縮。比山楂細很多，比女貞子紅。", "dish": "20_枸杞子_0.jpg", "bag": "20_枸杞子_1.jpg"}, {"名稱": "核桃仁", "拼音": "Hetaoren", "英文": "Walnut Meat", "拉丁": "Juglandis Semen", "類別": "果實及種子類", "來源": "胡桃科植物胡桃Juglans regia L. 的乾燥成熟種子。", "產地": "主產于新疆省、河北省、山西省等地。", "性狀": "多破碎，為不規則的塊狀，有皺曲的溝槽，大小不一；完整者類球形。種皮淡黃色或黃褐色，膜狀，維管柬脈紋深棕色，子葉類白色。質脆富油性。氣微，味甘；種皮味澀、微苦。", "品質": "以色黃、個大、飽滿、油多者為佳。", "性味": "甘，溫。", "功效": "補腎，溫肺，潤腸。用於腎陽不足，腰膝酸軟，陽痿遺精，虛寒喘嗽，腸燥便秘。", "name": "核桃仁", "page": 23, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%A0%B8%E6%A1%83%E4%BB%81&extension=all&pid=B00228", "images": ["21_核桃仁_0.jpg", "21_核桃仁_1.jpg"], "index": 21, "primary": false, "tip": "中學加碼。腦狀皺褶、乳白至淺黃。外形獨特。", "dish": "21_核桃仁_0.jpg", "bag": "21_核桃仁_1.jpg"}, {"名稱": "花椒", "拼音": "Huajiao", "英文": "Bunge Pricklyath Pericarp", "拉丁": "Zanthoxyli Pericarpium", "類別": "果實及種子類", "來源": "芸香科植物花椒Zanthoxylum bungeanum Maxim.的乾燥成熟果皮。", "產地": "主產於四川、陝西、河北、山東等地。", "性狀": "蓇葖果多單生，直徑4~5mm。略呈球狀，裂開為兩瓣。外表面紫紅色或棕紅色，散有多數疣狀突起的油點，直徑0.5~1mm，對光觀察半透明；內表面淡黃色。香氣濃，味麻辣而持久。", "品質": "以紫紅色、粒大、油性足、香氣濃者為佳。", "性味": "辛，溫，有小毒。", "功效": "溫中止痛、殺蟲止癢的功能。生花椒有小毒，辛溫之性甚強，外用殺蟲止癢作用佳。用於疥瘡、濕疹或皮膚瘙癢。", "name": "花椒", "page": 24, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%8A%B1%E6%A4%92&extension=all&pid=B00182", "images": ["22_花椒_0.jpg", "22_花椒_1.jpg"], "index": 22, "primary": false, "tip": "中學加碼。細小開裂的紅棕色果皮，中空。極細，要特寫。", "dish": "22_花椒_0.jpg", "bag": "22_花椒_1.jpg"}, {"名稱": "苦杏仁", "拼音": "Kuxingren", "英文": "Ansu Apricot Seed", "拉丁": "Armeniacae Semen Amarum", "類別": "果實及種子類", "來源": "薔薇科植物山杏Prunus armeniaca L. var. ansu Masim.、西伯利亞杏Prunus sibirica L.、東北杏Prunus mandshurica (Maxim.) Koehne或杏Prunus armeniaca L.的乾燥成熟種子。", "產地": "主產遼寧、內蒙古、河北、山東等地。", "性狀": "苦杏仁：呈扁心形，長1~1.9cm，寬0.8~1.5cm，厚0.5~0.8cm。表面黃棕 色至深棕色，一端尖，另端鈍圓，肥厚，左右不對稱。尖端一側有短線形種臍，圓端合點處向上具多數深棕色的脈紋。種皮薄，子葉2，乳白色，富油性。無臭，味苦。甜杏仁：乾燥種子，呈扁心臟形，長1.6~2.1cm，寬1.2~1.6cm，頂端尖，基部圓，左右對稱，種脊明顯，種皮較苦杏仁為厚，淡黃棕色，自合點處分散出許多深棕色脈紋，形成縱向凹紋。斷面白色。子葉接合面常見空隙。氣微，味微甜。", "品質": "苦杏仁以顆粒均勻、飽滿、完整、味苦者為佳。甜杏仁以顆粒均勻而大、飽滿肥厚、不發油者為佳。", "性味": "苦杏仁：味苦，微溫。甜杏仁：味甘、性平。", "功效": "降氣止咳平喘，潤腸通便。用於咳嗽氣喘，胸滿痰多，血虛津枯，腸燥便秘。", "name": "苦杏仁 / 北杏", "page": 25, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%8B%A6%E6%9D%8F%E4%BB%81&extension=all&pid=B00216", "images": ["23_苦杏仁_北杏_0.jpg", "23_苦杏仁_北杏_1.jpg"], "index": 23, "primary": true, "tip": "扁平心形種子，種皮棕褐。標籤可能寫北杏。勿與核桃仁混淆。", "dish": "23_苦杏仁_北杏_0.jpg", "bag": "23_苦杏仁_北杏_1.jpg"}, {"名稱": "連翹", "拼音": "Lianqiao", "英文": "Weeping Forsythia Fruit", "拉丁": "Forsythiae Fructus", "類別": "果實及種子類", "來源": "木犀科植物連翹Forsythia suspensa (Thunb.) Vahl 的乾燥果實。果實初熟尚帶綠色時採收稱為青翹，果實熟透顏色發黃時採收稱為黃翹。", "產地": "主產河南、山西、陝西等地。", "性狀": "黃翹：呈長卵形或卵形，兩端狹尖，多分裂為兩瓣。表面有一條明顯的縱溝和不規則的縱皺紋及凸起小斑點，間有殘留果柄，表面棕黃色，內面淺黃棕色，平滑，內有縱隔。質堅脆。種子多已脫落。氣微香，味苦。青翹：呈狹卵形至卵形，兩端狹尖，多不開裂。表面青綠色，綠褐色，有兩條縱溝和凸起小斑點，內有縱隔。質堅硬。氣芳香，味苦。間有殘留果柄。", "品質": "黃翹以色黃、瓣大、殼厚者為佳。青翹以色綠、不開裂者為佳。", "性味": "苦、微寒。", "功效": "清熱解毒，消腫散結，疏散風熱，有“瘡家聖藥”之稱。治溫熱，丹毒，斑疹，癰瘍腫毒，瘰鬁，小便淋閉，清心火。", "name": "連翹", "page": 26, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%80%A3%E7%BF%B9&extension=all&pid=B00190", "images": ["24_連翹_0.jpg", "24_連翹_1.jpg"], "index": 24, "primary": false, "tip": "中學加碼。乾果像小船，常開裂兩瓣。比木蝴蝶厚實。", "dish": "24_連翹_0.jpg", "bag": "24_連翹_1.jpg"}, {"名稱": "蓮子", "拼音": "Lianzi", "英文": "Lotus Seed", "拉丁": "Nelumbinis Semen", "類別": "果實及種子類", "來源": "睡蓮科植物蓮Nelumbo nucifera Gaertn. 的乾燥成熟種子。除去蓮心者稱蓮肉。", "產地": "主產湖南、湖北、福建、江蘇、浙江、江西等地。", "性狀": "本品略呈橢圓形或類球形，長1.2~1.8cm，直徑0.8~1.4cm。表面淺黃棕色至紅棕色，有細縱紋和較寬的脈紋。一端中心呈乳頭狀突起，深棕色，多有裂口，其周邊略下陷。質硬，種皮薄，不易剝離。子葉2，黃白色，肥厚，中有空隙，具綠色蓮子心。無臭，味甘、微澀；蓮子心味苦。", "品質": "以個大飽滿者為佳。", "性味": "甘、澀，平。", "功效": "補脾止瀉，益腎澀精，養心安神。用於脾虛久瀉，遺精帶下，心悸失眠。", "name": "蓮子", "page": 27, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%93%AE%E5%AD%90&extension=all&pid=B00245", "images": ["25_蓮子_0.jpg", "25_蓮子_1.jpg"], "index": 25, "primary": true, "tip": "橢圓種子，偏白或淺黃，有時可見綠色胚芽（蓮芯）。", "dish": "25_蓮子_0.jpg", "bag": "25_蓮子_1.jpg"}, {"名稱": "龍眼肉", "拼音": "Longyanrou", "英文": "Dried Longan Pulp", "拉丁": "Longan Arillus", "類別": "果實及種子類", "來源": "無患子科植物龍眼Dimocarpus longan Lour.的假種皮。", "產地": "主產福建、廣東、廣西、雲南等地。", "性狀": "為縱向破裂的不規則薄片，常數片粘結。長約1.5cm，寬2~4cm，厚約0.1cm。棕褐色，半透明，外表面皺縮不平，內面光亮而有細縱皺紋。質柔潤。氣微香，味甜。", "品質": "以片大、肉厚、質細軟、棕黃色者為佳。", "性味": "甘，溫。", "功效": "補益心脾，養血安神。用於氣血不足、心悸怔忡、健忘失眠、血虛萎黃。", "name": "龍眼肉", "page": 28, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%BE%8D%E7%9C%BC%E8%82%89&extension=all&pid=B00191", "images": ["26_龍眼肉_0.jpg", "26_龍眼肉_1.jpg"], "index": 26, "primary": false, "tip": "中學加碼。不規則半透明肉塊，棕褐。勿當成雞內金（雞內金是薄膜）。", "dish": "26_龍眼肉_0.jpg", "bag": "26_龍眼肉_1.jpg"}, {"名稱": "路路通", "拼音": "Lulutong", "英文": "Beautiful Sweetgum Fruit", "拉丁": "Liquidambaris Fructus", "類別": "果實及種子類", "來源": "金縷梅科植物楓香樹Liquidambar formosana Hance的乾燥成熟果序。", "產地": "主產江蘇、安徽、浙江、福建等地。", "性狀": "本品為聚花果，由多數小蒴果集合而成，呈球形，直徑2~3cm。基部有總果梗 。表面灰棕色或棕褐色，有多數尖刺及喙狀小鈍刺，長0.5~1mm，常折斷，小蒴果頂部開裂，呈蜂窩狀小孔。體輕，質硬，不易破開。氣微，味淡。", "品質": "以個大、黃色、無果梗者為佳。", "性味": "苦，平。", "功效": "祛風活絡，利水通經。用於關節痹痛，麻木拘攣，水腫脹滿，乳少經閉。", "name": "路路通", "page": 29, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%B7%AF%E8%B7%AF%E9%80%9A&extension=all&pid=B00192", "images": ["27_路路通_0.jpg", "27_路路通_1.jpg"], "index": 27, "primary": false, "tip": "中學加碼。圓形刺球（楓香果）。外形幾乎不會認錯。", "dish": "27_路路通_0.jpg", "bag": "27_路路通_1.jpg"}, {"名稱": "木蝴蝶", "拼音": "Muhudie", "英文": "Indian Trunpetflower Seed", "拉丁": "Oroxyli Semen", "類別": "果實及種子類", "來源": "紫葳科植物木蝴蝶Oroxylum indicum (L.) Vent.的乾燥成熟種子。", "產地": "主產雲南、廣西、貴州等地。", "性狀": "本品為蝶形薄片，除基部外三面延長成寬大菲薄的翅。長5~8cm，寬3.5~4.5cm。表面淺黃白色，翅半透明，有絹絲樣光澤，上有放射狀紋理，邊緣多破裂。體輕，剝去種皮，可見一層薄膜狀的胚乳緊裹於子葉之外。子葉2，蝶形，黃綠色或黃色，長徑1~1.5cm。無臭，味微苦。", "品質": "以張大、色白、有光澤、翼柔軟如綢者為佳。", "性味": "苦、甘，涼。", "功效": "清肺利咽，疏肝和胃。用於肺熱咳嗽，喉痹，音啞，肝胃氣痛。", "name": "木蝴蝶", "page": 30, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%9C%A8%E8%9D%B4%E8%9D%B6&extension=all&pid=B00250", "images": ["28_木蝴蝶_0.jpg", "28_木蝴蝶_1.jpg"], "index": 28, "primary": true, "tip": "薄如紙的翅狀種子，像蝴蝶翅膀。白色／淺黃，半透明。", "dish": "28_木蝴蝶_0.jpg", "bag": "28_木蝴蝶_1.jpg"}, {"名稱": "女貞子", "拼音": "Nvzhenzi", "英文": "Glossy Privet Fruit", "拉丁": "Ligustri Lucidi Fructus", "類別": "果實及種子類", "來源": "木犀科植物女貞Ligustrum lucidum Ait. 的乾燥成熟果實。", "產地": "主產浙江，江蘇、湖南、福建、廣西、江西、四川等地。", "性狀": "呈卵形、橢圓形或腎形，長6~8.5mm，直徑3.5~5.5mm。表面黑紫色或灰黑色，皺縮不平，基部有果梗痕或具宿萼及短梗。體輕。外果皮薄，中果皮較鬆軟，易剝離，內果皮木質，黃棕色，具縱棱，破開後種子通常為1粒，腎形，紫黑色，油性。無臭，味甘、微苦澀。", "品質": "以粒大、飽滿、色黑紫者為佳。", "性味": "甘、苦，涼。", "功效": "滋補肝腎，明目烏髮。用於眩暈耳鳴，腰膝酸軟，鬚髮早白，目暗不明，內熱消渴、骨蒸潮熱。", "name": "女貞子", "page": 31, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%A5%B3%E8%B2%9E%E5%AD%90&extension=all&pid=B00252", "images": ["29_女貞子_0.jpg", "29_女貞子_1.jpg"], "index": 29, "primary": true, "tip": "細小橢圓，黑紫至黑褐。遠看像黑胡椒，不要當成枸杞。", "dish": "29_女貞子_0.jpg", "bag": "29_女貞子_1.jpg"}, {"名稱": "胖大海", "拼音": "Pangdahai", "英文": "Boat - fruited Sterculia Seed", "拉丁": "Sterculiae Lychnophorae Semen", "類別": "果實及種子類", "來源": "梧桐科植物胖大海Sterculia lychnophora Hance 的乾燥成熟種子。", "產地": "主產越南、泰國、印尼、馬來西亞等地。", "性狀": "呈紡錘形或橢圓形，長2~3cm，直徑1~1.5cm。先端鈍圓，基部略尖而歪，具淺色的圓形種臍，表面棕色或暗棕色，微有光澤，具不規則的乾縮皺紋。外層種皮極薄，質脆，易脫落。中層種皮較厚，黑褐色，質松易碎，遇水膨脹成海綿狀。斷面可見散在的樹脂狀小點。內層種皮可與中層種皮剝離，稍革質，內有2片肥厚胚乳，廣卵形；子葉2枚，菲薄，緊貼於胚乳內側，與胚乳等大。氣微，味淡，嚼之有黏性。", "品質": "以個大、堅質、棕色、有細皺紋及光澤者為佳。", "性味": "甘，寒。", "功效": "清熱潤肺，利咽解毒，潤腸通便。用於肺熱聲啞，乾咳無痰，咽喉乾痛，熱結便閉，頭痛目赤。", "name": "胖大海", "page": 32, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_pinyin&lang=cht&qry=%E8%83%96%E5%A4%A7%E6%B5%B7&pid=B00253", "images": ["30_胖大海_0.jpg", "30_胖大海_1.jpg"], "index": 30, "primary": false, "tip": "中學加碼。大型疏鬆種子，表面皺、棕褐。浸水會脹，但比賽是乾品。", "dish": "30_胖大海_0.jpg", "bag": "30_胖大海_1.jpg"}, {"名稱": "芡實", "拼音": "Qianshi", "英文": "Gordon Euryale Seed", "拉丁": "Euryales Semen", "類別": "果實及種子類", "來源": "睡蓮科植物芡Euryale ferox Salisb. 的乾燥成熟種仁。", "產地": "主產於江蘇、湖南、湖北、山東等地。", "性狀": "類球形，多為破粒。表面有棕紅色內種皮，一端黃自色，約占全體1/3、有凹點狀的種臍痕，除去內種皮顯白色。質較硬，斷面白色，粉性。氣微，味淡。", "品質": "以顆粒飽滿均勻、粉性足、無碎末及皮殼者為佳。", "性味": "甘、澀。平。", "功效": "益腎固精，補脾止渭，除濕止帶。用於遺精滑精，遺尿尿頻，脾虛久瀉，自濁，帶下。", "name": "芡實", "page": 33, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%8A%A1%E5%AF%A6&extension=all&pid=B00232", "images": ["31_芡實_0.jpg", "31_芡實_1.jpg"], "index": 31, "primary": false, "tip": "中學加碼。較圓，外皮棕紅，剖面偏白。比蓮子圓、色較深。", "dish": "31_芡實_0.jpg", "bag": "31_芡實_1.jpg"}, {"名稱": "桑椹", "拼音": "Sangshen", "英文": "Mullberry Fruit", "拉丁": "Mori Fructus", "類別": "果實及種子類", "來源": "桑科植物桑Morus alba L.的乾燥果穗。", "產地": "主產浙江、江蘇、安徽、新疆等地。", "性狀": "該品為聚花果，由多數小核果集合而成，呈長圓形，長1~2cm，直徑0.5~0.8cm。黃棕色、棕紅色至暗紫色，(比較少見的顏色成熟後呈乳白色)，有短果序梗。小核果卵圓形，稍扁，長約2mm，寬約1mm，外具肉質花被片4 枚。氣微，味微酸而甜。", "品質": "以個大、肉厚、色紫紅、糖分足者為佳。", "性味": "甘、酸，寒。", "功效": "補血滋陰，生津潤燥。用於眩暈耳鳴，心悸失眠，鬚髮早白，津傷口渴，內熱消渴，血虛便秘。補肝，益腎，熄風，滋液。治肝腎陰虧，消渴，便秘，目暗，耳鳴，瘰鬁，關節不利。", "name": "桑椹", "page": 34, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E6%A1%91%E6%A4%B9&extension=all&pid=B00202", "images": ["32_桑椹_0.jpg", "32_桑椹_1.jpg"], "index": 32, "primary": false, "tip": "中學加碼。乾桑椹，深紫近黑、聚合果外形。", "dish": "32_桑椹_0.jpg", "bag": "32_桑椹_1.jpg"}, {"名稱": "山楂", "拼音": "Shanzha", "英文": "Chinese Hawthorn Fruit", "拉丁": "Crataegi Fructus", "類別": "果實及種子類", "來源": "薔薇科植物山裡紅Crataegus pinnatifida Bge. var. major N. E. Br.或山楂Crataegus pinnatifida Bge.的乾燥成熟果實。", "產地": "主產河南、河北、山東等地。", "性狀": "果實較小，類球形，直徑0.8~1.4cm，有的壓成餅狀。表面棕色至棕紅色，並有細密皺紋，頂端凹陷，有花萼殘跡，基部有果梗或已脫落。", "品質": "以果大、肉厚、核少、皮紅者為佳。", "性味": "甘、酸，微溫。", "功效": "開胃消食、化滯消積、活血散瘀、化痰行氣。用於肉食滯積、症瘕積聚、腹脹痞滿、瘀阻腹痛、痰飲、泄瀉、腸風下血等。", "name": "山楂", "page": 35, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%B1%B1%E6%A5%82&extension=all&pid=B00203", "images": ["33_山楂_0.jpg", "33_山楂_1.jpg"], "index": 33, "primary": true, "tip": "常見為切片，紅棕，可見果核。比枸杞大、扁平。", "dish": "33_山楂_0.jpg", "bag": "33_山楂_1.jpg"}, {"名稱": "使君子", "拼音": "Shijunzi", "英文": "Rangooncreeper Fruit", "拉丁": "Quisqualis Fructus", "類別": "果實及種子類", "來源": "使君子科植物使君子Quisqualis indica L.的乾燥成熟果實。", "產地": "主產四川、廣東、廣西等地。", "性狀": "呈橢圓形或卵圓形，具5條縱棱，偶有4~9棱，長2.5~4cm，直徑約2cm。表面黑褐色至紫黑色，平滑，微具光澤。頂端狹尖，基部鈍圓，有明顯圓形的果梗痕。質堅硬，橫切面多呈五角星形，棱角處殼較厚，中間呈類圓形空腔。種子長橢圓形或紡錘形，長約2cm，直徑約1cm；表面棕褐色或黑褐色，有多數縱皺紋；種皮薄，易剝離；子葉2，黃白色，有油性，斷面有裂紋。微香，味微甜。", "品質": "以個大、表面具紫褐色光澤、仁飽滿、色白者為佳。", "性味": "甘，溫。", "功效": "殺蟲消積。用於蛔蟲、蟯蟲病，蟲積腹痛，小兒疳積。", "name": "使君子", "page": 36, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E4%BD%BF%E5%90%9B%E5%AD%90&extension=all&pid=B00255", "images": ["34_使君子_0.jpg", "34_使君子_1.jpg"], "index": 34, "primary": true, "tip": "橄欖形，有五至六條縱稜。比苦杏仁長、有稜。", "dish": "34_使君子_0.jpg", "bag": "34_使君子_1.jpg"}, {"名稱": "小茴香", "拼音": "Xiaohuixiang", "英文": "Fennel Fruit", "拉丁": "Foeniculi Fructus", "類別": "果實及種子類", "來源": "傘形科植物茴香Foeniculum vulgare Mill.的乾燥成熟果實。", "產地": "原產歐洲，我國主產於內蒙古、甘肅、四川等地。", "性狀": "果實為雙懸果，呈圓柱形，有的稍彎曲，兩端略尖，長4~8mm，直徑1.5~2.5mm。表面黃綠或淡黃色，頂端殘留有黃棕色突起的柱基，基部有時有細小的果梗。分果呈長橢圓形，背面有縱棱5條，接合面平坦而較寬。橫切面略呈5邊形，背面的4邊約等長。有特異茴香氣，味微甜、辛。", "品質": "以粒大飽滿、黃綠色、香氣濃者為佳。", "性味": "辛，溫。", "功效": "開胃進食，理氣散寒，有助陽道。主治：中焦有寒，食欲減退，噁心嘔吐，腹部冷痛；疝氣疼痛，睾丸腫痛；脾胃氣滯，脘腹脹滿作痛。", "name": "小茴香", "page": 37, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E5%B0%8F%E8%8C%B4%E9%A6%99&extension=all&pid=B00215", "images": ["35_小茴香_0.jpg", "35_小茴香_1.jpg"], "index": 35, "primary": true, "tip": "細小稜果，像小梳子／小茴香籽。比丁香短，不是釘狀。", "dish": "35_小茴香_0.jpg", "bag": "35_小茴香_1.jpg"}, {"名稱": "薏苡仁", "拼音": "Yiyiren", "英文": "Ma - yuen Jobstears Seed", "拉丁": "Coicis Semen", "類別": "果實及種子類", "來源": "禾本科植物薏苡Coix lacryma-jobi L. var. ma-yuen (Roman.) Stapf的乾燥成熟種仁。", "產地": "主產福建、河北、浙江等地。", "性狀": "種仁寬卵形或長橢圓形，長4~8mm，寬3~6mm。表面乳白色，光滑，偶有殘存的黃褐色種皮。一端鈍圓，另端較寬而微凹，有1淡棕色點狀種臍。背面圓凸，腹面有1條羅寬而深的縱溝。質堅實，斷面白色粉性。氣微，味微甜。以粒大充實、色白、無皮碎者為佳。", "品質": "以粒大充實、色白、無皮碎者為佳。", "性味": "甘、淡，微寒。", "功效": "健脾滲濕，除痹止瀉。薏米可用於治療水腫、腳氣、小便不利、濕痹拘攣、脾虛泄瀉。", "name": "薏苡仁", "page": 38, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E8%96%8F%E8%8B%A1%E4%BB%81&extension=all&pid=B00219", "images": ["36_薏苡仁_0.jpg", "36_薏苡仁_1.jpg"], "index": 36, "primary": true, "tip": "卵圓，白色或淡黃，一側有淺溝。比白扁豆圓。", "dish": "36_薏苡仁_0.jpg", "bag": "36_薏苡仁_1.jpg"}, {"名稱": "雞骨草", "拼音": "Jigucao", "英文": "Canton Abrus Herb", "拉丁": "Abri Herba", "類別": "全草類", "來源": "豆科植物廣州相思子Abrus cantoniensis Hance及毛相思子Abrus mollis Hance的乾燥全草。", "產地": "主產兩廣地區。", "性狀": "該品根多呈圓錐形，上粗下細，有分枝，長短不一，直徑0.5~1.5cm；表面灰棕色，粗糙，有細縱紋，支根極細，有的斷落或留有殘基；質硬。莖叢生，長50~100cm，直徑約0.2cm；灰棕色至紫褐色，小枝纖細，疏被或密被短柔毛。羽狀複葉互生，小葉8~11 對，多脫落，小葉矩圓形，廣州相思子葉長0.8~1.2cm，毛相思子葉長1.2~2.4cm，先端平截，有小突尖，下表面被伏毛。氣微香，味微苦。", "品質": "以根莖結節狀、莖葉全者為佳。", "性味": "甘、微苦，涼。", "功效": "清熱解毒，舒肝止痛。用於黃疸，脅肋不舒，胃脘脹痛；急、慢性肝炎，乳腺炎。", "name": "雞骨草", "page": 39, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%9B%9E%E9%AA%A8%E8%8D%89&extension=all&pid=B00273", "images": ["37_雞骨草_0.jpg", "37_雞骨草_1.jpg"], "index": 37, "primary": true, "tip": "細莖小葉的全草，乾燥後綠褐。比益母草更細、更「藤狀」。", "dish": "37_雞骨草_0.jpg", "bag": "37_雞骨草_1.jpg"}, {"名稱": "益母草", "拼音": "Yimucao", "英文": "Common Motherwort Herb", "拉丁": "Leonuri Herba", "類別": "全草類", "來源": "唇形科植物益母草Leonurus japonicus Houtt.的新鮮或乾燥地上部分。", "產地": "全國各地。", "性狀": "鮮益母草：幼苗期無莖，基生葉圓心形，邊緣5~9淺裂，每裂片有2~3鈍齒。花前期莖呈方柱形，上部多分枝，四面凹下成縱溝，長30~60cm，直徑0.2~0.5cm ；表面青綠色；質鮮嫩，斷面中部有髓。葉交互對生，有柄；葉片青綠色，質鮮嫩，揉之有汁；下部莖生葉掌狀3 裂，上部葉羽狀深裂或淺裂成3 片，裂片全緣或具少數鋸齒。氣微，味微苦。乾益母草：莖表面灰綠色或黃綠色；體輕，質韌，斷面中部有髓。葉片灰綠色，多皺縮、破碎，易脫落。輪傘花序腋生，小花淡紫色，花萼筒狀，花冠二唇形。切段者長約2cm。", "品質": "以枝嫩、黃綠色、帶葉花者為佳。", "性味": "辛、苦，涼。", "功效": "活血、祛淤、調經、消水。治療婦女月經不調，胎漏難產，胞衣不下，產後血暈，瘀血腹痛，崩中漏下，尿血、瀉血，癰腫瘡瘍。", "name": "益母草", "page": 40, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E7%9B%8A%E6%AF%8D%E8%8D%89&extension=all&pid=B00292", "images": ["38_益母草_0.jpg", "38_益母草_1.jpg"], "index": 38, "primary": false, "tip": "中學加碼。全草，莖較方、葉對生。比雞骨草粗壯。", "dish": "38_益母草_0.jpg", "bag": "38_益母草_1.jpg"}, {"名稱": "雞內金", "拼音": "Jineijin", "英文": "Chicken's Gizzard-membrane", "拉丁": "Galli Gigerii Endothelium Coreneum", "類別": "動物類", "來源": "雉科動物家雞Gallus gallus domesticus Brisson的乾燥砂囊內壁。殺雞後，取出雞肫，立即取下內壁，洗淨，曬乾。", "產地": "全國各地。", "性狀": "本品為不規則卷片，厚約2mm。表面黃色、黃綠色或黃褐色，薄而半透明，具明顯的條狀皺紋。質脆，易碎，斷面角質樣，有光澤。氣微腥，味微苦。", "品質": "以完整少破碎、黃色者為佳。", "性味": "甘，平。", "功效": "健胃消食，澀精止遺。用於食積不消，嘔吐瀉痢，小兒疳積，遺尿，遺精。", "name": "雞內金", "page": 41, "url": "https://sys01.lib.hkbu.edu.hk/cmed/mmid/detail.php?sort=name_cht&lang=cht&f_search=1&qry=%E9%9B%9E%E5%85%A7%E9%87%91&extension=all&pid=B00380", "images": ["39_雞內金_0.jpg", "39_雞內金_1.jpg"], "index": 39, "primary": true, "tip": "雞胗內壁薄膜，金黃至黃褐、半透明、有皺紋。這是清單裡唯一的動物類藥材。", "dish": "39_雞內金_0.jpg", "bag": "39_雞內金_1.jpg"}];
+const LOOK = [["白茅根", "北沙參", "都是淺色長條。白茅根有明顯環節、較黃、像禾草段；北沙參較直、較白、較光滑。"], ["當歸", "桔梗", "當歸黃棕、多分枝、油潤；桔梗多已去皮、短粗、偏白。"], ["當歸", "巴戟天", "巴戟天有「雞腸」縊縮、斷面可帶紫；當歸分枝多、黃棕油潤。"], ["麥冬", "浙貝母", "麥冬紡錘、兩端尖、半透明；浙貝母是鱗莖、粉質、較圓。"], ["百合", "浙貝母", "百合鱗片厚大、層疊如花瓣；浙貝母較小、較圓、粉性強。"], ["菊花", "夏枯草", "菊花是頭狀花序；夏枯草是褐色穗狀果穗。"], ["枸杞子", "山楂", "枸杞細長紅果；山楂是較大的切片，常見果核。"], ["枸杞子", "女貞子", "枸杞紅而長；女貞子細小、黑紫。"], ["蓮子", "芡實", "蓮子橢圓偏白；芡實較圓、外皮棕紅。"], ["薏苡仁", "白扁豆", "薏苡仁卵圓有溝；白扁豆扁平腎形。"], ["肉桂", "杜仲", "肉桂捲筒、內面紅棕；杜仲較扁平的樹皮。"], ["雞血藤", "鉤藤", "雞血藤常見切片與紅圈；鉤藤帶彎鉤。"], ["丁香", "小茴香", "丁香是釘狀花蕾；小茴香是細小稜果。"], ["草果", "花椒", "草果大顆有稜；花椒細小開裂果皮。"], ["苦杏仁 / 北杏", "核桃仁", "苦杏仁扁平心形帶種皮；核桃仁呈腦狀皺褶。"], ["木蝴蝶", "連翹", "木蝴蝶薄如紙、翅狀；連翹較厚、船形常開裂。"], ["胖大海", "使君子", "胖大海大而疏鬆皺縮；使君子橄欖形、有縱稜。"], ["龍眼肉", "雞內金", "龍眼肉厚、棕褐半透明肉塊；雞內金是金黃薄膜。"], ["益母草", "雞骨草", "益母草較粗壯全草；雞骨草細莖小葉。"], ["枇杷葉", "益母草", "枇杷葉是大片革質單葉；益母草是帶莖全草。"], ["路路通", "佛手", "路路通是圓刺球；佛手是柑橘「手指」狀乾片。"]];
+const byName = Object.fromEntries(HERBS.map(h => [h.name, h]));
+
+const tabs = document.querySelectorAll("nav.tabs button");
+const panels = document.querySelectorAll(".panel");
+tabs.forEach(btn => btn.addEventListener("click", () => {
+  tabs.forEach(b => b.classList.remove("active"));
+  panels.forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(btn.dataset.tab).classList.add("active");
+}));
+
+function imgPath(file) { return "herb_images/" + file; }
+
+function filtered() {
+  const q = (document.getElementById("q").value || "").trim().toLowerCase();
+  const flt = document.getElementById("flt").value;
+  return HERBS.filter(h => {
+    if (flt === "primary" && !h.primary) return false;
+    if (flt === "extra" && h.primary) return false;
+    if (!q) return true;
+    const blob = [h.name, h["拼音"], h["英文"], h["拉丁"], h["類別"], h["性味"], h["功效"], h.tip].join(" ").toLowerCase();
+    return blob.includes(q);
+  });
+}
+
+function renderGrid() {
+  const list = filtered();
+  document.getElementById("count").textContent = list.length + " 種";
+  document.getElementById("herbGrid").innerHTML = list.map(h => `
+    <article class="card herb-card" data-name="${h.name}">
+      <img src="${imgPath(h.dish)}" alt="${h.name} 白碟">
+      <div class="meta">
+        <h3>${h.index}. ${h.name}</h3>
+        <div>
+          <span class="badge ${h.primary ? "p" : "s"}">${h.primary ? "小學+中學" : "中學加碼"}</span>
+          <span class="badge cat">${h["類別"]}</span>
+        </div>
+        <p class="muted">${h["拼音"]} · ${h["性味"]}</p>
+      </div>
+    </article>`).join("");
+  document.querySelectorAll(".herb-card").forEach(el => {
+    el.addEventListener("click", () => openHerb(el.dataset.name));
+  });
+}
+
+function openHerb(name) {
+  const h = byName[name];
+  const dlg = document.getElementById("dlg");
+  document.getElementById("dlgBody").innerHTML = `
+    <h2 style="margin-top:0">${h.index}. ${h.name}</h2>
+    <p>
+      <span class="badge ${h.primary ? "p" : "s"}">${h.primary ? "小學+中學" : "中學加碼"}</span>
+      <span class="badge cat">${h["類別"]}</span>
+    </p>
+    <div class="grid two">
+      <img src="${imgPath(h.dish)}" alt="白碟">
+      <img src="${imgPath(h.bag)}" alt="膠袋標籤">
+    </div>
+    <p><b>鏡頭提示：</b>${h.tip}</p>
+    <div class="kv">
+      <b>拼音</b><span>${h["拼音"]}</span>
+      <b>拉丁</b><span>${h["拉丁"]}</span>
+      <b>英文</b><span>${h["英文"]}</span>
+      <b>來源</b><span>${h["來源"]}</span>
+      <b>產地</b><span>${h["產地"]}</span>
+      <b>性狀</b><span>${h["性狀"]}</span>
+      <b>品質</b><span>${h["品質"]}</span>
+      <b>性味</b><span>${h["性味"]}</span>
+      <b>功效</b><span>${h["功效"]}</span>
+    </div>
+    <p><a href="${h.url}" target="_blank" rel="noopener">打開浸大中藥庫原頁</a></p>
+    <button class="act" onclick="document.getElementById('dlg').close()">關閉</button>
+  `;
+  dlg.showModal();
+}
+
+document.getElementById("q").addEventListener("input", renderGrid);
+document.getElementById("flt").addEventListener("change", renderGrid);
+
+function renderMix() {
+  document.getElementById("mixList").innerHTML = LOOK.map(row => {
+    const a = byName[row[0]], b = byName[row[1]];
+    if (!a || !b) return "";
+    return `<div class="card">
+      <div class="look">
+        <div><img src="${imgPath(a.dish)}" alt="${a.name}"><p><b>${a.name}</b> ${a.primary ? "" : "<span class='badge s'>中學</span>"}</p></div>
+        <div><img src="${imgPath(b.dish)}" alt="${b.name}"><p><b>${b.name}</b> ${b.primary ? "" : "<span class='badge s'>中學</span>"}</p></div>
+      </div>
+      <p>${row[2]}</p>
+    </div>`;
+  }).join("");
+}
+
+let flashIdx = 0, flashDeck = [], flashShowAns = false;
+function deckSet(sel) {
+  return sel === "primary" ? HERBS.filter(h => h.primary) : HERBS.slice();
+}
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function renderFlash() {
+  if (!flashDeck.length) {
+    flashDeck = shuffle(deckSet(document.getElementById("flashSet").value));
+    flashIdx = 0;
+  }
+  const h = flashDeck[flashIdx];
+  const mode = document.getElementById("flashMode").value;
+  const card = document.getElementById("flashCard");
+  document.getElementById("flashProg").textContent = (flashIdx + 1) + " / " + flashDeck.length;
+  if (!flashShowAns) {
+    if (mode === "photo") card.innerHTML = `<div><img src="${imgPath(h.dish)}" alt="?"><p class="muted">點擊看名稱</p></div>`;
+    if (mode === "xingwei") card.innerHTML = `<div><p class="muted">性味</p><h2>${h["性味"]}</h2><p class="muted">這是哪一種？</p></div>`;
+    if (mode === "leibie") card.innerHTML = `<div><p class="muted">${h["類別"]}</p><p>${h["性狀"].slice(0, 80)}…</p><p class="muted">這是哪一種？</p></div>`;
+    if (mode === "gongxiao") card.innerHTML = `<div><p class="muted">功效</p><p>${h["功效"]}</p><p class="muted">這是哪一種？</p></div>`;
+  } else {
+    card.innerHTML = `<div>
+      <h2 style="margin:0 0 8px">${h.name}</h2>
+      <p>${h["拼音"]} · ${h["類別"]} · ${h["性味"]}</p>
+      <img src="${imgPath(h.dish)}" alt="${h.name}">
+      <p class="muted">${h.tip}</p>
+    </div>`;
+  }
+}
+document.getElementById("flashCard").addEventListener("click", () => {
+  flashShowAns = !flashShowAns;
+  renderFlash();
+});
+document.getElementById("flashNext").addEventListener("click", () => {
+  flashShowAns = false;
+  flashIdx = (flashIdx + 1) % flashDeck.length;
+  renderFlash();
+});
+document.getElementById("flashMode").addEventListener("change", () => { flashDeck = []; flashShowAns = false; renderFlash(); });
+document.getElementById("flashSet").addEventListener("change", () => { flashDeck = []; flashShowAns = false; renderFlash(); });
+
+function pickWrong(correct, pool) {
+  const others = pool.filter(h => h.name !== correct.name);
+  return shuffle(others).slice(0, 3);
+}
+function makeQuestion(pool) {
+  const h = pool[Math.floor(Math.random() * pool.length)];
+  const types = ["photo", "xingwei", "leibie", "source"];
+  if (pool.some(x => !x.primary) || true) types.push("gongxiao");
+  const type = types[Math.floor(Math.random() * types.length)];
+  const opts = shuffle([h, ...pickWrong(h, pool)]).map(x => x.name);
+  let prompt = "";
+  if (type === "photo") prompt = `<img src="${imgPath(h.dish)}" alt="?" style="max-height:200px;max-width:100%;object-fit:contain"><p>白碟上是哪一種藥材？</p>`;
+  if (type === "xingwei") prompt = `<p>性味為「${h["性味"]}」的是？</p>`;
+  if (type === "leibie") prompt = `<p>屬於「${h["類別"]}」，且性狀開頭為「${h["性狀"].slice(0, 28)}…」的是？</p>`;
+  if (type === "source") prompt = `<p>來源：「${h["來源"]}」這是？</p>`;
+  if (type === "gongxiao") prompt = `<p>功效包括「${h["功效"].split("。")[0]}」的是？</p>`;
+  return { prompt, answer: h.name, opts };
+}
+
+let quizQ = [], quizI = 0, quizScore = 0;
+function startQuiz() {
+  const pool = deckSet(document.getElementById("quizSet").value);
+  quizQ = [];
+  const used = new Set();
+  while (quizQ.length < 10) {
+    const q = makeQuestion(pool);
+    if (used.has(q.answer + q.prompt.slice(0, 20))) continue;
+    used.add(q.answer + q.prompt.slice(0, 20));
+    quizQ.push(q);
+  }
+  quizI = 0; quizScore = 0;
+  showQuiz();
+}
+function showQuiz() {
+  const box = document.getElementById("quizBox");
+  if (quizI >= quizQ.length) {
+    box.innerHTML = `<h3>完成</h3><p class="progress">分數：${quizScore} / 10</p><p>${quizScore >= 8 ? "可以進入下一組易混藥材。" : "建議先用閃卡把錯的名稱再過一輪。"}</p>`;
+    document.getElementById("quizScore").textContent = quizScore + " / 10";
+    return;
+  }
+  const q = quizQ[quizI];
+  document.getElementById("quizScore").textContent = "第 " + (quizI + 1) + " 題 · 目前 " + quizScore + " 分";
+  box.innerHTML = `<div>${q.prompt}</div>` + q.opts.map(o => `<button class="quiz-opt" data-opt="${o}">${o}</button>`).join("");
+  box.querySelectorAll(".quiz-opt").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const ok = btn.dataset.opt === q.answer;
+      box.querySelectorAll(".quiz-opt").forEach(b => {
+        b.disabled = true;
+        if (b.dataset.opt === q.answer) b.classList.add("right");
+      });
+      if (ok) { btn.classList.add("right"); quizScore++; }
+      else btn.classList.add("wrong");
+      setTimeout(() => { quizI++; showQuiz(); }, 700);
+    });
+  });
+}
+document.getElementById("quizStart").addEventListener("click", startQuiz);
+
+function renderTable() {
+  const rows = HERBS.map(h => `<tr>
+    <td>${h.index}</td>
+    <td>${h.name}${h.primary ? "" : " *"}</td>
+    <td>${h["拼音"]}</td>
+    <td>${h["類別"]}</td>
+    <td>${h["性味"]}</td>
+    <td>${h["來源"]}</td>
+    <td>${h["產地"]}</td>
+    <td>${h["品質"]}</td>
+    <td>${h["功效"]}</td>
+  </tr>`).join("");
+  document.getElementById("bigTable").innerHTML = `<thead><tr>
+    <th>#</th><th>名稱</th><th>拼音</th><th>類別</th><th>性味</th><th>來源</th><th>產地</th><th>品質</th><th>功效</th>
+  </tr></thead><tbody>${rows}</tbody>
+  <caption style="caption-side:bottom;text-align:left;padding-top:8px">* 中學加碼（不在小學 24 種內）</caption>`;
+}
+
+renderGrid();
+renderMix();
+renderFlash();
+renderTable();
+</script>
+</body>
+</html>
