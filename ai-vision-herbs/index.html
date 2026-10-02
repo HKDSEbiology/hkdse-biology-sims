@@ -94,6 +94,15 @@ button.act { background: var(--gold); color: var(--navy); border: 0; font-weight
 button.ghost { background: #fff; }
 .look { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .look img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+.report-q { border-left: 4px solid var(--line); padding-left: 10px; margin: 14px 0; }
+.report-q.ok { border-left-color: var(--ok); }
+.report-q.bad { border-left-color: var(--warn); }
+.report-q img { max-height: 140px; max-width: 100%; object-fit: contain; display: block; margin: 6px 0; }
+@media print {
+  nav.tabs, .noprint, header { display: none !important; }
+  .panel { display: block !important; }
+  .card { break-inside: avoid; }
+}
 @media (max-width: 640px) {
   .look { grid-template-columns: 1fr; }
   header h1 { font-size: 1.15rem; }
@@ -103,7 +112,7 @@ button.ghost { background: #fff; }
 <body>
 <header>
   <h1>2026 AI Vision 智辨百草挑戰賽 · 學生溫習筆記</h1>
-  <p>聖士提反女子中學生物科 · 附件清單 + 浸大中藥材圖像數據庫（比賽指定參考）</p>
+  <p>聖士提反女子中學生物科 · Ms Lai Kam Fung · 浸大中藥材圖像數據庫（比賽指定參考）</p>
 </header>
 <div class="wrap">
 <nav class="tabs" id="tabs">
@@ -114,6 +123,7 @@ button.ghost { background: #fff; }
   <button data-tab="flash">閃卡</button>
   <button data-tab="quiz">小測</button>
   <button data-tab="table">總表</button>
+  <button data-tab="files">下載</button>
 </nav>
 
 <section id="home" class="panel active">
@@ -156,6 +166,7 @@ button.ghost { background: #fff; }
       <li>mTraining：<a href="https://mtraining.mblock.cc/" target="_blank" rel="noopener">mtraining.mblock.cc</a></li>
       <li>拍攝：Olympus TG-7、iPad、電腦（照片可以手機拍，訓練請用電腦）</li>
       <li>藥材：以老師提供的乾藥材／大會圖片集為準。校園活體植物只作平時練習，賽日是乾品白碟。</li>
+      <li>查詢：Ms Lai Kam Fung（生物科）</li>
     </ul>
   </div>
 </section>
@@ -241,7 +252,12 @@ button.ghost { background: #fff; }
 
 <section id="quiz" class="panel">
   <h2>小測 10 題</h2>
-  <div class="toolbar">
+  <p class="muted noprint">完成後會出現個人詳細報告：每題對錯、弱項、該種藥的性味／功效／鏡頭提示。可列印或下載。</p>
+  <div class="toolbar noprint" id="quizStartBar">
+    <input id="stuName" placeholder="English name" autocomplete="name">
+    <input id="stuClass" placeholder="Class" style="min-width:90px">
+    <input id="stuNo" placeholder="Class no." style="min-width:90px">
+    <select id="stuDiv"><option value="">Division</option><option>B</option><option>C</option><option>E</option></select>
     <select id="quizSet">
       <option value="all">中學組範圍</option>
       <option value="primary">小學組範圍</option>
@@ -249,7 +265,7 @@ button.ghost { background: #fff; }
     <button class="act" id="quizStart">開始／重做</button>
     <span class="progress" id="quizScore"></span>
   </div>
-  <div id="quizBox" class="card">按「開始」抽取 10 題。題型包括認圖、性味、類別、來源、功效。</div>
+  <div id="quizBox" class="card">先填姓名和班別，再按「開始」。題型包括認圖、性味、類別、來源、功效。</div>
 </section>
 
 <section id="table" class="panel">
@@ -260,9 +276,36 @@ button.ghost { background: #fff; }
   </div>
 </section>
 
+<section id="files" class="panel">
+  <h2>下載教材</h2>
+  <p class="muted">請下載後離線使用或列印。官方圖片集檔案較大。</p>
+  <div class="grid two">
+    <div class="card">
+      <h3>本校整理</h3>
+      <ul>
+        <li><a href="downloads/cheatsheet.pdf" download>39 種速記表（名稱／類別／性味／功效）</a></li>
+        <li><a href="downloads/lookalikes.pdf" download>易混對照一覽</a></li>
+        <li><a href="downloads/photo-checklist.pdf" download>拍攝清單（可打勾）</a></li>
+        <li><a href="downloads/herbs.csv" download>39 種資料表（Excel / CSV）</a></li>
+        <li><a href="downloads/ai-cam-training.pdf" download>AI Cam + mTraining 步驟</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>大會原文</h3>
+      <ul>
+        <li><a href="downloads/secondary-herb-list.pdf" download>中學組中草藥圖片集（39 種）</a></li>
+        <li><a href="https://drive.google.com/file/d/10dLBs5yo_l-japWCv7knlEEWZF7pssGJ/view" target="_blank" rel="noopener">中學組清單（Google Drive）</a></li>
+        <li><a href="https://drive.google.com/file/d/1zP82I4zYzlDVV9Z8aXE6B5NOBtZP0lgX/view" target="_blank" rel="noopener">小學組清單（Google Drive）</a></li>
+        <li><a href="https://sys01.lib.hkbu.edu.hk/cmed/mmid/" target="_blank" rel="noopener">浸大中藥材圖像數據庫</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <footer>
   資料來源：大會《中草藥圖片集》及香港浸會大學圖書館「中藥材圖像數據庫」（比賽指定權威）。
-  本頁只供本校學生備賽溫習，不是醫療建議，請勿自行配藥或服用。
+  本頁只供聖士提反女子中學學生備賽溫習，不是醫療建議，請勿自行配藥或服用。
+  查詢：Ms Lai Kam Fung，生物科。
   官方頁：<a href="https://www.dtsl.asia/pages/ai-vision-competition">dtsl.asia/pages/ai-vision-competition</a>
 </footer>
 </div>
@@ -416,40 +459,58 @@ function pickWrong(correct, pool) {
   const others = pool.filter(h => h.name !== correct.name);
   return shuffle(others).slice(0, 3);
 }
+const TYPE_LABEL = {
+  photo: "認圖（第一回合）",
+  xingwei: "性味",
+  leibie: "類別／性狀",
+  source: "來源",
+  gongxiao: "功效"
+};
 function makeQuestion(pool) {
   const h = pool[Math.floor(Math.random() * pool.length)];
-  const types = ["photo", "xingwei", "leibie", "source"];
-  if (pool.some(x => !x.primary) || true) types.push("gongxiao");
+  const types = ["photo", "xingwei", "leibie", "source", "gongxiao"];
   const type = types[Math.floor(Math.random() * types.length)];
   const opts = shuffle([h, ...pickWrong(h, pool)]).map(x => x.name);
-  let prompt = "";
-  if (type === "photo") prompt = `<img src="${imgPath(h.dish)}" alt="?" style="max-height:200px;max-width:100%;object-fit:contain"><p>白碟上是哪一種藥材？</p>`;
-  if (type === "xingwei") prompt = `<p>性味為「${h["性味"]}」的是？</p>`;
-  if (type === "leibie") prompt = `<p>屬於「${h["類別"]}」，且性狀開頭為「${h["性狀"].slice(0, 28)}…」的是？</p>`;
-  if (type === "source") prompt = `<p>來源：「${h["來源"]}」這是？</p>`;
-  if (type === "gongxiao") prompt = `<p>功效包括「${h["功效"].split("。")[0]}」的是？</p>`;
-  return { prompt, answer: h.name, opts };
+  let prompt = "", stem = "";
+  if (type === "photo") {
+    stem = "白碟上是哪一種藥材？";
+    prompt = `<img src="${imgPath(h.dish)}" alt="?" style="max-height:200px;max-width:100%;object-fit:contain"><p>${stem}</p>`;
+  }
+  if (type === "xingwei") { stem = `性味為「${h["性味"]}」的是？`; prompt = `<p>${stem}</p>`; }
+  if (type === "leibie") { stem = `屬於「${h["類別"]}」，且性狀開頭為「${h["性狀"].slice(0, 28)}…」的是？`; prompt = `<p>${stem}</p>`; }
+  if (type === "source") { stem = `來源：「${h["來源"]}」這是？`; prompt = `<p>${stem}</p>`; }
+  if (type === "gongxiao") { stem = `功效包括「${h["功效"].split("。")[0]}」的是？`; prompt = `<p>${stem}</p>`; }
+  return { type, stem, prompt, answer: h.name, opts, dish: h.dish };
 }
 
-let quizQ = [], quizI = 0, quizScore = 0;
+let quizQ = [], quizI = 0, quizScore = 0, quizLog = [];
 function startQuiz() {
+  const name = (document.getElementById("stuName").value || "").trim();
+  const cls = (document.getElementById("stuClass").value || "").trim();
+  const no = (document.getElementById("stuNo").value || "").trim();
+  if (!name || !cls || !no) {
+    alert("Please fill English name, class and class number before you start.");
+    return;
+  }
   const pool = deckSet(document.getElementById("quizSet").value);
   quizQ = [];
   const used = new Set();
-  while (quizQ.length < 10) {
+  let guard = 0;
+  while (quizQ.length < 10 && guard < 200) {
+    guard++;
     const q = makeQuestion(pool);
-    if (used.has(q.answer + q.prompt.slice(0, 20))) continue;
-    used.add(q.answer + q.prompt.slice(0, 20));
+    const key = q.answer + q.type + q.stem.slice(0, 24);
+    if (used.has(key)) continue;
+    used.add(key);
     quizQ.push(q);
   }
-  quizI = 0; quizScore = 0;
+  quizI = 0; quizScore = 0; quizLog = [];
   showQuiz();
 }
 function showQuiz() {
   const box = document.getElementById("quizBox");
   if (quizI >= quizQ.length) {
-    box.innerHTML = `<h3>完成</h3><p class="progress">分數：${quizScore} / 10</p><p>${quizScore >= 8 ? "可以進入下一組易混藥材。" : "建議先用閃卡把錯的名稱再過一輪。"}</p>`;
-    document.getElementById("quizScore").textContent = quizScore + " / 10";
+    showReport();
     return;
   }
   const q = quizQ[quizI];
@@ -464,9 +525,90 @@ function showQuiz() {
       });
       if (ok) { btn.classList.add("right"); quizScore++; }
       else btn.classList.add("wrong");
-      setTimeout(() => { quizI++; showQuiz(); }, 700);
+      quizLog.push({
+        n: quizI + 1, type: q.type, stem: q.stem, dish: q.dish,
+        answer: q.answer, chosen: btn.dataset.opt, ok
+      });
+      setTimeout(() => { quizI++; showQuiz(); }, 650);
     });
   });
+}
+function showReport() {
+  const name = (document.getElementById("stuName").value || "").trim();
+  const cls = (document.getElementById("stuClass").value || "").trim();
+  const no = (document.getElementById("stuNo").value || "").trim();
+  const div = document.getElementById("stuDiv").value || "—";
+  const scope = document.getElementById("quizSet").value === "primary" ? "小學組 24 種" : "中學組 39 種";
+  const when = new Date().toLocaleString();
+  const byType = {};
+  quizLog.forEach(item => {
+    const k = TYPE_LABEL[item.type] || item.type;
+    if (!byType[k]) byType[k] = { n: 0, right: 0 };
+    byType[k].n++;
+    if (item.ok) byType[k].right++;
+  });
+  const typeRows = Object.keys(byType).map(k => {
+    const v = byType[k];
+    return `<tr><td>${k}</td><td>${v.right} / ${v.n}</td></tr>`;
+  }).join("");
+  const misses = quizLog.filter(x => !x.ok);
+  const missNames = [...new Set(misses.map(x => x.answer))];
+  const advice = quizScore >= 8
+    ? "整體穩定。請針對錯題的藥材再拍白碟照片，並用閃卡倒轉練習功效／性味。"
+    : "先用「易混對照」和閃卡，把錯的名稱再過一輪，然後重做一組 10 題。";
+  const items = quizLog.map(item => {
+    const h = byName[item.answer] || {};
+    const photo = item.type === "photo"
+      ? `<img src="${imgPath(item.dish)}" alt="${item.answer}">` : "";
+    return `<article class="report-q ${item.ok ? "ok" : "bad"}">
+      <p><b>第 ${item.n} 題 · ${TYPE_LABEL[item.type]}</b> ${item.ok ? "正確" : "錯誤"}</p>
+      <p>${item.stem}</p>
+      ${photo}
+      <p>你的答案：<b>${item.chosen}</b>　正確：<b>${item.answer}</b></p>
+      <p class="muted">性味：${h["性味"] || ""}　類別：${h["類別"] || ""}</p>
+      <p class="muted">功效：${h["功效"] || ""}</p>
+      <p>鏡頭提示：${h.tip || ""}</p>
+    </article>`;
+  }).join("");
+  document.getElementById("quizScore").textContent = quizScore + " / 10";
+  document.getElementById("quizBox").innerHTML = `
+    <div id="report">
+      <h3>個人詳細報告</h3>
+      <p>${name} · ${cls} (${no}) · Division ${div} · ${scope}</p>
+      <p class="progress" style="font-size:1.4rem">${quizScore} / 10　${quizScore * 10}%</p>
+      <p class="muted">${when} · SSGC Biology · Ms Lai Kam Fung</p>
+      <h3>題型表現</h3>
+      <table><thead><tr><th>題型</th><th>得分</th></tr></thead><tbody>${typeRows}</tbody></table>
+      <p>${misses.length === 0 ? "今次全部答對。" : "失分主要在：<b>" + missNames.join("、") + "</b>。"}</p>
+      <p>${advice}</p>
+      <h3>逐題回顧</h3>
+      ${items}
+      <p class="noprint">
+        <button class="act" id="printReport">列印報告</button>
+        <button class="act ghost" id="dlReport">下載報告</button>
+        <button class="act ghost" id="quizAgain">再做一組</button>
+      </p>
+    </div>`;
+  document.getElementById("printReport").addEventListener("click", () => window.print());
+  document.getElementById("dlReport").addEventListener("click", () => downloadReport(name, cls, no, div, scope, when));
+  document.getElementById("quizAgain").addEventListener("click", startQuiz);
+}
+function downloadReport(name, cls, no, div, scope, when) {
+  const node = document.getElementById("report").cloneNode(true);
+  node.querySelectorAll(".noprint").forEach(el => el.remove());
+  const html = "<!DOCTYPE html><html lang='zh-Hant'><head><meta charset='utf-8'><title>AI Vision quiz report</title>"
+    + "<style>body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;max-width:800px;margin:24px auto;line-height:1.5}"
+    + ".ok{border-left:4px solid #2F6F4E;padding-left:10px;margin:12px 0}"
+    + ".bad{border-left:4px solid #9A4A2A;padding-left:10px;margin:12px 0}"
+    + "img{max-height:140px;max-width:100%}</style></head><body>"
+    + node.innerHTML + "</body></html>";
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const a = document.createElement("a");
+  const safe = (name || "student").replace(/[^A-Za-z0-9_-]+/g, "_");
+  a.href = URL.createObjectURL(blob);
+  a.download = "AI-Vision-quiz-" + safe + "-" + cls + no + ".html";
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 document.getElementById("quizStart").addEventListener("click", startQuiz);
 
