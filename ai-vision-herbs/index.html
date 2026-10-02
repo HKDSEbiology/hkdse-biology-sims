@@ -175,7 +175,8 @@ button.ghost { background: #fff; }
     <ul>
       <li>Makeblock AI Cam 2.0 + CyberPi</li>
       <li>mTraining：<a href="https://mtraining.mblock.cc/" target="_blank" rel="noopener">mtraining.mblock.cc</a></li>
-      <li>拍攝：<b>主要用 AI Cam 連接 mTraining 實拍</b>（與賽日同一顆鏡頭、同一色準）。TG-7 / iPad 只作備份，不要當主訓練集。</li>
+      <li>官方說明：<a href="https://support.makeblock.com/hc/en-us/sections/30900703738263-AI-Camera-2-0" target="_blank" rel="noopener">AI Camera 2.0 Help Center</a>（訓練／部署：<a href="https://support.makeblock.com/hc/en-us/articles/34966303225751-Deploy-and-Train-General-Models" target="_blank" rel="noopener">Deploy and Train General Models</a>）</li>
+      <li>拍攝：<b>主要用 AI Cam 在 mTraining 做 Device Collection</b>（與賽日同一顆鏡頭）。TG-7 / iPad 只作備份。</li>
       <li>藥材：以老師提供的乾藥材／大會圖片集為準。校園活體植物只作平時練習，賽日是乾品白碟。</li>
       <li>查詢：Ms Lai Kam Fung（生物科）</li>
     </ul>
@@ -186,7 +187,7 @@ button.ghost { background: #fff; }
   <h2>訓練 AI Cam 流程</h2>
   <div class="card ok">
     <h3>建議：用 AI Cam 拍訓練照 —— 這策略是好的</h3>
-    <p>賽日評判看的是 <b>AI Cam</b> 眼前的白碟，不是手機相。用同一顆鏡頭、同一距離、同一白碟來訓練，顏色和變形才對得上。mTraining 本來就支援「連接 AI Cam 拍照」。TG-7 / iPad 可以備份，但不要當主資料。</p>
+    <p>賽日評判看的是 <b>AI Cam</b> 眼前的白碟，不是手機相。用同一顆鏡頭、同一距離、同一白碟來訓練，顏色和變形才對得上。Makeblock 官方支援兩種入圖：<b>Device Collection</b>（鏡頭直傳 mTraining）或電腦上傳。TG-7 / iPad 可以備份，但不要當主資料。</p>
     <p>六人合練 <b>一個模型</b>，再把同一個 QR Code 載入 <b>3 部 AI Cam</b>（三隊各用一部）——這也是對的。類別名稱必須完全一樣，否則三部機會認成三種字。</p>
   </div>
   <div class="card">
@@ -197,7 +198,7 @@ button.ghost { background: #fff; }
       <li><b>中等（每種 10 張）：</b>3 張不同堆法，再裁特寫。對象：百合、龍眼肉、桑椹、白扁豆、花椒、小茴香、丁香、益母草、雞骨草。</li>
       <li><b>易混（每種 15–21 張）：</b>以全碟為主，換堆法、遠近、光線；每部 AI Cam 至少 2 張。根類（白茅根／北沙參／當歸／桔梗／巴戟天）、麥冬／浙貝母、肉桂／杜仲、菊花／夏枯草、枸杞／山楂／女貞子、蓮子／芡實／薏苡仁、苦杏仁。</li>
     </ul>
-    <p class="muted">裁切守則：每塊仍要看得出是該種藥，不要裁到空白碟。官方圖可作補充，但 500 張配額先留給 AI Cam 實拍。</p>
+    <p class="muted">裁切守則：每塊仍要看得出是該種藥，不要裁到空白碟。鏡頭直傳（Device Collection）是整張圖；要裁切，請先用 USB 匯出或從電腦上傳（見下方官方步驟）。官方圖可作補充，但 500 張配額先留給 AI Cam 實拍。</p>
   </div>
   <div class="card">
     <h3>六人分工 → 一個模型 → 三部鏡頭</h3>
@@ -212,27 +213,22 @@ button.ghost { background: #fff; }
     <p>易混藥材請用 3 部鏡頭各拍 2 張，避免「只在鏡頭 1 訓練、鏡頭 2／3 賽日認不到」。</p>
   </div>
   <div class="card">
-    <h3>階段一：收集照片</h3>
-    <ul>
-      <li><b>主方法 · AI Cam 實拍：</b>藥材放<b>白色圓碟</b>，用 mTraining 連接 AI Cam 拍照。這是訓練集的主體。</li>
-      <li><b>補充 · 官方圖：</b>本頁藥材卡的白碟／膠袋圖可少量加入，讓模型見過大會標準樣。不要從購物網站亂抓。</li>
-    </ul>
-    <p class="muted">類別名稱請用<b>正確中文名</b>，三部機器必須同一套標籤。</p>
-  </div>
-  <div class="card">
-    <h3>階段二：mTraining → QR Code → AI Cam</h3>
+    <h3>官方步驟：用 AI Cam 拍進 mTraining（Makeblock Help Center）</h3>
+    <p class="muted">對照原文：<a href="https://support.makeblock.com/hc/en-us/articles/34966303225751-Deploy-and-Train-General-Models" target="_blank" rel="noopener">Deploy and Train General Models</a>。六人共用<b>同一個學校帳號、同一個 Training Project</b>。</p>
     <ol class="steps">
-      <li>用電腦開啟 mTraining，登入學校帳號。</li>
-      <li>新建項目：選擇<b>圖像檢測／圖像分類</b>（跟課堂示範；不要選錯成語音）。</li>
-      <li>每種藥材一個數據集／類別，上傳該類全部照片。</li>
-      <li>開始訓練，不要關閉分頁。</li>
-      <li>訓練完成後產生 QR Code，用 AI Cam 掃描導入模型。</li>
+      <li>電腦開 <a href="https://mtraining.mblock.cc/" target="_blank" rel="noopener">mtraining.mblock.cc</a>，登入 → <b>Training Projects → New Project</b>。任務類型選 <b>Image Classification（圖像分類）</b>：一碟一種藥、螢幕出中文名。若 10 月 17 日工作坊規定用 Image Detection（圖像檢測），跟大會，並為每張圖畫框。</li>
+      <li><b>Select Dataset → Create New Dataset</b>，類型必須與專案相同。</li>
+      <li><b>主方法 · Device Collection：</b>按 Device Collection → 左欄選 Training Set → <b>Generate QR Code</b>。AI Cam 點 <b>Self-trained Model → Collect Image</b>，掃描電腦上的 QR。對準白碟按 Photo，左下角出現 <b>Uploaded</b> 才算成功。<b>QR Code 只有效 5 分鐘</b>，過期按 Refresh。</li>
+      <li><b>裁切／補圖 · 電腦上傳：</b>Upload Images。要把鏡頭相裁成多塊：USB 接電腦，<b>長按 Learn 鍵</b>至出現約 8 GB 磁碟再放手，複製照片後裁切再上傳（<a href="https://support.makeblock.com/hc/en-us/articles/30900768675223-Use-Recognition-Features-of-AI-Camera-2-0" target="_blank" rel="noopener">Taking photos</a>）。鏡頭需連 Wi-Fi，否則時間會顯示 1970。</li>
+      <li><b>Annotate Data：</b>Add Label，39 個名稱與本頁完全相同（包括「苦杏仁 / 北杏」）。圖像分類：整張圖標一個名。全部標完才訓練。</li>
+      <li><b>Create Training Task：</b>Batch Size 8–16，Epochs 約 50–200，Learning Rate 預設 0.001。不要關閉分頁。</li>
+      <li><b>Deploy：</b>產生 QR → AI Cam 點 <b>Self-trained Model → Deploy Model</b> → 掃描。三部鏡頭掃<b>同一個</b>部署 QR。</li>
     </ol>
   </div>
   <div class="card">
-    <h3>階段三：CyberPi 顯示中文名</h3>
+    <h3>CyberPi 顯示中文名</h3>
     <p>鏡頭認出藥材後，把名稱傳到 CyberPi。比賽<b>不必出聲</b>，螢幕顯示正確中文名即可。語音是加分示範，不是評分必須。</p>
-    <p>程式通常只需幾塊積木：鏡頭辨識 → 讀取標籤 → 顯示文字。</p>
+    <p>程式通常只需幾塊積木：鏡頭辨識 → 讀取標籤 → 顯示文字。接線與積木見 Help Center 的 <b>Use AI Camera 2.0 with CyberPi</b>：<a href="https://support.makeblock.com/hc/en-us/sections/30900703738263-AI-Camera-2-0" target="_blank" rel="noopener">AI Camera 2.0 專區</a>。</p>
   </div>
   <div class="card warn">
     <h3>提高準確率的拍攝守則</h3>
@@ -328,7 +324,16 @@ button.ghost { background: #fff; }
         <li><a href="downloads/photo-checklist.pdf" download>拍攝清單（可打勾，含 500 張配額）</a></li>
         <li><a href="downloads/team-plan.pdf" download>六人分工＋一個模型＋三部鏡頭</a></li>
         <li><a href="downloads/herbs.csv" download>39 種資料表（Excel / CSV）</a></li>
-        <li><a href="downloads/ai-cam-training.pdf" download>AI Cam + mTraining 步驟</a></li>
+        <li><a href="downloads/ai-cam-training.pdf" download>大會 AI Cam + mTraining 簡報</a></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Makeblock 官方 Help Center</h3>
+      <ul>
+        <li><a href="https://support.makeblock.com/hc/en-us/sections/30900703738263-AI-Camera-2-0" target="_blank" rel="noopener">AI Camera 2.0 專區（總目錄）</a></li>
+        <li><a href="https://support.makeblock.com/hc/en-us/articles/34966303225751-Deploy-and-Train-General-Models" target="_blank" rel="noopener">Deploy and Train General Models（拍圖、標註、訓練、QR 部署）</a></li>
+        <li><a href="https://support.makeblock.com/hc/en-us/articles/30900768675223-Use-Recognition-Features-of-AI-Camera-2-0" target="_blank" rel="noopener">Recognition Features（拍照／USB 匯出）</a></li>
+        <li><a href="https://mtraining.mblock.cc/" target="_blank" rel="noopener">mTraining 平台</a></li>
       </ul>
     </div>
     <div class="card">
