@@ -157,6 +157,16 @@
         <a class="btn ghost" href="../photo-mc/teacher.html">Paper statistics</a>
       </div>
     </article>
+    <article class="card topic">
+      <span class="level">F.4 · 32 items · live</span>
+      <h3>Membrane permeability</h3>
+      <p id="count-membrane" class="muted">No submissions yet.</p>
+      <p>Two 16-item practices on diffusion, osmosis, experiments and active transport. Same identity fields.</p>
+      <div class="links">
+        <a class="btn primary" href="../membrane-mc/index.html">Student practice</a>
+        <a class="btn ghost" href="../membrane-mc/teacher.html">Item statistics</a>
+      </div>
+    </article>
     <article class="card topic soon">
       <span class="level">Next papers</span>
       <h3>More MC topics</h3>
@@ -334,9 +344,11 @@ function render() {
   const elCell = document.getElementById("count-cell");
   const elDiv = document.getElementById("count-div");
   const elPhoto = document.getElementById("count-photo");
+  const elMem = document.getElementById("count-membrane");
   if (elCell) elCell.textContent = paperCount("cellular");
   if (elDiv) elDiv.textContent = paperCount("cell cycle");
   if (elPhoto) elPhoto.textContent = paperCount("photosynthesis");
+  if (elMem) elMem.textContent = paperCount("membrane");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
