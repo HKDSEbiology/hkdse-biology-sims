@@ -2,6 +2,7 @@
 Thumbs.db
 *.psd
 *.docx
+!teacher/papers/*.docx
 submit_url.txt
 __pycache__/
 venv/
