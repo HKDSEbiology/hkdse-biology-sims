@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 220" width="460" height="220">
+  <rect width="460" height="220" fill="#fff"/>
+  <ellipse cx="220" cy="110" rx="150" ry="78" fill="#f4f8ee" stroke="#1f7a6c" stroke-width="3"/>
+  <ellipse cx="220" cy="110" rx="128" ry="58" fill="none" stroke="#2f6f9e" stroke-width="2.5"/>
+  <path d="M110 110 C130 70, 150 70, 170 110 S210 150, 230 110 S270 70, 290 110 S330 150, 330 110" fill="none" stroke="#2f6f9e" stroke-width="2.5"/>
+  <text x="28" y="48" font-size="14" font-family="Segoe UI, sans-serif" fill="#1c2430">X cytoplasm</text>
+  <line x1="70" y1="54" x2="78" y2="70" stroke="#1c2430"/>
+  <text x="200" y="118" font-size="14" font-family="Segoe UI, sans-serif" fill="#1c2430">Y</text>
+  <text x="338" y="78" font-size="14" font-family="Segoe UI, sans-serif" fill="#1c2430">Z</text>
+  <line x1="330" y1="82" x2="292" y2="96" stroke="#1c2430"/>
+  <text x="20" y="208" font-size="12" font-family="Segoe UI, sans-serif" fill="#5a6b7c">X outside the organelle | Y matrix | Z inner membrane / crista</text>
+</svg>
