@@ -163,17 +163,6 @@
     </article>
     <article class="card topic">
       <span class="level">F.4 · 32 items · live</span>
-      <h3>Membrane permeability</h3>
-      <p id="count-membrane" class="muted">No submissions yet.</p>
-      <p>Two 16-item practices on diffusion, osmosis, experiments and active transport. Same identity fields.</p>
-      <div class="links">
-        <a class="btn primary" href="../membrane-mc/index.html">Student practice</a>
-        <a class="btn ghost" href="../membrane-mc/teacher.html">Item statistics</a>
-        <a class="btn word" href="papers/membrane-permeability-web.docx">Word paper (same Q numbers as web)</a>
-      </div>
-    </article>
-    <article class="card topic">
-      <span class="level">F.4 · 32 items · live</span>
       <h3>Respiration</h3>
       <p id="count-respiration" class="muted">No submissions yet.</p>
       <p>Two 16-item practices on meaning, experiments, mitochondria, RQ and plants. Same identity fields.</p>
@@ -355,12 +344,10 @@ function render() {
   const elCell = document.getElementById("count-cell");
   const elDiv = document.getElementById("count-div");
   const elPhoto = document.getElementById("count-photo");
-  const elMem = document.getElementById("count-membrane");
   const elResp = document.getElementById("count-respiration");
   if (elCell) elCell.textContent = paperCount("cellular");
   if (elDiv) elDiv.textContent = paperCount("cell cycle");
   if (elPhoto) elPhoto.textContent = paperCount("photosynthesis");
-  if (elMem) elMem.textContent = paperCount("membrane");
   if (elResp) elResp.textContent = paperCount("respiration");
 
   const stats = itemStats();
