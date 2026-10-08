@@ -172,6 +172,18 @@
         <a class="btn word" href="papers/respiration-web.docx">Word paper (same Q numbers as web)</a>
       </div>
     </article>
+    <article class="card topic">
+      <span class="level">F.4 · 44 items · live</span>
+      <h3>Membrane transport</h3>
+      <p id="count-membrane" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–22 and Q23–44. Same identity fields. Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../membrane-mc/index.html">Student practice</a>
+        <a class="btn ghost" href="../membrane-mc/teacher.html">Item statistics</a>
+        <a class="btn word" href="papers/membrane-ch3-review-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
+
   </section>
 
   <footer>
@@ -349,6 +361,8 @@ function render() {
   if (elDiv) elDiv.textContent = paperCount("cell cycle");
   if (elPhoto) elPhoto.textContent = paperCount("photosynthesis");
   if (elResp) elResp.textContent = paperCount("respiration");
+  const elMem = document.getElementById("count-membrane");
+  if (elMem) elMem.textContent = paperCount("membrane");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `

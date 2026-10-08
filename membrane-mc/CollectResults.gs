@@ -1,8 +1,8 @@
 /**
- * Membrane permeability F.4 MC — collect student answers
+ * Membrane transport F.4 MC — collect student answers
  *
  * Setup (once, signed in as the teacher):
- * 1. New Google Sheet. Name it "Membrane permeability F.4 MC results".
+ * 1. New Google Sheet. Name it "Membrane transport F.4 MC results".
  * 2. Extensions → Apps Script. Delete the stub. Paste THIS whole file.
  * 3. Save. Run setup. Grant permission when asked.
  * 4. Deploy → New deployment → Type: Web app
