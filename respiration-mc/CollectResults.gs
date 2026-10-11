@@ -15,7 +15,7 @@
  * Optional: run rebuildItemStats after a class to refresh the Item_stats sheet.
  */
 
-var TOKEN = "respiration-2026";
+var TOKEN = "respiration-36-2026";
 
 var ATTEMPT_HEADERS = [
   "attempt_id", "when_iso", "name", "class", "class_no", "division", "practice_id",

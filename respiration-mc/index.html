@@ -51,18 +51,18 @@
 <body>
 <header>
   <h1>Respiration · F.4</h1>
-  <p>Two practices of 16 questions (Q1–32). Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
+  <p>Two practices (Q1–18 and Q19–36). Question numbers match the Word paper. Enter your name in English (same as your ID card), class, class number and biology division, then choose one practice.</p>
 </header>
 <main id="app"></main>
 <script src="../submit-config.js?v=live2"></script>
 <script src="../results-store.js?v=live2"></script>
-<script src="questions.js"></script>
+<script src="questions.js?v=36"></script>
 <script>
 const BANK = window.RESPIRATION_BANK;
 const app = document.getElementById("app");
-const KEY = "respiration-mc-v1";
-const SUBMIT_TOKEN = "respiration-2026";
-const PAPER = "Respiration F.4 MC";
+const KEY = "respiration-mc-v2";
+const SUBMIT_TOKEN = "respiration-36-2026";
+const PAPER = "Respiration 36 MC";
 const REPORT_HEAD = "Respiration · personal report";
 const REPORT_FOOT = "Personal report · HKDSE Biology · F.4 Respiration";
 const REPORT_FILE = "report_F4_respiration_";
@@ -190,7 +190,7 @@ function renderQ() {
     <p class="small">${esc(state.name)} · ${esc(state.cls)} (${esc(state.classNo)}) · ${esc(state.division)} · ${esc(s.title)} · ${esc(s.subtitle)}</p>
     <div class="bar"><span style="width:${pct}%"></span></div>
     <section class="card">
-      <p class="small">${review ? "Review · " : ""}Question ${it.n} of 32</p>
+      <p class="small">${review ? "Review · " : ""}Question ${it.n}</p>
       ${it.directions ? `<p class="small">${esc(it.directions)}</p>` : ""}
       ${tableHtml(it.table)}
       <p class="stem"></p>
