@@ -183,6 +183,17 @@
         <a class="btn word" href="papers/membrane-web.docx">Word paper (same Q numbers as web)</a>
       </div>
     </article>
+    <article class="card topic">
+      <span class="level">32 items · live</span>
+      <h3>Reproduction in plants</h3>
+      <p id="count-plant-repro" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–16 and Q17–32. Same identity fields. Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../plant-repro-mc/index.html?v=r1">Student practice</a>
+        <a class="btn ghost" href="../plant-repro-mc/teacher.html?v=r1">Item statistics</a>
+        <a class="btn word" href="papers/plant-reproduction-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
 
   </section>
 
@@ -363,6 +374,8 @@ function render() {
   if (elResp) elResp.textContent = paperCount("respiration");
   const elMem = document.getElementById("count-membrane");
   if (elMem) elMem.textContent = paperCount("membrane");
+  const elPlant = document.getElementById("count-plant-repro");
+  if (elPlant) elPlant.textContent = paperCount("reproduction in plants");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
