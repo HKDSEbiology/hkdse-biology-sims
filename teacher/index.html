@@ -205,6 +205,17 @@
         <a class="btn word" href="papers/transport-humans-web.docx">Word paper (same Q numbers as web)</a>
       </div>
     </article>
+    <article class="card topic">
+      <span class="level">32 items · live</span>
+      <h3>Reproduction in humans</h3>
+      <p id="count-human-repro" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–16 (reproductive systems and the menstrual cycle) and Q17–32 (pregnancy, birth and contraception). Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../human-repro-mc/index.html?v=h1">Student practice</a>
+        <a class="btn ghost" href="../human-repro-mc/teacher.html?v=h1">Item statistics</a>
+        <a class="btn word" href="papers/human-reproduction-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
 
   </section>
 
@@ -389,6 +400,8 @@ function render() {
   if (elPlant) elPlant.textContent = paperCount("reproduction in plants");
   const elTrans = document.getElementById("count-transport");
   if (elTrans) elTrans.textContent = paperCount("transport in humans");
+  const elHuman = document.getElementById("count-human-repro");
+  if (elHuman) elHuman.textContent = paperCount("reproduction in humans");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
