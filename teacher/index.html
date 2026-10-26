@@ -194,6 +194,17 @@
         <a class="btn word" href="papers/plant-reproduction-web.docx">Word paper (same Q numbers as web)</a>
       </div>
     </article>
+    <article class="card topic">
+      <span class="level">32 items · live</span>
+      <h3>Transport in humans</h3>
+      <p id="count-transport" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–16 (tissue fluid and lymph) and Q17–32 (heart and circulation). Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../transport-humans-mc/index.html?v=t1">Student practice</a>
+        <a class="btn ghost" href="../transport-humans-mc/teacher.html?v=t1">Item statistics</a>
+        <a class="btn word" href="papers/transport-humans-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
 
   </section>
 
@@ -376,6 +387,8 @@ function render() {
   if (elMem) elMem.textContent = paperCount("membrane");
   const elPlant = document.getElementById("count-plant-repro");
   if (elPlant) elPlant.textContent = paperCount("reproduction in plants");
+  const elTrans = document.getElementById("count-transport");
+  if (elTrans) elTrans.textContent = paperCount("transport in humans");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
