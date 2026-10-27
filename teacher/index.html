@@ -173,6 +173,17 @@
       </div>
     </article>
     <article class="card topic">
+      <span class="level">32 items · live</span>
+      <h3>Gas exchange in humans</h3>
+      <p id="count-gas-exchange" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–16 (airways, mucus, inspired and expired air) and Q17–32 (ventilation, the air sac, exercise and smoking). Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../gas-exchange-humans-mc/index.html?v=g1">Student practice</a>
+        <a class="btn ghost" href="../gas-exchange-humans-mc/teacher.html?v=g1">Item statistics</a>
+        <a class="btn word" href="papers/gas-exchange-humans-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
+    <article class="card topic">
       <span class="level">F.4 · 44 items · live</span>
       <h3>Membrane transport</h3>
       <p id="count-membrane" class="muted">No submissions yet.</p>
@@ -394,6 +405,8 @@ function render() {
   if (elDiv) elDiv.textContent = paperCount("cell cycle");
   if (elPhoto) elPhoto.textContent = paperCount("photosynthesis");
   if (elResp) elResp.textContent = paperCount("respiration");
+  const elGas = document.getElementById("count-gas-exchange");
+  if (elGas) elGas.textContent = paperCount("gas exchange in humans");
   const elMem = document.getElementById("count-membrane");
   if (elMem) elMem.textContent = paperCount("membrane");
   const elPlant = document.getElementById("count-plant-repro");
