@@ -162,6 +162,17 @@
       </div>
     </article>
     <article class="card topic">
+      <span class="level">17 items · live</span>
+      <h3>Nutrition and gas exchange in plants</h3>
+      <p id="count-plant-nutrition" class="muted">No submissions yet.</p>
+      <p>One practice, Q1–17. Minerals, water culture, and gas exchange. Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../plant-nutrition-mc/index.html?v=n1">Student practice</a>
+        <a class="btn ghost" href="../plant-nutrition-mc/teacher.html?v=n1">Item statistics</a>
+        <a class="btn word" href="papers/plant-nutrition-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
+    <article class="card topic">
       <span class="level">36 items · live</span>
       <h3>Respiration</h3>
       <p id="count-respiration" class="muted">No submissions yet.</p>
@@ -415,6 +426,8 @@ function render() {
   if (elTrans) elTrans.textContent = paperCount("transport in humans");
   const elHuman = document.getElementById("count-human-repro");
   if (elHuman) elHuman.textContent = paperCount("reproduction in humans");
+  const elPlantNut = document.getElementById("count-plant-nutrition");
+  if (elPlantNut) elPlantNut.textContent = paperCount("nutrition and gas exchange in plants");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
