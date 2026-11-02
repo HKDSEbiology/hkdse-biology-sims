@@ -173,6 +173,17 @@
       </div>
     </article>
     <article class="card topic">
+      <span class="level">32 items · live</span>
+      <h3>Transpiration, transport and support in plants</h3>
+      <p id="count-plant-transport" class="muted">No submissions yet.</p>
+      <p>Two practices, Q1–16 (transpiration, stomata and the potometer) and Q17–32 (absorption, xylem, phloem and support). Question numbers match the Word paper.</p>
+      <div class="links">
+        <a class="btn primary" href="../plant-transport-mc/index.html?v=pt1">Student practice</a>
+        <a class="btn ghost" href="../plant-transport-mc/teacher.html?v=pt1">Item statistics</a>
+        <a class="btn word" href="papers/plant-transport-web.docx">Word paper (same Q numbers as web)</a>
+      </div>
+    </article>
+    <article class="card topic">
       <span class="level">36 items · live</span>
       <h3>Respiration</h3>
       <p id="count-respiration" class="muted">No submissions yet.</p>
@@ -428,6 +439,8 @@ function render() {
   if (elHuman) elHuman.textContent = paperCount("reproduction in humans");
   const elPlantNut = document.getElementById("count-plant-nutrition");
   if (elPlantNut) elPlantNut.textContent = paperCount("nutrition and gas exchange in plants");
+  const elPlantTrans = document.getElementById("count-plant-transport");
+  if (elPlantTrans) elPlantTrans.textContent = paperCount("transpiration, transport and support");
 
   const stats = itemStats();
   document.getElementById("items").innerHTML = stats.length ? `
