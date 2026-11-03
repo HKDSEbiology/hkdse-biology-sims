@@ -1,0 +1,641 @@
+{
+  "cards": [
+    {
+      "file": "p1_01.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_02.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_03.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_04.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_05.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_06.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p1_07.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_08.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_09.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_10.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_11.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_12.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p1_13.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p1_14.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p1_15.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p1_16.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p1_17.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p1_18.jpg",
+      "page": 1,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_01.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_02.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_03.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_04.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_05.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_06.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p2_07.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_08.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_09.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_10.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_11.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_12.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p2_13.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_14.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_15.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_16.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_17.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p2_18.jpg",
+      "page": 2,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p3_01.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p3_02.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p3_03.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p3_04.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 1
+    },
+    {
+      "file": "p3_05.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p3_06.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p3_07.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p3_08.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 2
+    },
+    {
+      "file": "p3_09.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p3_10.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p3_11.jpg",
+      "page": 3,
+      "kind": "resource",
+      "row": 3
+    },
+    {
+      "file": "p4_01.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_02.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_03.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_04.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_05.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_06.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p4_07.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_08.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_09.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_10.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_11.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_12.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p4_13.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p4_14.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p4_15.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p4_16.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p4_17.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p4_18.jpg",
+      "page": 4,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_01.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_02.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_03.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_04.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_05.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_06.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p5_07.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_08.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_09.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_10.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_11.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_12.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p5_13.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_14.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_15.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_16.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_17.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p5_18.jpg",
+      "page": 5,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_01.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_02.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_03.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_04.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_05.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_06.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p6_07.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_08.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_09.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_10.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_11.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_12.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p6_13.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_14.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_15.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_16.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_17.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p6_18.jpg",
+      "page": 6,
+      "kind": "question",
+      "row": 3
+    },
+    {
+      "file": "p7_01.jpg",
+      "page": 7,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p7_02.jpg",
+      "page": 7,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p7_03.jpg",
+      "page": 7,
+      "kind": "question",
+      "row": 1
+    },
+    {
+      "file": "p7_04.jpg",
+      "page": 7,
+      "kind": "question",
+      "row": 2
+    },
+    {
+      "file": "p7_05.jpg",
+      "page": 7,
+      "kind": "question",
+      "row": 2
+    }
+  ],
+  "pdf": "downloads/competition-cards.pdf"
+}

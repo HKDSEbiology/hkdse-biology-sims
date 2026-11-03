@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>比賽卡練習 · AI Vision 智辨百草</title>
+<style>
+:root { --navy:#1F3A5F; --paper:#F7F4EE; --ink:#243044; --line:#E4DDD0; --gold:#C4A35A; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:"Segoe UI","Microsoft JhengHei",sans-serif; background:var(--paper); color:var(--ink); }
+header { background:var(--navy); color:#fff; padding:16px 18px 14px; }
+header a { color:#fff; }
+header h1 { margin:0 0 4px; font-size:1.25rem; }
+header p { margin:0; color:#d9d3c7; font-size:.92rem; }
+.wrap { max-width:820px; margin:0 auto; padding:14px 14px 48px; }
+.modes { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 12px; }
+.modes button, .row button {
+  border:1px solid var(--line); background:#fff; color:var(--navy);
+  padding:8px 12px; border-radius:999px; cursor:pointer; font-weight:600;
+}
+.modes button.on { background:var(--navy); color:#fff; border-color:var(--navy); }
+.hint { color:#5C6B7A; font-size:.92rem; line-height:1.45; }
+.stage { position:relative; max-width:440px; margin:12px auto; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 24px rgba(36,48,68,.12); }
+.stage img { width:100%; display:block; }
+.mask { position:absolute; background:#f3ecdf; display:none; }
+.mask span { position:absolute; left:0; right:0; top:38%; text-align:center; color:#8a7b62; font-weight:700; }
+.stage.photo .top { display:block; left:0; right:0; top:0; height:18%; }
+.stage.photo .bottom { display:block; left:0; right:0; bottom:0; height:40%; }
+.stage.photo .side { display:block; right:0; top:16%; width:24%; height:44%; }
+.stage.facts .bottom { display:block; left:0; right:0; bottom:0; height:42%; }
+.stage.question .bottom { display:block; left:0; right:0; bottom:0; height:36%; }
+.stage.show .mask { display:none; }
+.row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; }
+.row .go { background:var(--navy); color:#fff; border-color:var(--navy); }
+.prog { color:#5C6B7A; }
+</style>
+</head>
+<body>
+<header>
+  <h1>比賽卡練習</h1>
+  <p><a href="index.html">返回溫習筆記</a> · 先答，再揭曉 · Ms Lai Kam Fung／Ms Ng Hoi Kiu</p>
+</header>
+<div class="wrap">
+  <p class="hint" id="hint"></p>
+  <div class="modes" id="modes">
+    <button data-mode="photo" class="on">認圖</button>
+    <button data-mode="facts">背卡</button>
+    <button data-mode="question">答題</button>
+    <button data-mode="rules">功能卡</button>
+  </div>
+  <div class="stage photo" id="stage"><img id="pic" alt="比賽卡">
+    <div class="mask top"></div>
+    <div class="mask side"><span>先說名稱</span></div>
+    <div class="mask bottom"></div>
+  </div>
+  <div class="row">
+    <button class="go" id="reveal">揭曉</button>
+    <button id="next">下一張</button>
+    <span class="prog" id="prog"></span>
+  </div>
+</div>
+<script>
+const FUNCTION = new Set(["p2_07.jpg","p2_18.jpg","p3_06.jpg","p3_07.jpg","p3_08.jpg","p3_09.jpg","p3_10.jpg","p3_11.jpg"]);
+const HINT = {
+  photo: "第一回合：只看照片，說出中文名。類別和功效已遮住。",
+  facts: "看名稱，說出這張卡上的類別、性味、產地，以及功效那一句短句。背卡上的字，不必背浸大長文。",
+  question: "第二回合：先作答，再按揭曉。基礎題說類別／性味／產地／來源／品質；是非題先講「是」或「否」；配對題可多於一種；情景題先對形態和性味。",
+  rules: "功能卡不用背藥名。看懂打出後怎樣做：跳過、百搭、加牌、加分、倒轉、問 AI、指定下一個。"
+};
+
+let deck = [], all = [], mode = "photo", i = 0, open = false;
+
+function shuffle(a) {
+  for (let n = a.length - 1; n > 0; n--) {
+    const j = Math.floor(Math.random() * (n + 1));
+    [a[n], a[j]] = [a[j], a[n]];
+  }
+  return a;
+}
+function pool() {
+  if (mode === "question") return all.filter(c => c.kind === "question");
+  if (mode === "rules") return all.filter(c => FUNCTION.has(c.file));
+  return all.filter(c => c.kind === "resource" && !FUNCTION.has(c.file));
+}
+function show() {
+  const c = deck[i];
+  document.getElementById("pic").src = "cards/" + c.file;
+  document.getElementById("prog").textContent = (i + 1) + " / " + deck.length;
+  open = false;
+  const stage = document.getElementById("stage");
+  stage.className = "stage " + mode;
+  document.getElementById("reveal").textContent = mode === "rules" ? "下一張" : "揭曉";
+}
+function start(m) {
+  mode = m;
+  document.querySelectorAll(".modes button").forEach(b => b.classList.toggle("on", b.dataset.mode === m));
+  document.getElementById("hint").textContent = HINT[m];
+  deck = shuffle(pool().slice());
+  i = 0;
+  if (deck.length) show();
+}
+document.getElementById("modes").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (b) start(b.dataset.mode);
+});
+document.getElementById("reveal").addEventListener("click", () => {
+  if (mode === "rules") { i = (i + 1) % deck.length; show(); return; }
+  if (!open) {
+    open = true;
+    document.getElementById("stage").classList.add("show");
+    document.getElementById("reveal").textContent = "下一張";
+  } else {
+    i = (i + 1) % deck.length;
+    show();
+  }
+});
+document.getElementById("next").addEventListener("click", () => { i = (i + 1) % deck.length; show(); });
+document.addEventListener("keydown", e => {
+  if (e.key === " " || e.key === "Enter") { e.preventDefault(); document.getElementById("reveal").click(); }
+  if (e.key === "ArrowRight") document.getElementById("next").click();
+});
+fetch("cards/manifest.json").then(r => r.json()).then(data => {
+  all = data.cards;
+  start("photo");
+});
+</script>
+</body>
+</html>
