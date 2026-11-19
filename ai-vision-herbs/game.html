@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>百草模擬 · AI Vision 智辨百草</title>
+<style>
+:root { --navy:#1F3A5F; --paper:#F7F4EE; --ink:#243044; --line:#E4DDD0; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:"Segoe UI","Microsoft JhengHei",sans-serif; background:var(--paper); color:var(--ink); }
+header { background:var(--navy); color:#fff; padding:16px 18px 14px; }
+header a { color:#fff; }
+header h1 { margin:0 0 4px; font-size:1.25rem; }
+header p { margin:0; color:#d9d3c7; font-size:.92rem; }
+.wrap { max-width:760px; margin:0 auto; padding:14px 14px 48px; }
+.bar { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:8px 0; }
+.clock { font-size:2.2rem; font-weight:800; color:var(--navy); min-width:3ch; text-align:right; }
+.clock.hot { color:#9b2c2c; }
+.q { background:#fff; border-radius:14px; padding:16px; min-height:92px; box-shadow:0 8px 24px rgba(36,48,68,.08); }
+.tag { color:var(--navy); font-weight:700; font-size:.85rem; }
+.hand, .choices, .row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+button { border:1px solid var(--line); background:#fff; color:var(--navy); padding:8px 12px; border-radius:999px; cursor:pointer; font-weight:600; font-family:inherit; }
+button.on { background:var(--navy); color:#fff; }
+button.go { background:var(--navy); color:#fff; }
+button:disabled { opacity:.45; cursor:default; }
+.hint, .msg { color:#5C6B7A; line-height:1.45; }
+.msg { min-height:1.4em; font-weight:700; color:var(--ink); }
+</style>
+</head>
+<body>
+<header>
+  <h1>百草模擬</h1>
+  <p><a href="index.html">返回溫習筆記</a> · 一人練習第二回合 · 題目不限於比賽卡</p>
+</header>
+<div class="wrap">
+  <div class="bar">
+    <span id="mine">你的牌 0</span>
+    <span id="cpu">電腦 0</span>
+    <span class="clock" id="clock">–</span>
+  </div>
+  <p class="hint" id="hint">先按「開始一局」。必答 10 秒、不出牌。搶答先按搶答，再只准出一張牌。</p>
+  <div class="q"><div class="tag" id="tag">準備</div><p id="text">開局有 10 張牌。牌沒有了就淘汰。搶答答對可向電腦抽 1 張。</p></div>
+  <div class="hand" id="hand"></div>
+  <div class="choices" id="choices"></div>
+  <div class="row">
+    <button class="go" id="buzz" disabled>搶答</button>
+    <button id="yes" disabled>是</button>
+    <button id="no" disabled>否</button>
+    <button id="send" disabled>交出這一張</button>
+    <button id="start">開始一局</button>
+  </div>
+  <p class="msg" id="msg"></p>
+</div>
+<script>
+const HERBS = [{"n": "白茅根", "c": "根及根莖類", "t": "甘、寒", "p": "河南、遼寧、河北、山西、山東、陝西、新疆等北方地區", "s": "根莖長圓柱形，有時分枝，長短不一，長30~60cm，直徑2~4mm"}, {"n": "巴戟天", "c": "根及根莖類", "t": "辛、甘，溫", "p": "廣東、廣西、福建、海南等地", "s": "根扁圓柱形式圓柱形，略彎曲，長度不等，直徑1~2cm，表面灰黃色或灰黃棕色，有的微帶紫色，具…"}, {"n": "北沙參", "c": "根及根莖類", "t": "甘，微苦，微寒", "p": "山東、江蘇、河北、遼寧等地", "s": "長圓柱形，偶有分枝"}, {"n": "當歸", "c": "根及根莖類", "t": "甘、辛，溫", "p": "甘肅、雲南、青海等地", "s": "全歸長略呈圓柱形，下部有支根3~5條或更多，長15~25cm"}, {"n": "桔梗", "c": "根及根莖類", "t": "苦、辛，平", "p": "華北、東北等地", "s": "根長圓形或長紡錘形，稍扭曲，下部偶有分支，長6~20cm，直徑1~2cm"}, {"n": "麥冬", "c": "根及根莖類", "t": "甘、微苦，涼", "p": "四川、浙江", "s": "浙這種藥塊根紡錘形，長1.5~3.5cm，中部直徑3~7mm"}, {"n": "浙貝母", "c": "根及根莖類", "t": "苦，寒", "p": "浙江、江蘇、安徽、湖南等地", "s": "元寶貝為鱗莖外層的單瓣鱗片"}, {"n": "鉤藤", "c": "藤木類", "t": "甘，涼", "p": "廣東、廣西、湖南、湖北等地", "s": "莖枝圓柱形或類方柱形，直徑2~6mm"}, {"n": "雞血藤", "c": "藤木類", "t": "苦、甘，溫", "p": "雲南、廣西、廣東等地", "s": "該品為橢圓形、長矩圓形或不規則的斜切片，厚0.3~1cm"}, {"n": "杜仲", "c": "皮類", "t": "甘，溫", "p": "貴州、四川、陝西、湖北等地", "s": "乾燥樹皮，為平坦的板片狀或卷片狀，大小厚薄不一，一般厚約3~10mm，長約40~100cm"}, {"n": "肉桂", "c": "皮類", "t": "辛、甘，大熱", "p": "廣東、廣西、福建、海南等地", "s": "企邊桂：呈長片狀槽狀形，左右兩邊向內捲曲，卷邊呈半筒形，槽的中心略凸起，外皮下凹，長43cm…"}, {"n": "百合", "c": "葉類", "t": "甘，寒", "p": "四川、雲南、貴州、湖南、湖北、陝西等地區", "s": "卷丹：鱗葉長2~3.5cm，寬1.5~3cm，厚1~3cm，表面乳白色或淡黃棕色，有縱直的脈…"}, {"n": "枇杷葉", "c": "葉類", "t": "苦，微寒", "p": "長江以南各地區", "s": "葉片長橢圓形，長12~30cm，寬4~9cm"}, {"n": "丁香", "c": "花類", "t": "甘，溫", "p": "坦桑尼亞的桑吉巴島以及馬來西亞、印尼等地", "s": "乾燥的花蕾略呈短棒狀，長1.5~2cm，紅棕色至暗棕色；下部為圓柱狀略扁的萼管，長1~1.3…"}, {"n": "夏枯草", "c": "花類", "t": "辛、苦，寒", "p": "江蘇、安徽、河南等地", "s": "該品呈棒狀，略扁，長1.5~8cm，直徑0.8~1.5cm，淡棕色至棕紅色"}, {"n": "菊花", "c": "花類", "t": "苦，微寒", "p": "浙江、安徽等地", "s": "杭菊：花序扁球形、不規則球形或稍壓扁，直徑多1.5~4cm"}, {"n": "白扁豆", "c": "果實及種子類", "t": "甘，微溫", "p": "安徽、陝西、湖南、河南等地", "s": "種子扁橢圓形或扁卵圓形，長0.8~1.3cm，寬6~9mm，厚約7mm"}, {"n": "草果", "c": "果實及種子類", "t": "辛，溫", "p": "貴州、廣西、雲南等地", "s": "果實橢圓形，長2~4.5cm，直徑1~2.5cm，表面棕色或紅棕色，具3鈍棱及明顯的縱溝及棱…"}, {"n": "佛手", "c": "果實及種子類", "t": "辛、苦、酸，溫", "p": "兩廣、川渝地區", "s": "該品為類橢圓形或卵圓形的薄片，常皺縮或捲曲"}, {"n": "枸杞子", "c": "果實及種子類", "t": "甘，平", "p": "甘肅、寧夏、新疆、內蒙古、青海等地", "s": "呈類紡錘形或橢圓形，表面紅色或暗紅色，項端有小突起狀的花柱痕，基部有白色的果梗痕"}, {"n": "核桃仁", "c": "果實及種子類", "t": "甘，溫", "p": "新疆省、河北省、山西省等地", "s": "多破碎，為不規則的塊狀，有皺曲的溝槽，大小不一；完整者類球形"}, {"n": "花椒", "c": "果實及種子類", "t": "辛，溫，有小毒", "p": "四川、陝西、河北、山東等地", "s": "蓇葖果多單生，直徑4~5mm"}, {"n": "苦杏仁 / 北杏", "c": "果實及種子類", "t": "苦杏仁：味苦，微溫。甜杏仁：味甘、性平", "p": "遼寧、內蒙古、河北、山東等地", "s": "苦杏仁：呈扁心形，長1~1.9cm，寬0.8~1.5cm，厚0.5~0.8cm"}, {"n": "連翹", "c": "果實及種子類", "t": "苦、微寒", "p": "河南、山西、陝西等地", "s": "黃翹：呈長卵形或卵形，兩端狹尖，多分裂為兩瓣"}, {"n": "蓮子", "c": "果實及種子類", "t": "甘、澀，平", "p": "湖南、湖北、福建、江蘇、浙江、江西等地", "s": "本品略呈橢圓形或類球形，長1.2~1.8cm，直徑0.8~1.4cm"}, {"n": "龍眼肉", "c": "果實及種子類", "t": "甘，溫", "p": "福建、廣東、廣西、雲南等地", "s": "為縱向破裂的不規則薄片，常數片粘結"}, {"n": "路路通", "c": "果實及種子類", "t": "苦，平", "p": "江蘇、安徽、浙江、福建等地", "s": "本品為聚花果，由多數小蒴果集合而成，呈球形，直徑2~3cm"}, {"n": "木蝴蝶", "c": "果實及種子類", "t": "苦、甘，涼", "p": "雲南、廣西、貴州等地", "s": "本品為蝶形薄片，除基部外三面延長成寬大菲薄的翅"}, {"n": "女貞子", "c": "果實及種子類", "t": "甘、苦，涼", "p": "浙江，江蘇、湖南、福建、廣西、江西、四川等地", "s": "呈卵形、橢圓形或腎形，長6~8.5mm，直徑3.5~5.5mm"}, {"n": "胖大海", "c": "果實及種子類", "t": "甘，寒", "p": "越南、泰國、印尼、馬來西亞等地", "s": "呈紡錘形或橢圓形，長2~3cm，直徑1~1.5cm"}, {"n": "芡實", "c": "果實及種子類", "t": "甘、澀。平", "p": "江蘇、湖南、湖北、山東等地", "s": "類球形，多為破粒"}, {"n": "桑椹", "c": "果實及種子類", "t": "甘、酸，寒", "p": "浙江、江蘇、安徽、新疆等地", "s": "該品為聚花果，由多數小核果集合而成，呈長圓形，長1~2cm，直徑0.5~0.8cm"}, {"n": "山楂", "c": "果實及種子類", "t": "甘、酸，微溫", "p": "河南、河北、山東等地", "s": "果實較小，類球形，直徑0.8~1.4cm，有的壓成餅狀"}, {"n": "使君子", "c": "果實及種子類", "t": "甘，溫", "p": "四川、廣東、廣西等地", "s": "呈橢圓形或卵圓形，具5條縱棱，偶有4~9棱，長2.5~4cm，直徑約2cm"}, {"n": "小茴香", "c": "果實及種子類", "t": "辛，溫", "p": "原產歐洲，我國內蒙古、甘肅、四川等地", "s": "果實為雙懸果，呈圓柱形，有的稍彎曲，兩端略尖，長4~8mm，直徑1.5~2.5mm"}, {"n": "薏苡仁", "c": "果實及種子類", "t": "甘、淡，微寒", "p": "福建、河北、浙江等地", "s": "種仁寬卵形或長橢圓形，長4~8mm，寬3~6mm"}, {"n": "雞骨草", "c": "全草類", "t": "甘、微苦，涼", "p": "兩廣地區", "s": "該品根多呈圓錐形，上粗下細，有分枝，長短不一，直徑0.5~1.5cm；表面灰棕色，粗糙，有細…"}, {"n": "益母草", "c": "全草類", "t": "辛、苦，涼", "p": "全國各地", "s": "鮮這種藥：幼苗期無莖，基生葉圓心形，邊緣5~9淺裂，每裂片有2~3鈍齒"}, {"n": "雞內金", "c": "動物類", "t": "甘，平", "p": "全國各地", "s": "本品為不規則卷片，厚約2mm"}];
+let hand=[], deck=[], cpu=0, qs=[], qi=0, phase="", selected=-1, left=0, tick=null, rights=0, asked=0, lock=false, round=0;
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function rand(a){ return a[Math.floor(Math.random()*a.length)]; }
+function others(h){ return HERBS.filter(x=>x.n!==h.n); }
+function fact(h){ return h.c+"；"+h.t; }
+
+function makeNeed(h){
+  const opts=[{text:fact(h), ok:true}];
+  for(const o of shuffle(others(h))){
+    const text=fact(o);
+    if(!opts.some(x=>x.text===text)) opts.push({text, ok:false});
+    if(opts.length===4) break;
+  }
+  return {kind:"need", type:"基礎必答", text:"請說明「"+h.n+"」的類別與性味。這題不出牌。", opts:shuffle(opts)};
+}
+function makePlace(h){
+  const opts=[{text:h.p, ok:true}];
+  for(const o of shuffle(others(h))){
+    if(!opts.some(x=>x.text===o.p)) opts.push({text:o.p, ok:false});
+    if(opts.length===4) break;
+  }
+  return {kind:"need", type:"基礎必答", text:"請說出「"+h.n+"」的產地。這題不出牌。", opts:shuffle(opts)};
+}
+function makeScene(h){
+  return {kind:"buzz", type:"情景", text:h.s+"。這是哪一種？搶答後只可交出一張牌。", test:card=>card.n===h.n, reveal:h.n};
+}
+function makeMatch(h){
+  return {kind:"buzz", type:"配對", text:"「"+h.n+"」屬於"+h.c+"。請交出另一種同類的牌。", test:card=>card.n!==h.n && card.c===h.c, reveal:"另一種"+h.c};
+}
+function makeTF(h){
+  const lie=Math.random()<0.5;
+  let text, ans;
+  if(!lie){ text="「"+h.n+"」屬於"+h.c+"，性味為"+h.t+"。"; ans=true; }
+  else {
+    const o=rand(others(h).filter(x=>x.t!==h.t));
+    text="「"+h.n+"」屬於"+h.c+"，性味為"+o.t+"。";
+    ans=false;
+  }
+  return {kind:"tf", type:"是非", text:text, named:h.n, ans:ans};
+}
+function build(){
+  const pool=shuffle(HERBS.slice());
+  const makers=[makeScene, makeMatch, makeTF, makeScene, makeMatch, makeTF];
+  const buzz=makers.map((fn,i)=>fn(pool[i+2]));
+  return [makeNeed(pool[0]), makePlace(pool[1])].concat(buzz);
+}
+
+function stop(){ if(tick){ clearInterval(tick); tick=null; } }
+function startTimer(sec, fn){
+  stop();
+  left=sec;
+  paintClock();
+  tick=setInterval(()=>{
+    left-=1;
+    paintClock();
+    if(left<=0){ stop(); fn(); }
+  }, 1000);
+}
+function paintClock(){
+  const el=document.getElementById("clock");
+  el.textContent=phase==="wait"||phase==="over"?"–":String(left);
+  el.classList.toggle("hot", left<=3 && phase!=="wait" && phase!=="over");
+}
+function paint(){
+  document.getElementById("mine").textContent="你的牌 "+hand.length;
+  document.getElementById("cpu").textContent="電腦 "+cpu;
+  const q=qs[qi];
+  const handBox=document.getElementById("hand");
+  const choiceBox=document.getElementById("choices");
+  handBox.innerHTML="";
+  choiceBox.innerHTML="";
+  const showHand=phase==="answer" && q && q.kind!=="need";
+  if(showHand){
+    hand.forEach((h,i)=>{
+      const b=document.createElement("button");
+      b.textContent=h.n;
+      if(i===selected) b.className="on";
+      b.onclick=()=>{ if(lock||phase!=="answer") return; selected=i; paint(); };
+      handBox.appendChild(b);
+    });
+  }
+  if(q && q.kind==="need" && phase==="answer"){
+    q.opts.forEach(o=>{
+      const b=document.createElement("button");
+      b.textContent=o.text;
+      b.onclick=()=>answerNeed(o.ok);
+      choiceBox.appendChild(b);
+    });
+  }
+  document.getElementById("buzz").disabled=phase!=="buzz";
+  document.getElementById("yes").disabled=!(phase==="answer" && q && q.kind==="tf");
+  document.getElementById("no").disabled=!(phase==="answer" && q && q.kind==="tf");
+  document.getElementById("send").disabled=!(phase==="answer" && q && q.kind==="buzz");
+}
+function say(s){ document.getElementById("msg").textContent=s; }
+function showQ(){
+  lock=false; selected=-1;
+  if(hand.length===0){ return finish("牌沒有了，這一局淘汰。"); }
+  if(qi>=qs.length){ return finish("八題完成。"); }
+  const q=qs[qi];
+  document.getElementById("tag").textContent=(qi+1)+" / "+qs.length+"　"+q.type;
+  document.getElementById("text").textContent=q.text;
+  say("");
+  if(q.kind==="need"){
+    phase="answer";
+    document.getElementById("hint").textContent="基礎必答：10 秒內選答案。不要出牌。";
+    paint();
+    startTimer(10, ()=>fail("超時，抽走 1 張牌。"));
+  } else {
+    phase="buzz";
+    document.getElementById("hint").textContent="10 秒內按「搶答」。沒有搶答會少 1 張牌。";
+    paint();
+    startTimer(10, ()=>fail("沒有搶答，抽走 1 張牌。"));
+  }
+}
+function buzz(){
+  if(phase!=="buzz"||lock) return;
+  stop();
+  phase="answer";
+  const q=qs[qi];
+  document.getElementById("hint").textContent=q.kind==="tf"
+    ? "先選這題藥材的牌，再按「是」或「否」。只可一人作答。"
+    : "只可選一張牌，然後按「交出這一張」。";
+  paint();
+  startTimer(10, ()=>fail("作答超時，抽走 1 張牌。"));
+}
+function answerNeed(ok){
+  if(phase!=="answer"||lock) return;
+  lock=true; stop(); asked++;
+  if(ok){ rights++; say("答對。必答題保留原有的牌。"); later(next, 900); }
+  else fail("答錯，抽走 1 張牌。", true);
+}
+function sendCard(){
+  if(phase!=="answer"||lock) return;
+  const q=qs[qi];
+  if(selected<0){ say("先選一張牌。"); return; }
+  lock=true; stop(); asked++;
+  const card=hand[selected];
+  if(q.test(card)) gain("答對。向電腦抽 1 張。");
+  else fail("答錯。正確應是："+q.reveal+"。抽走這張牌。", true);
+}
+function judgeTF(yes){
+  if(phase!=="answer"||lock) return;
+  const q=qs[qi];
+  if(selected<0 || hand[selected].n!==q.named){
+    lock=true; stop(); asked++;
+    fail("沒有拿着「"+q.named+"」。以手上的牌為準，抽走 1 張。", true);
+    return;
+  }
+  lock=true; stop(); asked++;
+  if(yes===q.ans) gain("答對。向電腦抽 1 張。");
+  else fail("答錯。這題是「"+(q.ans?"是":"否")+"」。抽走這張牌。", true);
+}
+function dropOne(){
+  if(!hand.length) return;
+  const i=selected>=0 && selected<hand.length ? selected : Math.floor(Math.random()*hand.length);
+  hand.splice(i,1);
+  selected=-1;
+}
+function fail(message, already){
+  if(!already){ lock=true; stop(); asked++; }
+  dropOne();
+  say(message);
+  paint();
+  if(hand.length===0) later(()=>finish("牌沒有了，這一局淘汰。"), 900);
+  else later(next, 1100);
+}
+function gain(message){
+  rights++;
+  if(cpu>0 && deck.length){ cpu--; hand.push(deck.pop()); }
+  say(message);
+  paint();
+  later(next, 900);
+}
+function later(fn, ms){
+  const my=round;
+  setTimeout(()=>{ if(my===round) fn(); }, ms);
+}
+function next(){ qi++; showQ(); }
+function finish(reason){
+  phase="over"; stop(); lock=true;
+  document.getElementById("tag").textContent="完結";
+  document.getElementById("text").textContent=reason+"　答對 "+rights+" / "+asked+"。餘下 "+hand.length+" 張牌。";
+  document.getElementById("hint").textContent="再按「開始一局」會換一批題。比賽題目可以和這一局不同。";
+  say("");
+  paint();
+  paintClock();
+}
+function start(){
+  round++;
+  const pool=shuffle(HERBS.slice());
+  hand=pool.slice(0,10);
+  deck=pool.slice(10);
+  cpu=8; qs=build(); qi=0; rights=0; asked=0;
+  phase="wait";
+  showQ();
+}
+document.getElementById("buzz").onclick=buzz;
+document.getElementById("send").onclick=sendCard;
+document.getElementById("yes").onclick=()=>judgeTF(true);
+document.getElementById("no").onclick=()=>judgeTF(false);
+document.getElementById("start").onclick=start;
+document.addEventListener("keydown", e=>{
+  if(e.key===" " && phase==="buzz"){ e.preventDefault(); buzz(); }
+});
+</script>
+</body>
+</html>
