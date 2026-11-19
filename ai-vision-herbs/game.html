@@ -174,7 +174,7 @@ function paint(){
   const choiceBox=document.getElementById("choices");
   handBox.innerHTML="";
   choiceBox.innerHTML="";
-  const showHand=mode==="buzz" && (phase==="speak"||phase==="buzz"||phase==="answer"||phase==="review");
+  const showHand=mode==="buzz" && (phase==="answer"||phase==="review");
   if(showHand){
     hand.forEach((h,i)=>{
       const b=document.createElement("button");
